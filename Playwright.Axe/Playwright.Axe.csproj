@@ -4,6 +4,16 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
+	  <Title>Playwright.Axe</Title>
+	  <PackageId>Playwright.Axe</PackageId>
+	  <Authors>Isaac Walker</Authors>
+	  <Summary>Axe integration for Playwright .Net.</Summary>
+	  <Description>Automated accessibility testing via Axe for tests written with Microsoft Playwright .Net.</Description>
+	  <PublishRepositoryUrl>true</PublishRepositoryUrl>
+	  <PackageTags>Playwright Axe</PackageTags>
+	  <IncludeSymbols>true</IncludeSymbols>
+	  <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+	  <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
 	<Target Name="InstallAxeContent" BeforeTargets="BeforeBuild">
