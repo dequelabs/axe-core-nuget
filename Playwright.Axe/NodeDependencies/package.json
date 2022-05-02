@@ -1,0 +1,6 @@
+{
+    "description": "Node to resolve axe core dependencies.",
+    "dependencies": {
+        "axe-core": "^4.4.1"
+    }
+}
