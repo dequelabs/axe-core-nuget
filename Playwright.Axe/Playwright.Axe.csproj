@@ -1,6 +1,6 @@
 ﻿<Project>
   <Sdk Name="Microsoft.NET.Sdk" />
-  <Sdk Name="Yarn.MSBuild" />
+  <Sdk Name="Yarn.MSBuild" Version="1.22.17" />
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
