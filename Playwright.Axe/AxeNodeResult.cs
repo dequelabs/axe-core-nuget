@@ -19,13 +19,19 @@ namespace Playwright.Axe
         /// </summary>
         public AxeImpactValue? Impact { get; }
 
-
+        /// <summary>
+        /// Target identifier of this result node.
+        /// </summary>
         public IList<string>? Target { get; }
 
-
+        /// <summary>
+        /// Xpath selectors for elements
+        /// </summary>
         public IList<string>? XPath { get; }
 
-
+        /// <summary>
+        /// Elements ancestry.
+        /// </summary>
         public IList<string>? Ancestry { get; }
 
         /// <summary>
@@ -43,8 +49,10 @@ namespace Playwright.Axe
         /// </summary>
         public IList<AxeCheckResult> None { get; } = new List<AxeCheckResult>();
 
-
-        public string FailureSummary { get; }
+        /// <summary>
+        /// Failure summary.
+        /// </summary>
+        public string? FailureSummary { get; }
 
         /// <summary>
         /// Constructor.
@@ -58,7 +66,7 @@ namespace Playwright.Axe
             IList<AxeCheckResult> any,
             IList<AxeCheckResult> all,
             IList<AxeCheckResult> none,
-            string failureSummary
+            string? failureSummary
             )
         {
             Html = html;

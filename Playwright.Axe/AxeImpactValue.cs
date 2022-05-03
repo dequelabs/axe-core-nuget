@@ -10,9 +10,24 @@ namespace Playwright.Axe
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum AxeImpactValue
     {
+        /// <summary>
+        /// Minor impact value.
+        /// </summary>
         Minor,
+
+        /// <summary>
+        /// Moderate impact value.
+        /// </summary>
         Moderate,
+
+        /// <summary>
+        /// Serious impact value.
+        /// </summary>
         Serious,
+
+        /// <summary>
+        /// Critical impact value.
+        /// </summary>
         Critical
     }
 }

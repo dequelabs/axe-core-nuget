@@ -4,6 +4,9 @@ using System;
 
 namespace Playwright.Axe
 {
+    /// <summary>
+    /// Data related to the environment that Axe executed in.
+    /// </summary>
     public class AxeEnvironmentData
     {
         /// <summary>
