@@ -20,5 +20,10 @@ namespace Playwright.Axe.AxeCoreWrapper
         /// Calls the Run/Analyze method of Axe Core.
         /// </summary>
         public Task<AxeResults> Run(IPage page, AxeRunOptions? options = null);
+
+        /// <summary>
+        /// Runs Axe on a Playwright Locator
+        /// </summary>
+        public Task<AxeResults> RunOnLocator(ILocator locator, AxeRunOptions? options = null);
     }
 }

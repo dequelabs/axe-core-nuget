@@ -68,6 +68,18 @@ namespace Playwright.Axe.AxeCoreWrapper
             return axeResult;
         }
 
+        /// <inheritdoc/>
+        public async Task<AxeResults> RunOnLocator(ILocator locator, AxeRunOptions? options = null)
+        {
+            await m_axeContentEmbedder.EmbedAxeCoreIntoPage(locator.Page, options?.Iframes);
+
+            string? paramString = JsonSerializer.Serialize(options, s_jsonOptions);
+            string runParamTemplate = options != null ? "JSON.parse(runOptions)" : string.Empty;
+
+            var resultJsonElement = await locator.EvaluateAsync($"(node, runOptions) => window.axe.run(node, {runParamTemplate})", paramString);
+            return DeserializeAxeResults(resultJsonElement);
+        }
+
         private static async Task<TResult?> EvaluateAxeRun<TResult>(IPage page, object? param = null)
             where TResult : class
         {
@@ -83,6 +95,23 @@ namespace Playwright.Axe.AxeCoreWrapper
 
             TResult? result = JsonSerializer.Deserialize<TResult>(resultJsonElement.Value, s_jsonOptions);
             return result;
+        }
+
+        private static AxeResults DeserializeAxeResults(JsonElement? jsonElement)
+        {
+            if (!jsonElement.HasValue)
+            {
+                throw new Exception();
+            }
+
+            AxeResults? results = JsonSerializer.Deserialize<AxeResults>(jsonElement.Value, s_jsonOptions);
+
+            if (results is null)
+            {
+                throw new Exception();
+            }
+
+            return results;
         }
     }
 }

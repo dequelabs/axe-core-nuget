@@ -1,5 +1,6 @@
 #nullable enable
 
+using Microsoft.Playwright;
 using Microsoft.Playwright.MSTest;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -149,6 +150,31 @@ namespace Playwright.Axe.Test
 
             Assert.AreEqual(ariaViolation.Id, expectedViolationId);
             Assert.IsTrue(targets.Any(target => target.Equals(expectedViolationTarget)));
+        }
+
+        [TestMethod]
+        [DataRow("button")]
+        [DataRow("text=Text example")]
+        [DataRow("[aria-label='Accessibility Label']")]
+        [DataRow("id=id-example")]
+        public async Task RunAxeOnLocator_NoOptions(string selector)
+        {
+            await NavigateToPage("selector.html");
+
+            AxeResults axeResults = await Page!.Locator(selector).RunAxe();
+            Assert.IsTrue(axeResults.Passes.All(pass => pass.Nodes!.Count == 1));
+        }
+
+        [TestMethod]
+        public async Task RunAxeOnLocator_WithOptions()
+        {
+            const string tag = "ACT";
+            await NavigateToPage("selector.html");
+
+            AxeRunOptions runOptions = new(new AxeRunOnly(AxeRunOnlyType.Tag, new List<string> { tag }));
+
+            AxeResults axeResults = await Page!.Locator("button").RunAxe(runOptions);
+            Assert.IsTrue(axeResults.Passes.All(pass => pass.Tags!.Contains(tag)));
         }
 
         private static IEnumerable<object?[]> GetAxeRulesParameters()
