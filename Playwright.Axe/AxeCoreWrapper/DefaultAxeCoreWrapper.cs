@@ -19,7 +19,8 @@ namespace Playwright.Axe.AxeCoreWrapper
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             Converters =
             {
-                new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
+                new JsonStringEnumConverter(JsonNamingPolicy.CamelCase),
+                new RunContextJsonConverter()
             },
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
         };
@@ -54,11 +55,11 @@ namespace Playwright.Axe.AxeCoreWrapper
         }
 
         /// <inheritdoc/>
-        public async Task<AxeResults> Run(IPage page, AxeRunOptions? options = null)
+        public async Task<AxeResults> Run(IPage page, AxeRunContext? context = null, AxeRunOptions? options = null)
         {
             await m_axeContentEmbedder.EmbedAxeCoreIntoPage(page, options?.Iframes);
 
-            AxeResults? axeResult = await EvaluateAxeRun<AxeResults>(page, options);
+            AxeResults? axeResult = await EvaluateAxeRun<AxeResults>(page, context, options);
 
             if(axeResult == null)
             {
@@ -80,13 +81,15 @@ namespace Playwright.Axe.AxeCoreWrapper
             return DeserializeAxeResults(resultJsonElement);
         }
 
-        private static async Task<TResult?> EvaluateAxeRun<TResult>(IPage page, object? param = null)
+        private static async Task<TResult?> EvaluateAxeRun<TResult>(IPage page, AxeRunContext? context = null, object? param = null)
             where TResult : class
         {
             string? paramString = JsonSerializer.Serialize(param, s_jsonOptions);
             string runParamTemplate = param != null ? "JSON.parse(runOptions)" : string.Empty;
 
-            JsonElement? resultJsonElement = await page.EvaluateAsync($"(runOptions) => window.axe.run({runParamTemplate})", paramString);
+            string? contextParam = context is null ? string.Empty : ($"JSON.parse(\'{JsonSerializer.Serialize(context, s_jsonOptions)}\'),");
+
+            JsonElement? resultJsonElement = await page.EvaluateAsync($"(runOptions) => window.axe.run({contextParam}{runParamTemplate})", paramString);
 
             if (!resultJsonElement.HasValue)
             {

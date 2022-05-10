@@ -1,6 +1,5 @@
 #nullable enable
 
-using Microsoft.Playwright;
 using Microsoft.Playwright.MSTest;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -177,6 +176,20 @@ namespace Playwright.Axe.Test
             Assert.IsTrue(axeResults.Passes.All(pass => pass.Tags!.Contains(tag)));
         }
 
+        [TestMethod]
+        [DynamicData(nameof(GetAxeContextParameters), DynamicDataSourceType.Method)]
+        public async Task RunAxe_WithContext(AxeRunContext axeRunContext, ISet<string> targets, bool includedInTargets)
+        {
+            await NavigateToPage("selector.html");
+
+            AxeResults axeResults = await Page!.RunAxe(axeRunContext);
+
+            Assert.IsTrue(axeResults.Passes
+                .All(pass => pass.Nodes!
+                .All(node => node.Target!
+                .Any(target => includedInTargets == targets.Contains(target)))));
+        }
+
         private static IEnumerable<object?[]> GetAxeRulesParameters()
         {
             yield return new object?[]
@@ -253,6 +266,51 @@ namespace Playwright.Axe.Test
                 new AxeRunOptions(iframes: true),
                 iframeValidator,
                 "with-frame.html"
+            };
+        }
+
+        private static IEnumerable<object?[]> GetAxeContextParameters()
+        {
+            yield return new object?[]
+            {
+                new AxeRunSerialContext("#id-example"),
+                new HashSet<string>()
+                {
+                    "#id-example"
+                },
+                true
+            };
+
+            yield return new object?[]
+            {
+                new AxeRunSerialContext("a"),
+                new HashSet<string>()
+                {
+                    "a[aria-label=\"Accessibility Label\"]",
+                    "#id-example"
+                },
+                true
+            };
+
+            yield return new object?[]
+            {
+                new AxeRunSerialContext(null, "#id-example"),
+                new HashSet<string>()
+                {
+                    "#id-example"
+                },
+                false
+            };
+
+            yield return new object?[]
+            {
+                new AxeRunSerialContext(null, "a"),
+                new HashSet<string>()
+                {
+                    "a[aria-label=\"Accessibility Label\"]",
+                    "#id-example"
+                },
+                false
             };
         }
 

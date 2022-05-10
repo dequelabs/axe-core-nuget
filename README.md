@@ -111,6 +111,80 @@ foreach(var inapplicable in axeResults.Inapplicable)
 
 ``` 
 
+This method can be run on an element via the context parameter.
+This allows the inclusion and exclusion of string selectors.
+When exclude is only specified, include will default to the entire document.
+Currently the node and node lists functionality are not supported.
 
+``` cs
+
+AxeRunContext runContext = new AxeRunSerialContext("#my-id"); // Only run on this id.
+
+runContext = new AxeRunSerialContext(null, "#my-id"); // Run on everything but this id.
+
+runContext = new AxeRunSerialContext("button", "#my-id"); // Run on every button that does not have this id.
+
+runContext = new AxeRunSerialContext(new List<string>()
+{
+    new List<string>()
+    {
+        "#my-frame",
+        "#my-id"
+    }
+}); // Run on the element with my-id Id and which is inside the frame with id my-frame.
+
+AxeResults axeResults = await page.RunAxe(runContext);
+
+```
+
+The run method can also be run on a Playwright Locator.
+This does not support context parameter.
+
+``` cs
+ILocator locator = page.Locator("text=Sign In");
+
+AxeResults = await locator.RunAxe();
+```
+
+All these run methods support an AxeRunOptions parameter.
+This is roughly the equivalent of [axe options](https://www.deque.com/axe/core-documentation/api-documentation/#options-parameter) .
+
+```cs
+
+AxeRunOptions options = new AxeRunOptions(
+    // Run only tags that are wcag2aa.
+    runOnly = new AxeRunOnly(AxeRunOnlyType.Tag, new List<string> { "wcag2aa" }),
+
+    // Specify rules.
+    rules = new Dictionary<string, AxeRuleObjectValue>()
+    {
+        // Don't run color-contrast.
+        {"color-contrast", new AxeRuleObjectValue(false)}
+    },
+
+    // Limit result types to Violations.
+    resultTypes = new List<AxeResultGroup>()
+    {
+        AxeResultGroup.Violations
+    },
+
+    // Don't return css selectors in results.
+    selectors = false,
+
+    // Return CSS selector for elements, with all the element's ancestors.
+    ancestry = true,
+
+    // Don't return xpath selectors for elements.
+    xpath = false,
+
+    // Don't run axe on iframes inside the document.
+    iframes = false
+);
+
+AxeResults axeResults = await page.RunAxe(options);
+axeResults = await page.RunAxe(context, options);
+axeResults = await locator.RunAxe(options);
+
+```
 
 

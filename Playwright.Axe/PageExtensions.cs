@@ -42,7 +42,24 @@ namespace Playwright.Axe
 
             IAxeCoreWrapper axeCoreWrapper = new DefaultAxeCoreWrapper(axeContentEmbedder);
 
-            return await axeCoreWrapper.Run(page, options);
+            return await axeCoreWrapper.Run(page, null, options);
+        }
+
+        /// <summary>
+        /// Runs Axe against the page in its current state.
+        /// </summary>
+        /// <param name="page">The Playwright Page object</param>
+        /// <param name="context">Context to specify which element to run axe on.</param>
+        /// <param name="options">Options for running Axe.</param>
+        /// <returns>The AxeResults</returns>
+        public static async Task<AxeResults> RunAxe(this IPage page, AxeRunContext? context, AxeRunOptions? options = null)
+        {
+            IAxeContentProvider axeContentProvider = new DefaultAxeContentProvider();
+            IAxeContentEmbedder axeContentEmbedder = new DefaultAxeContentEmbedder(axeContentProvider);
+
+            IAxeCoreWrapper axeCoreWrapper = new DefaultAxeCoreWrapper(axeContentEmbedder);
+
+            return await axeCoreWrapper.Run(page, context, options);
         }
     }
 }
