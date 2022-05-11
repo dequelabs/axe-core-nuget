@@ -143,7 +143,7 @@ This does not support context parameter.
 ``` cs
 ILocator locator = page.Locator("text=Sign In");
 
-AxeResults = await locator.RunAxe();
+AxeResults axeResults = await locator.RunAxe();
 ```
 
 All these run methods support an AxeRunOptions parameter.
@@ -153,32 +153,32 @@ This is roughly the equivalent of [axe options](https://www.deque.com/axe/core-d
 
 AxeRunOptions options = new AxeRunOptions(
     // Run only tags that are wcag2aa.
-    runOnly = new AxeRunOnly(AxeRunOnlyType.Tag, new List<string> { "wcag2aa" }),
+    runOnly: new AxeRunOnly(AxeRunOnlyType.Tag, new List<string> { "wcag2aa" }),
 
     // Specify rules.
-    rules = new Dictionary<string, AxeRuleObjectValue>()
+    rules: new Dictionary<string, AxeRuleObjectValue>()
     {
         // Don't run color-contrast.
         {"color-contrast", new AxeRuleObjectValue(false)}
     },
 
     // Limit result types to Violations.
-    resultTypes = new List<AxeResultGroup>()
+    resultTypes: new List<AxeResultGroup>()
     {
         AxeResultGroup.Violations
     },
 
     // Don't return css selectors in results.
-    selectors = false,
+    selectors: false,
 
     // Return CSS selector for elements, with all the element's ancestors.
-    ancestry = true,
+    ancestry: true,
 
     // Don't return xpath selectors for elements.
-    xpath = false,
+    xpath: false,
 
     // Don't run axe on iframes inside the document.
-    iframes = false
+    iframes: false
 );
 
 AxeResults axeResults = await page.RunAxe(options);
