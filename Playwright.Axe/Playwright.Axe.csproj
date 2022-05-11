@@ -10,10 +10,14 @@
 	  <Summary>Axe integration for Playwright .Net.</Summary>
 	  <Description>Automated accessibility testing via Axe for tests written with Microsoft Playwright .Net.</Description>
 	  <PublishRepositoryUrl>true</PublishRepositoryUrl>
+	  <PackageProjectUrl>https://github.com/IsaacWalker/PlaywrightAxeDotnet</PackageProjectUrl>
+      <RepositoryUrl>https://github.com/IsaacWalker/PlaywrightAxeDotnet</RepositoryUrl>
+	  <RepositoryType>git</RepositoryType>
 	  <PackageTags>Playwright Axe</PackageTags>
 	  <IncludeSymbols>true</IncludeSymbols>
 	  <SymbolPackageFormat>snupkg</SymbolPackageFormat>
 	  <GenerateDocumentationFile>true</GenerateDocumentationFile>
+	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
 	<Target Name="InstallAxeContent" BeforeTargets="BeforeBuild">
