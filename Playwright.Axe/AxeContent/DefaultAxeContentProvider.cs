@@ -1,10 +1,9 @@
 ﻿#nullable enable
 
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
-using System.Resources;
 using System.Text;
 
 namespace Playwright.Axe.AxeContent
@@ -13,15 +12,28 @@ namespace Playwright.Axe.AxeContent
     public sealed class DefaultAxeContentProvider : IAxeContentProvider
     {
         /// <inheritdoc />
-        public string GetAxeCoreScriptContent()
+        public string GetAxeCoreScriptContent() => GetFileContents("axe.js");
+
+        /// <inheritdoc />
+        public IDictionary<string, string> GetHtmlReportFiles()
         {
-            var resourceStream = Assembly
-                .GetExecutingAssembly()
-                .GetManifestResourceStream("Playwright.Axe.axe.js");
-            using (var reader = new StreamReader(resourceStream, Encoding.UTF8))
+            IList<string> reportStaticFiles = new List<string>()
             {
+                "index.html",
+                "index.js"
+            };
+
+            return reportStaticFiles.ToDictionary(sf => sf, sf => GetFileContents(sf));
+        }
+
+        private string GetFileContents(string filename)
+        {
+            Stream resourceStream = Assembly
+                .GetExecutingAssembly()
+                .GetManifestResourceStream($"Playwright.Axe.{filename}");
+
+            using var reader = new StreamReader(resourceStream, Encoding.UTF8);
                 return reader.ReadToEnd();
-            }
         }
     }
 }

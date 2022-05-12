@@ -190,6 +190,16 @@ namespace Playwright.Axe.Test
                 .Any(target => includedInTargets == targets.Contains(target)))));
         }
 
+        [TestMethod]
+        public async Task RunAxe_WithReport_OutputsReport()
+        {
+            await NavigateToPage("basic.html");
+
+            AxeHtmlReportOptions reportOptions = new();
+
+            await Page!.RunAxe(reportOptions: reportOptions);
+        }
+
         private static IEnumerable<object?[]> GetAxeRulesParameters()
         {
             yield return new object?[]

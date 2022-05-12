@@ -22,17 +22,32 @@
 
 	<Import Project="../SignAssembly.props" />
 		
-	<Target Name="InstallAxeContent" BeforeTargets="BeforeBuild">
+	<Target Name="InstallClientDependencies" BeforeTargets="BeforeBuild">
 		<Yarn Command="install" WorkingDirectory="NodeDependencies" />
-		<CallTarget Targets="IncludeAxeContent" />
+		<CallTarget Targets="BuildClientDependencies" />
 	</Target>
 
-	<Target Name="IncludeAxeContent">
+	<Target Name="BuildClientDependencies">
+		<Yarn Command="build" WorkingDirectory="NodeDependencies" />
+		<CallTarget Targets="IncludeClientContent" />
+	</Target>
+
+	<Target Name="IncludeClientContent">
 		<ItemGroup>
 			<EmbeddedResource Include="NodeDependencies/node_modules/axe-core/axe.min.js" Link="axe.js">
 			</EmbeddedResource>
+			<EmbeddedResource Include="NodeDependencies/dist/index.js" Link="index.js">
+			</EmbeddedResource>
+			<EmbeddedResource Include="NodeDependencies/dist/index.html" Link="index.html">
+			</EmbeddedResource>
 		</ItemGroup>
 	</Target>
+
+	<ItemGroup>
+	  <Compile Remove="NodeDependencies\**" />
+	  <EmbeddedResource Remove="NodeDependencies\**" />
+	  <None Remove="NodeDependencies\**" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Playwright" Version="1.20.2" />
