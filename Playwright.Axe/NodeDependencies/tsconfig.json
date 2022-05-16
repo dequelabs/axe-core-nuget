@@ -1,12 +1,12 @@
 {
     "compilerOptions": {
-        "target": "ESNext",
+        "target": "ES2016",
         "module": "ESNext",
+        "lib": ["DOM"],
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
         "jsx": "react",
-        "moduleResolution": "Node",
-        "isolatedModules": true
+        "moduleResolution": "Node"
     },
     "ts-node": {
         "compilerOptions": {

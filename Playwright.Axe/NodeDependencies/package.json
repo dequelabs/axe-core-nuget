@@ -5,6 +5,7 @@
         "build": "webpack --config webpack.config.ts"
     },
     "dependencies": {
+        "@fluentui/react": "^8.67.4",
         "axe-core": "^4.4.1",
         "react": "^18.1.0",
         "react-dom": "^18.1.0"
