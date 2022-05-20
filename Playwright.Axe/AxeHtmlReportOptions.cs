@@ -14,11 +14,17 @@ namespace Playwright.Axe
         public string? ReportDir { get; }
 
         /// <summary>
+        /// Only create if violations are present in the run.
+        /// </summary>
+        public bool OnlyOnViolations { get; }
+
+        /// <summary>
         /// Options for creating an Axe Html Report.
         /// </summary>
-        public AxeHtmlReportOptions(string? reportDir = null)
+        public AxeHtmlReportOptions(string? reportDir = null, bool? onlyOnViolations = true)
         {
             ReportDir = reportDir;
+            OnlyOnViolations = onlyOnViolations!.Value;
         }
     }
 }

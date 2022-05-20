@@ -4,6 +4,7 @@ using Microsoft.Playwright.MSTest;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -191,14 +192,15 @@ namespace Playwright.Axe.Test
         }
 
         [TestMethod]
-        public async Task RunAxe_WithReport_OutputsReport()
+        [DynamicData(nameof(GetReportParameters), DynamicDataSourceType.Method)]
+        public async Task RunAxe_WithReport_OutputsReport(AxeHtmlReportOptions reportOptions, string? expectedReportPath)
         {
             await NavigateToPage("basic.html");
 
-            AxeHtmlReportOptions reportOptions = new();
-
             await Page!.RunAxe(reportOptions: reportOptions);
-        }
+
+            Assert.IsTrue(File.Exists(expectedReportPath));
+        }   
 
         private static IEnumerable<object?[]> GetAxeRulesParameters()
         {
@@ -321,6 +323,15 @@ namespace Playwright.Axe.Test
                     "#id-example"
                 },
                 false
+            };
+        }
+
+        private static IEnumerable<object?[]> GetReportParameters()
+        {
+            yield return new object[]
+            {
+                new AxeHtmlReportOptions(),
+                "report/index.html"
             };
         }
 

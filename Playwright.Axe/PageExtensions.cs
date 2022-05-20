@@ -5,6 +5,7 @@ using Playwright.Axe.AxeContent;
 using Playwright.Axe.AxeCoreWrapper;
 using Playwright.Axe.HtmlReport;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Playwright.Axe
@@ -68,7 +69,7 @@ namespace Playwright.Axe
 
             AxeResults results = await axeCoreWrapper.Run(page, context, options);
 
-            if(reportOptions != null)
+            if(reportOptions != null && !(reportOptions.OnlyOnViolations && !results.Violations.Any()))
             {
                 IHtmlReportBuilder htmlReportBuilder = new HtmlReportBuilder(axeContentProvider);
                 htmlReportBuilder.BuildReport(results, reportOptions);
