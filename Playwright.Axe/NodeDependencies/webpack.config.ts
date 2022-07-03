@@ -15,17 +15,20 @@ const config: Configuration = {
     resolve: {
         extensions: [".js", ".ts", ".tsx"]
     },
+    performance: {
+        hints: false
+    },
     module: {
         rules: [
             {
                 test: /\.(ts|tsx)?$/,
-                use: "ts-loader"
+                use: "swc-loader"
             }
         ]
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: path.join(__dirname, "./report-src/index.html")
+            template: path.join(__dirname, "./report-src/index.html"),
         })
     ]
 }
