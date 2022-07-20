@@ -38,9 +38,9 @@
 
 	<Target Name="IncludeClientContent">
 		<ItemGroup>
-			<EmbeddedResource Include="NodeDependencies/node_modules/axe-core/axe.min.js" Link="axe.js">
+			<EmbeddedResource Include="NodeDependencies/dist/index.axe-core.js" Link="axe.js">
 			</EmbeddedResource>
-			<EmbeddedResource Include="NodeDependencies/dist/index.js" Link="index.js">
+			<EmbeddedResource Include="NodeDependencies/dist/index.report.js" Link="index.report.js">
 			</EmbeddedResource>
 			<EmbeddedResource Include="NodeDependencies/dist/index.html" Link="index.html">
 			</EmbeddedResource>

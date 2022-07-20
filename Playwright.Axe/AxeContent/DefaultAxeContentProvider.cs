@@ -20,7 +20,7 @@ namespace Playwright.Axe.AxeContent
             IList<string> reportStaticFiles = new List<string>()
             {
                 "index.html",
-                "index.js"
+                "index.report.js"
             };
 
             return reportStaticFiles.ToDictionary(sf => sf, sf => GetFileContents(sf));
