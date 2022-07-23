@@ -23,6 +23,7 @@ namespace Playwright.Axe.AxeCoreWrapper
                 new RunContextJsonConverter()
             },
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            ReferenceHandler = ReferenceHandler.IgnoreCycles
         };
 
         private readonly IAxeContentEmbedder m_axeContentEmbedder;
@@ -37,21 +38,8 @@ namespace Playwright.Axe.AxeCoreWrapper
         {
             await m_axeContentEmbedder.EmbedAxeCoreIntoPage(page, false);
 
-            string? jsonString = (await page.EvaluateAsync("(paramTags) => JSON.stringify(window.axe.getRules(paramTags))", tags))
-                .Value.GetString();
-            
-            if(jsonString == null)
-            {
-                throw new Exception();
-            }
-
-            IList<AxeRuleMetadata>? ruleMetadatas = JsonSerializer.Deserialize<List<AxeRuleMetadata>>(jsonString, s_jsonOptions);
-            if (ruleMetadatas == null)
-            {
-                throw new Exception();
-            }
-
-            return ruleMetadatas;
+            object jsonObject = await page.EvaluateAsync<object>("(paramTags) => window.axe.getRules(paramTags)", tags);
+            return DeserializeResult<List<AxeRuleMetadata>>(jsonObject);
         }
 
         /// <inheritdoc/>
@@ -59,12 +47,7 @@ namespace Playwright.Axe.AxeCoreWrapper
         {
             await m_axeContentEmbedder.EmbedAxeCoreIntoPage(page, options?.Iframes);
 
-            AxeResults? axeResult = await EvaluateAxeRun<AxeResults>(page, context, options);
-
-            if(axeResult == null)
-            {
-                throw new Exception();
-            }
+            AxeResults axeResult = await EvaluateAxeRun<AxeResults>(page, context, options);
 
             return axeResult;
         }
@@ -77,11 +60,11 @@ namespace Playwright.Axe.AxeCoreWrapper
             string? paramString = JsonSerializer.Serialize(options, s_jsonOptions);
             string runParamTemplate = options != null ? "JSON.parse(runOptions)" : string.Empty;
 
-            var resultJsonElement = await locator.EvaluateAsync($"(node, runOptions) => window.axe.run(node, {runParamTemplate})", paramString);
-            return DeserializeAxeResults(resultJsonElement);
+            object jsonObject = await locator.EvaluateAsync<object>($"(node, runOptions) => window.axe.run(node, {runParamTemplate})", paramString);
+            return DeserializeResult<AxeResults>(jsonObject);
         }
 
-        private static async Task<TResult?> EvaluateAxeRun<TResult>(IPage page, AxeRunContext? context = null, object? param = null)
+        private static async Task<TResult> EvaluateAxeRun<TResult>(IPage page, AxeRunContext? context = null, object? param = null)
             where TResult : class
         {
             string? paramString = JsonSerializer.Serialize(param, s_jsonOptions);
@@ -89,25 +72,16 @@ namespace Playwright.Axe.AxeCoreWrapper
 
             string? contextParam = context is null ? string.Empty : ($"JSON.parse(\'{JsonSerializer.Serialize(context, s_jsonOptions)}\'),");
 
-            JsonElement? resultJsonElement = await page.EvaluateAsync($"(runOptions) => window.axe.run({contextParam}{runParamTemplate})", paramString);
+            object jsonObject = await page.EvaluateAsync<object>($"(runOptions) => window.axe.run({contextParam}{runParamTemplate})", paramString);
 
-            if (!resultJsonElement.HasValue)
-            {
-                return null;
-            }
-
-            TResult? result = JsonSerializer.Deserialize<TResult>(resultJsonElement.Value, s_jsonOptions);
-            return result;
+            return DeserializeResult<TResult>(jsonObject);
         }
 
-        private static AxeResults DeserializeAxeResults(JsonElement? jsonElement)
+        private static TResult DeserializeResult<TResult>(object jsonObject)
         {
-            if (!jsonElement.HasValue)
-            {
-                throw new Exception();
-            }
-
-            AxeResults? results = JsonSerializer.Deserialize<AxeResults>(jsonElement.Value, s_jsonOptions);
+            // Temporary solution for handling jsonelements with metadata properties which cause exceptions in some circumstances.
+            string jsonString = JsonSerializer.Serialize(jsonObject, s_jsonOptions);
+            TResult results = JsonSerializer.Deserialize<TResult>(jsonString, s_jsonOptions);
 
             if (results is null)
             {

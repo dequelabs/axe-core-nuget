@@ -13,7 +13,8 @@ namespace Playwright.Axe
     {
         private static readonly JsonSerializerOptions s_jsonOptions = new JsonSerializerOptions
         {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            ReferenceHandler = ReferenceHandler.IgnoreCycles
         };
 
         public override AxeRunContext Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
