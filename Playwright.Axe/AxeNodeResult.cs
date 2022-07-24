@@ -22,7 +22,7 @@ namespace Playwright.Axe
         /// <summary>
         /// Target identifier of this result node.
         /// </summary>
-        public IList<string>? Target { get; }
+        public IList<string> Target { get; }
 
         /// <summary>
         /// Xpath selectors for elements
@@ -71,7 +71,7 @@ namespace Playwright.Axe
         {
             Html = html;
             Impact = impact;
-            Target = target;
+            Target = target ?? new List<string>();
             XPath = xpath;
             Ancestry = ancestry;
             Any = any;
