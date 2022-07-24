@@ -38,12 +38,12 @@ namespace Playwright.Axe
         /// <summary>
         /// Array of tags that this rule is assigned.
         /// </summary>
-        public IList<string>? Tags { get; }
+        public IList<string> Tags { get; }
 
         /// <summary>
         /// List of all elements the Rule tested.
         /// </summary>
-        public IList<AxeNodeResult>? Nodes { get; }
+        public IList<AxeNodeResult> Nodes { get; }
 
         /// <inheritdoc />
         public override string ToString() => Id;
@@ -65,8 +65,8 @@ namespace Playwright.Axe
             HelpUrl = helpUrl;
             Id = id;
             Impact = impact;
-            Tags = tags;
-            Nodes = nodes;
+            Tags = tags ?? new List<string>();
+            Nodes = nodes ?? new List<AxeNodeResult>();
         }
     }
 }
