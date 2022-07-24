@@ -69,7 +69,7 @@ const ReportPageBase = (props: IReportPageProps): JSX.Element => {
             <Stack>
                 <RuleList header={"Violations"} rules={props.axeResults.violations} />
                 <RuleList header={"Passes"} rules={props.axeResults.passes} />
-                <RuleList header={"Incomplete"} rules={props.axeResults.incomplete} />
+                <RuleList header={"Incomplete"} rules={props.axeResults.incomplete } />
                 <RuleList header={"Inapplicable"} rules={props.axeResults.inapplicable} />
             </Stack>
         </>)
