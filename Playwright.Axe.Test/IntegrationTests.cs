@@ -333,6 +333,12 @@ namespace Playwright.Axe.Test
                 new AxeHtmlReportOptions(),
                 "report/index.html"
             };
+
+            yield return new object[]
+            {
+                new AxeHtmlReportOptions(reportDir: "custom-report-directory"),
+                "custom-report-directory/index.html"
+            };
         }
 
         private async Task NavigateToPage(string htmlPageName)

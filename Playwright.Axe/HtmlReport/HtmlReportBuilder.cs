@@ -3,6 +3,7 @@
 using Playwright.Axe.AxeContent;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Abstractions;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -13,11 +14,22 @@ namespace Playwright.Axe.HtmlReport
     {
         private readonly IAxeContentProvider m_contentProvider;
 
+        private readonly IDirectory m_directory;
+
+        private readonly IFile m_file;
+
         private const string ResultsDataFileName = "data.js";
 
-        public HtmlReportBuilder(IAxeContentProvider contentProvider)
+        private const string DefaultReportDirectory = "report";
+
+        public HtmlReportBuilder(
+            IAxeContentProvider contentProvider,
+            IDirectory directory,
+            IFile file)
         {
             m_contentProvider = contentProvider;
+            m_directory = directory;
+            m_file = file;
         }
 
         /// <inheritdoc />
@@ -26,7 +38,9 @@ namespace Playwright.Axe.HtmlReport
             IDictionary<string, string> staticFiles = m_contentProvider.GetHtmlReportFiles();
             staticFiles.Add(ResultsDataFileName, GetResultsDataFileContent(runResults));
 
-            WriteFiles("report", staticFiles);
+            string reportDirectory = options.ReportDir ?? DefaultReportDirectory;
+
+            WriteFiles(reportDirectory, staticFiles);
         }
 
         private void WriteFiles(string outputDir, IDictionary<string, string> files)
@@ -35,12 +49,12 @@ namespace Playwright.Axe.HtmlReport
             {
                 string filePath = Path.Combine(outputDir, file.Key);
 
-                if(!Directory.Exists(outputDir))
+                if(!m_directory.Exists(outputDir))
                 {
-                    Directory.CreateDirectory(outputDir);
+                    m_directory.CreateDirectory(outputDir);
                 }
 
-                File.WriteAllText(filePath, file.Value);
+                m_file.WriteAllText(filePath, file.Value);
             }
         }
 
