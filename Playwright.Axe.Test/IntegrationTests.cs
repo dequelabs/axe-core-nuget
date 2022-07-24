@@ -244,7 +244,7 @@ namespace Playwright.Axe.Test
             Func<AxeResults, bool> selectorValidator = (AxeResults results) => 
                 results.Violations
                 .All(violation => violation.Nodes!
-                .All(node => node.Target == null));
+                .All(node => !node.Target.Any()));
             yield return new object?[]
             {
                 new AxeRunOptions(selectors: false),
