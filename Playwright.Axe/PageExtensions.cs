@@ -5,6 +5,8 @@ using Playwright.Axe.AxeContent;
 using Playwright.Axe.AxeCoreWrapper;
 using Playwright.Axe.HtmlReport;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -68,10 +70,11 @@ namespace Playwright.Axe
             IAxeCoreWrapper axeCoreWrapper = new DefaultAxeCoreWrapper(axeContentEmbedder);
 
             AxeResults results = await axeCoreWrapper.Run(page, context, options);
+            IFileSystem fileSystem = new FileSystem();
 
             if(reportOptions != null && !(reportOptions.OnlyOnViolations && !results.Violations.Any()))
             {
-                IHtmlReportBuilder htmlReportBuilder = new HtmlReportBuilder(axeContentProvider);
+                IHtmlReportBuilder htmlReportBuilder = new HtmlReportBuilder(axeContentProvider, fileSystem.Directory, fileSystem.File);
                 htmlReportBuilder.BuildReport(results, reportOptions);
             }
 
