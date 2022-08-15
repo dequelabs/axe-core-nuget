@@ -6,9 +6,9 @@ This repository contains 3 NuGet packages, which can be used for automated acces
 
 The packages are listed below:
 
-- [`Playwright.Axe`](./packages/playwright/README.md)
-- [`Selenium.Axe`](./packages/selenium/README.md)
-- [`Axe.Core`](./packages/core/README.md)
+- [`Deque.AxeCore.Playwright`](./packages/playwright/README.md)
+- [`Deque.AxeCore.Selenium`](./packages/selenium/README.md)
+- [`Deque.AxeCore.Commons`](./packages/commons/README.md)
 
 ## Philosophy
 
@@ -25,13 +25,13 @@ We believe that automated testing has an important role to play in achieving dig
 
 ## License
 
-* The `Playwright.Axe` NuGet package and its source code under the [`packages/playwright/` directory](./packages/playwright) are distributed under the terms of the [MIT License](./LICENSE-Playwright.Axe.txt).
-* The `Selenium.Axe` NuGet package and its source code under the [`packages/selenium/` directory](./packages/selenium) are distributed under the terms of the [MIT License](./LICENSE-Selenium.Axe.txt).
-* `axe-core`, the `Axe.Core` NuGet package, and all source code in this repository outside of the `packages/playwright/` and `packages/selenium/` directories are distributed under the terms of the [Mozilla Public License, version 2.0](./LICENSE-Axe.Core.txt).
+* The `Deque.AxeCore.Playwright` NuGet package and its source code under the [`packages/playwright/` directory](./packages/playwright) are distributed under the terms of the [MIT License](./LICENSE-Deque.AxeCore.Playwright.txt).
+* The `Deque.AxeCore.Selenium` NuGet package and its source code under the [`packages/selenium/` directory](./packages/selenium) are distributed under the terms of the [MIT License](./LICENSE-Deque.AxeCore.Selenium.txt).
+* The `Deque.AxeCore.Commons` NuGet package, its source code under [`packages/commons/` directory](./packages/commons), its embedded copy of [`axe-core`](https://github.com/dequelabs/axe-core), and all other source code in this repository outside of the `packages/` directory are distributed under the terms of the [Mozilla Public License, version 2.0](./LICENSE-Deque.AxeCore.Commons.txt).
 
-Note that the `Playwright.Axe` and `Selenium.Axe` NuGet packages each have a dependency on the `Axe.Core` NuGet package.
+Note that the (MIT licensed) `Deque.AxeCore.Playwright` and `Deque.AxeCore.Selenium` NuGet packages each have a dependency on the (MPL licensed) `Deque.AxeCore.Commons` NuGet package.
 
 ## Acknowledgments
 
-* Selenium.Axe was originally authored by @TroyWalshProf, @javnov, and a variety of other contributors in [TroyWalshProf/SeleniumAxeDotnet](https://github.com/TroyWalshProf/SeleniumAxeDotnet/graphs/contributors) and [javnov/axe-selenium-csharp](https://github.com/javnov/axe-selenium-csharp/graphs/contributors).
-* Playwright.Axe was originally authored by @IsaacWalker in [IsaacWalker/PlaywrightAxeDotnet](https://github.com/IsaacWalker/PlaywrightAxeDotnet).
+* `Deque.AxeCore.Selenium` is a fork of [TroyWalshProf/SeleniumAxeDotnet](https://github.com/TroyWalshProf/SeleniumAxeDotnet/graphs/contributors), which in turn is a fork of [javnov/axe-selenium-csharp](https://github.com/javnov/axe-selenium-csharp/graphs/contributors). We thank @TroyWalshProf, @javnov, and all the other contributors to those projects for their work. We especially thank @TroyWalshProf for agreeing to re-home the library as an officially supported integration package.
+* `Deque.AxeCore.Playwright` is a fork of [IsaacWalker/PlaywrightAxeDotnet](https://github.com/IsaacWalker/PlaywrightAxeDotnet). We thank @IsaacWalker for his work and for agreeing to re-home the library as an officially supported integration package.
