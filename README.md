@@ -33,5 +33,5 @@ Note that the (MIT licensed) `Deque.AxeCore.Playwright` and `Deque.AxeCore.Selen
 
 ## Acknowledgments
 
-* `Deque.AxeCore.Selenium` is a fork of [TroyWalshProf/SeleniumAxeDotnet](https://github.com/TroyWalshProf/SeleniumAxeDotnet/graphs/contributors), which in turn is a fork of [javnov/axe-selenium-csharp](https://github.com/javnov/axe-selenium-csharp/graphs/contributors). We thank @TroyWalshProf, @javnov, and all the other contributors to those projects for their work. We especially thank @TroyWalshProf for agreeing to re-home the library as an officially supported integration package.
 * `Deque.AxeCore.Playwright` is a fork of [IsaacWalker/PlaywrightAxeDotnet](https://github.com/IsaacWalker/PlaywrightAxeDotnet). We thank @IsaacWalker for his work and for agreeing to re-home the library as an officially supported integration package.
+* `Deque.AxeCore.Selenium` is a fork of [TroyWalshProf/SeleniumAxeDotnet](https://github.com/TroyWalshProf/SeleniumAxeDotnet/graphs/contributors), which in turn is a fork of [javnov/axe-selenium-csharp](https://github.com/javnov/axe-selenium-csharp/graphs/contributors). We thank @TroyWalshProf, @javnov, and all the other contributors to those projects for their work. We especially thank @TroyWalshProf for agreeing to re-home the library as an officially supported integration package.
