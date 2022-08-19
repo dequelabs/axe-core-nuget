@@ -1,0 +1,60 @@
+﻿<Project>
+  <Sdk Name="Microsoft.NET.Sdk" />
+  <Sdk Name="Yarn.MSBuild" Version="1.22.17" />
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+	  <Title>Playwright.Axe</Title>
+	  <PackageId>Playwright.Axe</PackageId>
+	  <Authors>Isaac Walker</Authors>
+	  <Summary>Axe integration for Playwright .Net.</Summary>
+	  <Description>Automated accessibility testing via Axe for tests written with Microsoft Playwright .Net.</Description>
+	  <PublishRepositoryUrl>true</PublishRepositoryUrl>
+	  <PackageProjectUrl>https://github.com/IsaacWalker/PlaywrightAxeDotnet</PackageProjectUrl>
+      <RepositoryUrl>https://github.com/IsaacWalker/PlaywrightAxeDotnet</RepositoryUrl>
+	  <RepositoryType>git</RepositoryType>
+	  <PackageTags>Playwright Axe</PackageTags>
+	  <PackageIcon>icon.png</PackageIcon>
+	  <IncludeSymbols>true</IncludeSymbols>
+	  <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+	  <GenerateDocumentationFile>true</GenerateDocumentationFile>
+	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+
+	<Import Project="../SignAssembly.props" />
+	<ItemGroup>
+		<None Include="..\icon.png" Pack="true" Visible="false" PackagePath="icon.png" />
+	</ItemGroup>
+		
+	<Target Name="InstallClientDependencies" BeforeTargets="BeforeBuild">
+		<Yarn Command="install" WorkingDirectory="NodeDependencies" />
+		<CallTarget Targets="BuildClientDependencies" />
+	</Target>
+
+	<Target Name="BuildClientDependencies">
+		<Yarn Command="build" WorkingDirectory="NodeDependencies" />
+		<CallTarget Targets="IncludeClientContent" />
+	</Target>
+
+	<Target Name="IncludeClientContent">
+		<ItemGroup>
+			<EmbeddedResource Include="NodeDependencies/dist/index.axe-core.js" Link="axe.js">
+			</EmbeddedResource>
+			<EmbeddedResource Include="NodeDependencies/dist/index.report.js" Link="index.report.js">
+			</EmbeddedResource>
+			<EmbeddedResource Include="NodeDependencies/dist/index.html" Link="index.html">
+			</EmbeddedResource>
+		</ItemGroup>
+	</Target>
+
+	<ItemGroup>
+	  <Compile Remove="NodeDependencies\**" />
+	  <EmbeddedResource Remove="NodeDependencies\**" />
+	  <None Remove="NodeDependencies\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Playwright" Version="1.20.2" />
+		<PackageReference Include="System.IO.Abstractions" Version="17.0.24" />
+	</ItemGroup>
+</Project>
