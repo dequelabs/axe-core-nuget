@@ -1,18 +1,20 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net471;netstandard2.0</TargetFrameworks>
-    <Authors>Globant,jdmesalosada,javnov,TroyWalshProf</Authors>
+    <Authors>Deque</Authors>
     <Description>Tools for using aXe for web accessibility testing with C# and Selenium</Description>
-    <PackageProjectUrl>https://github.com/TroyWalshProf/axe-selenium-csharp</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/TroyWalshProf/axe-selenium-csharp</RepositoryUrl>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Copyright>Copyright 2021</Copyright>
-    <PackageTags>selenium accessibility axe ada webdriver</PackageTags>
+    <PackageTags>accessibility deque dequelabs axe axe-core ada selenium webdriver</PackageTags>
+
+    <Copyright>Copyright 2022 Deque</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/dequelabs/axe-core-nuget</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/dequelabs/axe-core-nuget</RepositoryUrl>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+
+    <TargetFrameworks>net471;netstandard2.0</TargetFrameworks>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-	<PublishRepositoryUrl>true</PublishRepositoryUrl>
 
     <!-- override this in official/release build/pack/publish commands with -p:Version=x.y.z -->
     <VersionPrefix>0.0.0</VersionPrefix>
