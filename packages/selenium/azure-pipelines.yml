@@ -1,0 +1,68 @@
+name: ci-$(Date:yyyyMMdd)$(Rev:-r)
+
+pool:
+  vmImage: windows-latest
+
+variables:
+  version: '1.5.1'
+  buildConfiguration: 'Release'
+  solutionDirectory: '$(System.DefaultWorkingDirectory)/Selenium.Axe'
+  outputDirectory: '$(solutionDirectory)/Selenium.Axe/bin/$(buildConfiguration)'
+
+steps:
+- task: DotNetCoreInstaller@1
+  inputs:
+    version: '3.1.100'
+
+- task: SonarCloudPrepare@1
+  inputs:
+    SonarCloud: 'SonarCloud'
+    organization: 'troywalshprof'
+    scannerMode: 'MSBuild'
+    projectKey: 'TroyWalshProf_SeleniumAxeDotnet'
+    projectName: 'SeleniumAxeDotnet'
+
+- task: NodeTool@0
+  inputs:
+    versionSpec: '10.16.2'
+  displayName: use node 10.16.2
+
+- task: VisualStudioTestPlatformInstaller@1
+  inputs:
+    packageFeedSelector: 'nugetOrg'
+    versionSelector: 'latestStable'
+
+- task: CmdLine@2
+  inputs:
+    script: |
+      echo Update Chrome
+      choco upgrade googlechrome
+      
+      echo Update Firefox
+      choco upgrade firefox
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'restore'
+    projects: '**/*.csproj'
+    feedsToUse: 'select'
+
+- script: dotnet build --no-restore -c $(buildConfiguration) -p:Version=$(version)
+  displayName: dotnet build
+  workingDirectory: $(solutionDirectory)
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'test'
+    projects: '$(solutionDirectory)\Selenium.Axe.Test\Selenium.Axe.Test.csproj'
+    arguments: '--no-build -c $(buildConfiguration) --collect:"Code Coverage"'
+
+- task: SonarCloudAnalyze@1
+
+- task: SonarCloudPublish@1
+  inputs:
+    pollingTimeoutSec: '300'
+
+- publish: $(outputDirectory)
+  displayName: publish drop
+  name: drop
