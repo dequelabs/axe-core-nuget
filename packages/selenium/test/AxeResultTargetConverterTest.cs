@@ -3,7 +3,7 @@ using NUnit.Framework;
 using System.IO;
 using System.Linq;
 
-namespace Selenium.Axe.Test
+namespace Deque.AxeCore.Selenium.Test
 {
     [TestFixture]
     public class AxeResultTargetConverterTest

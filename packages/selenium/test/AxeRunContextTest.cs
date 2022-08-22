@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using System.Collections.Generic;
 
-namespace Selenium.Axe.Test
+namespace Deque.AxeCore.Selenium.Test
 {
     [TestFixture]
     public class AxeRunContextTest

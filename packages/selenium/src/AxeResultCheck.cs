@@ -1,4 +1,4 @@
-﻿namespace Selenium.Axe
+﻿namespace Deque.AxeCore.Selenium
 {
     public class AxeResultCheck
     {

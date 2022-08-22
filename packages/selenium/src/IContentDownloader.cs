@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Selenium.Axe
+namespace Deque.AxeCore.Selenium
 {
     internal interface IContentDownloader
     {

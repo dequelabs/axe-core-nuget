@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace Selenium.Axe
+namespace Deque.AxeCore.Selenium
 {
     /// <summary>
     /// Has the list of selectors that have to be included or excluded from scanning. If not specified the whole document will be scanned

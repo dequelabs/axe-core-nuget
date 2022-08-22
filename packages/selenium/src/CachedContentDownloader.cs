@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using System.Net;
 
-namespace Selenium.Axe
+namespace Deque.AxeCore.Selenium
 {
     /// <summary>
     /// Cache downloaded extenal resources

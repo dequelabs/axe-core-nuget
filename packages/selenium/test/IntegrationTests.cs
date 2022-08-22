@@ -19,7 +19,7 @@ using WebDriverManager.DriverConfigs.Impl;
 // Setup parallelization
 [assembly: Parallelizable(ParallelScope.All)]
 
-namespace Selenium.Axe.Test
+namespace Deque.AxeCore.Selenium.Test
 {
     [TestFixture]
     [Category("Integration")]

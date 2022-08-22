@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace Selenium.Axe.Test
+namespace Deque.AxeCore.Selenium.Test
 {
     [TestFixture]
     [NonParallelizable]

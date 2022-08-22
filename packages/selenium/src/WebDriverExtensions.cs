@@ -1,7 +1,7 @@
 ﻿using OpenQA.Selenium;
 using System;
 
-namespace Selenium.Axe
+namespace Deque.AxeCore.Selenium
 {
     public static class WebDriverExtensions
     {

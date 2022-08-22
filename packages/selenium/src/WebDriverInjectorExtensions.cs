@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Selenium.Axe
+namespace Deque.AxeCore.Selenium
 {
     internal static class WebDriverInjectorExtensions
     {

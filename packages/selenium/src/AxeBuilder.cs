@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Selenium.Axe
+namespace Deque.AxeCore.Selenium
 {
     /// <summary>
     /// Fluent style builder for invoking aXe. Instantiate a new Builder and configure testing with the include(),

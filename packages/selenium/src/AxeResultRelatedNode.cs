@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace Selenium.Axe
+namespace Deque.AxeCore.Selenium
 {
     public class AxeResultRelatedNode
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 
-namespace Selenium.Axe
+namespace Deque.AxeCore.Selenium
 {
     public class ExternalAxeScriptProvider : IAxeScriptProvider
     {

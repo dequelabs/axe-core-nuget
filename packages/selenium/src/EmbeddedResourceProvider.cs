@@ -1,7 +1,7 @@
 using System.IO;
 using System.Text;
 
-namespace Selenium.Axe
+namespace Deque.AxeCore.Selenium
 {
     internal static class EmbeddedResourceProvider
     {

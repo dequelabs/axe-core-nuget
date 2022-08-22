@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Selenium.Axe
+namespace Deque.AxeCore.Selenium
 {
     public class FileAxeScriptProvider : IAxeScriptProvider
     {

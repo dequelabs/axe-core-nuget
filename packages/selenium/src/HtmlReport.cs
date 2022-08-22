@@ -4,7 +4,7 @@ using System;
 using System.Text;
 using System.Web;
 
-namespace Selenium.Axe
+namespace Deque.AxeCore.Selenium
 {
     /// <summary>
     /// Findings to include in your HTML

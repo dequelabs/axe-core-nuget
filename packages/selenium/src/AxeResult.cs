@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 
-namespace Selenium.Axe
+namespace Deque.AxeCore.Selenium
 {
     public class AxeResult
     {
