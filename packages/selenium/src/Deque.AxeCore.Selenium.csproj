@@ -22,6 +22,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="../../../LICENSE-Deque.AxeCore.Selenium.txt" Pack="true" PackagePath="LICENSE.txt"/>
+    <None Include="../../../NOTICE.txt" Pack="true" PackagePath="NOTICE.txt"/>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="HtmlAgilityPack" Version="1.11.43" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
       <PrivateAssets>all</PrivateAssets>
