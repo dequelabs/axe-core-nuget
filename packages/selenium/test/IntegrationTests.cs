@@ -78,13 +78,14 @@ namespace Deque.AxeCore.Selenium.Test
             InitDriver(browser);
             LoadSimpleTestPage();
 
+            var outputFile = $@"{TestContext.CurrentContext.WorkDirectory}/raw-axe-results.json";
             var timeBeforeScan = DateTime.Now;
 
             var builder = new AxeBuilder(WebDriver)
                 .WithOptions(new AxeRunOptions() { XPath = true })
                 .WithTags("wcag2a", "wcag2aa")
                 .DisableRules("color-contrast")
-                .WithOutputFile(@"./raw-axe-results.json");
+                .WithOutputFile(outputFile);
 
             var results = builder.Analyze();
             results.Violations.FirstOrDefault(v => v.Id == "color-contrast").Should().BeNull();
@@ -92,7 +93,7 @@ namespace Deque.AxeCore.Selenium.Test
             results.Violations.Should().HaveCount(2);
             results.Violations.First().Nodes.First().XPath.Should().NotBeNullOrEmpty();
 
-            File.GetLastWriteTime(@"./raw-axe-results.json").Should().BeOnOrAfter(timeBeforeScan);
+            File.GetLastWriteTime(outputFile).Should().BeOnOrAfter(timeBeforeScan);
         }
 
         [Test]
@@ -309,9 +310,7 @@ namespace Deque.AxeCore.Selenium.Test
             var filename = new Uri(Path.GetFullPath(IntegrationTestTargetComplexTargetsFile)).AbsoluteUri;
             InitDriver(browser);
             WebDriver.Navigate().GoToUrl(filename);
-            var axeResult = new AxeBuilder(WebDriver)
-                .WithOutputFile(@".\raw-axe-results.json")
-                .Analyze();
+            var axeResult = new AxeBuilder(WebDriver).Analyze();
 
             var colorContrast = axeResult
                 .Violations
