@@ -39,7 +39,7 @@
     <PackageReference Include="WebDriverManager" Version="2.14.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Selenium.Axe\Selenium.Axe.csproj" />
+    <ProjectReference Include="..\src\Deque.AxeCore.Selenium.csproj" />
   </ItemGroup>
   <PropertyGroup>
 		<VSTestLogger>trx%3bLogFileName=Results$(TargetFramework).trx</VSTestLogger>

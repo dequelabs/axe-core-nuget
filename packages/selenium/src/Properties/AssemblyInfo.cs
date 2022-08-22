@@ -1,3 +1,3 @@
 ﻿using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("Selenium.Axe.Test")]
+[assembly: InternalsVisibleTo("Deque.AxeCore.Selenium.Test")]
