@@ -7,3 +7,8 @@ dist-docs
 coverage*.xml
 coverage*.json
 coveragereport
+[Tt]est[Rr]esults
+
+# Selenium drivers
+**/test/[Cc]hrome/
+**/test/[Ff]irefox/
