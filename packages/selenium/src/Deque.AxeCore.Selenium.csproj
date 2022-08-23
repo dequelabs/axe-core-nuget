@@ -1,0 +1,65 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Authors>Deque</Authors>
+    <Description>Tools for using aXe for web accessibility testing with C# and Selenium</Description>
+    <PackageTags>accessibility deque dequelabs axe axe-core ada selenium webdriver</PackageTags>
+
+    <Copyright>Copyright 2022 Deque</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/dequelabs/axe-core-nuget</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/dequelabs/axe-core-nuget</RepositoryUrl>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+
+    <TargetFrameworks>net471;netstandard2.0</TargetFrameworks>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
+    <!-- override this in official/release build/pack/publish commands with -p:Version=x.y.z -->
+    <VersionPrefix>0.0.0</VersionPrefix>
+    <VersionSuffix>development</VersionSuffix>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../../../LICENSE-Deque.AxeCore.Selenium.txt" Pack="true" PackagePath="LICENSE.txt"/>
+    <None Include="../../../NOTICE.txt" Pack="true" PackagePath="NOTICE.txt"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.43" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Selenium.WebDriver" Version="4.4.0" />
+  </ItemGroup>
+  
+  <!-- Running this using BeforeTagets="Restore" doesn't work if we run "dotnet restore" from solution folder. 
+       Running it before CollectPackageReferences, will work in both vs & command line. But, this task will be executed in both build & restore multiple times on multi-target project.
+       So, skipping this task if the copied package-lock.json file is same as the source file, to support incremental builds.
+  -->
+  <Target Name="DownloadAxe" Inputs="package-lock.json" Outputs="node_modules\package-lock.json" BeforeTargets="CollectPackageReferences">
+    <Exec Command="npm ci" />
+    <!-- Copying this file to support incremental builds -->
+    <Copy SourceFiles="package-lock.json" DestinationFolder="node_modules" />
+  </Target>
+
+  <ItemGroup>
+    <EmbeddedResource Include="node_modules\axe-core\axe.min.js">
+        <Link>Resources\axe.min.js</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\htmlReporterElements.js" />
+    <EmbeddedResource Include="Resources\htmlReporter.css" />    
+    <EmbeddedResource Include="Resources\scan.js" />
+  </ItemGroup>
+  <Choose>
+    <When Condition=" '$(TargetFramework)' != 'netstandard2.0' and '$(TargetFramework)' != 'netstandard2.1'   ">
+      <ItemGroup>
+        <Reference Include="System.Web" />
+      </ItemGroup>
+    </When>
+  </Choose>
+  
+</Project>
