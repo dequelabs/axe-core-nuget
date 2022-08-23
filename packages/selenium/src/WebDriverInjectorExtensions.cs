@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium;
+﻿using Deque.AxeCore.Commons;
+using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Linq;
