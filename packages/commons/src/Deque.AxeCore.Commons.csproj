@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Authors>Deque</Authors>
+    <Description>.NET bindings for the axe-core accessiblity testing engine</Description>
+    <PackageTags>accessibility deque dequelabs axe axe-core ada webdriver</PackageTags>
+
+    <Copyright>Copyright 2022 Deque</Copyright>
+    <PackageLicenseExpression>MPL-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/dequelabs/axe-core-nuget</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/dequelabs/axe-core-nuget</RepositoryUrl>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+
+    <TargetFrameworks>net471;netstandard2.0</TargetFrameworks>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
+    <!-- override this in official/release build/pack/publish commands with -p:Version=x.y.z -->
+    <VersionPrefix>0.0.0</VersionPrefix>
+    <VersionSuffix>development</VersionSuffix>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../../../LICENSE-Deque.AxeCore.Commons.txt" Pack="true" PackagePath="LICENSE.txt"/>
+    <None Include="../../../NOTICE.txt" Pack="true" PackagePath="NOTICE.txt"/>
+  </ItemGroup>
+</Project>
