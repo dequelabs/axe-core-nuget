@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-Thank you for reporting an issue with one of our packages. Please provide all necessary information to reproduce the issue to assit with investigation
+Thank you for reporting an issue with one of our packages. Please provide all necessary information to reproduce the issue to assist with investigation
 
 ## Which package were you using when you encountered the issue?**
 - [ ] Deque.AxeCore.Selenium
@@ -36,7 +36,7 @@ Steps to reproduce the behavior:
 ## Device Information
  - OS: [e.g. iOS]
  - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+ - Deque.AxeCore.* Package Version(s) [e.g. 22]
 
- ## Additional context
+## Additional context
  <!-- Add any other context about the problem here -->
