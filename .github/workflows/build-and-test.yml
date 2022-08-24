@@ -16,7 +16,7 @@ on:
 jobs:
   build-and-test:
     name: Build and test
-    runs-on: ubuntu-latest # Must use windows to build the net471 target framework?
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -27,11 +27,6 @@ jobs:
           dotnet-version: | 
             3.1.x
             6.x.x
-        
-      #- name: Install browsers required for Selenium testing
-      #  run: |
-      #    choco upgrade firefox
-      #    choco upgrade googlechrome
 
       - name: Install NuGet dependencies
         run: dotnet restore
@@ -44,7 +39,7 @@ jobs:
         run: dotnet build --no-restore -c ${{ inputs.configuration }} -p:VersionSuffix=${{ inputs.version-suffix }}
       
       - name: Test
-        run: dotnet test --no-restore -c ${{ inputs.configuration }} -p:VersionSuffix=${{ inputs.version-suffix }}
+        run: dotnet test --no-build -c ${{ inputs.configuration }} -p:VersionSuffix=${{ inputs.version-suffix }}
 
       - uses: actions/upload-artifact@v2
         if: ${{ success() || failure() }}
