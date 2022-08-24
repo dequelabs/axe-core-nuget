@@ -27,8 +27,11 @@ namespace Deque.AxeCore.Selenium.Test
     {
         private readonly ConcurrentDictionary<string, IWebDriver> localDriver = new ConcurrentDictionary<string, IWebDriver>();
         private readonly ConcurrentDictionary<string, WebDriverWait> localWaitDriver = new ConcurrentDictionary<string, WebDriverWait>();
-        private static string ChromeDriverPath = null;
-        private static string FirefoxDriverPath = null;
+
+        // These environment variables are used in GitHub Actions hosted runners.
+        // If these are null (eg, a local dev environment), WebDriverManager will download them as-needed.
+        private static string ChromeDriverPath = Environment.GetEnvironmentVariable("CHROMEWEBDRIVER");
+        private static string FirefoxDriverPath = Environment.GetEnvironmentVariable("GECKOWEBDRIVER");
 
         public IWebDriver WebDriver
         {
