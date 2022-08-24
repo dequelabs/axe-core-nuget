@@ -5,12 +5,9 @@ on:
   workflow_call:
     inputs:
       configuration:
-        description: "Build configuration for use with dotnet CLI's -c argument."
+        description: "debug or release (for use with dotnet CLI's -c argument)"
         required: true
-        type: choice
-        options:
-          - debug
-          - release
+        type: string
       version-suffix:
         description: "Version suffix (eg, for a version of 1.2.3-alpha.1, pass, \"-alpha.1\")"
         required: true
