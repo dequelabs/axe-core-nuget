@@ -28,10 +28,10 @@ jobs:
             3.1.x
             6.x.x
         
-      - name: Install browsers required for Selenium testing
-        run: |
-          choco upgrade firefox
-          choco upgrade googlechrome
+      #- name: Install browsers required for Selenium testing
+      #  run: |
+      #    choco upgrade firefox
+      #    choco upgrade googlechrome
 
       - name: Install NuGet dependencies
         run: dotnet restore
