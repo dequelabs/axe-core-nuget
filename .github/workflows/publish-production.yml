@@ -29,9 +29,12 @@ jobs:
 
       - run: go get gopkg.in/aktau/github-release.v0
 
-      - run:
-          name: Download and run GitHub release script
-          command: |
-            curl https://raw.githubusercontent.com/dequelabs/attest-release-scripts/develop/src/node-github-release.sh -s -o ./node-github-release.sh
-            chmod +x ./node-github-release.sh
-            ./node-github-release.sh
+      - name: Download and run GitHub release script
+        run: |
+          curl https://raw.githubusercontent.com/dequelabs/attest-release-scripts/develop/src/node-github-release.sh -s -o ./node-github-release.sh
+          chmod +x ./node-github-release.sh
+          ./node-github-release.sh
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_PUBLISHING_GITHUB_TOKEN }}
+          CIRCLE_PROJECT_USERNAME: ${{ github.repository_owner }}
+          CIRCLE_PROJECT_REPONAME: ${{ github.event.repository.name }}
