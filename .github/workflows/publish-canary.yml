@@ -1,0 +1,20 @@
+name: Publish canary
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  build-and-test:
+    uses: ./build-and-test.yml
+    with:
+      configuration: release
+      version-suffix: "-alpha.${{ github.run_number }}"
+
+  publish-nuget:
+    environment: nuget-canary
+    needs: ["build-and-test"]
+    uses: ./publish-nuget-packages.yml
+    secrets:
+      NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}

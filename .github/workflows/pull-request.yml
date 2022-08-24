@@ -1,0 +1,12 @@
+name: PR checks
+
+on:
+  pull_request:
+    - branches
+
+jobs:
+  build-and-test:
+    uses: ./build-and-test.yml
+    with:
+      configuration: debug
+      version-suffix: "-development.${{ github.sha }}"
