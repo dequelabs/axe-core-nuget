@@ -54,16 +54,15 @@ jobs:
           path: |
             ${{ github.workspace }}/packages/*/test/TestResults
       
-      - name: Pack
-        run: dotnet pack --no-restore -c ${{ inputs.configuration }} -p:VersionSuffix=${{ inputs.version-suffix }}
+      - name: Prepare packages artifact
+        run: |
+          mkdir ${{ github.workspace }}/packages-artifact
+          cp ${{ github.workspace }}/packages/*/src/bin/*/*.nupkg ${{ github.workspace }}/packages-artifact
+          cp ${{ github.workspace }}/packages/*/src/bin/*/*.snupkg ${{ github.workspace }}/packages-artifact
 
       - uses: actions/upload-artifact@v2
         name: Upload packages artifact
         with:
           name: packages
-          # Listing them separately instead of using .../packages/*/... is important to ensure
-          # the resulting artifact has a flat layout
-          path: |
-            ${{ github.workspace }}/packages/commons/src/bin/${{ inputs.configuration }}/*.s?nupkg
-            ${{ github.workspace }}/packages/selenium/src/bin/${{ inputs.configuration }}/*.s?nupkg
-            ${{ github.workspace }}/packages/playwright/src/bin/${{ inputs.configuration }}/*.s?nupkg
+          path: ${{ github.workspace }}/packages-artifact
+            
