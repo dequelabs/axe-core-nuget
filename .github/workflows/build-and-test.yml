@@ -16,7 +16,7 @@ on:
 jobs:
   build-and-test:
     name: Build and test
-    runs-on: windows-latest # Must use windows to build the net471 target framework
+    runs-on: ubuntu-latest # Must use windows to build the net471 target framework?
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
