@@ -1,4 +1,6 @@
-﻿namespace Deque.AxeCore.Selenium
+﻿using Deque.AxeCore.Commons;
+
+namespace Deque.AxeCore.Selenium
 {
     internal class EmbeddedResourceAxeProvider : IAxeScriptProvider
     {

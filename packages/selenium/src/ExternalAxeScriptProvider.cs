@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Deque.AxeCore.Commons;
+using System;
 using System.Net;
 
 namespace Deque.AxeCore.Selenium

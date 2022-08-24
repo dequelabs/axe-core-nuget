@@ -4,6 +4,7 @@ node_modules
 src/resources/standards
 dist-docs
 .DS_Store
+.vs/
 coverage*.xml
 coverage*.json
 coveragereport

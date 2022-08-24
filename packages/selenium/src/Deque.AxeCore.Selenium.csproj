@@ -35,6 +35,10 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Selenium.WebDriver" Version="4.4.0" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../commons/src/Deque.AxeCore.Commons.csproj" />
+  </ItemGroup>
   
   <!-- Running this using BeforeTagets="Restore" doesn't work if we run "dotnet restore" from solution folder. 
        Running it before CollectPackageReferences, will work in both vs & command line. But, this task will be executed in both build & restore multiple times on multi-target project.
