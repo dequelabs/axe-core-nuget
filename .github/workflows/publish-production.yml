@@ -1,0 +1,37 @@
+name: Publish production
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-test:
+    uses: ./build-and-test.yml
+    with:
+      configuration: release
+      version-suffix: ""
+
+  publish-nuget:
+    environment: nuget-production
+    needs: ["build-and-test"]
+    uses: ./publish-nuget-packages.yml
+    secrets:
+      NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+
+  publish-github-release:
+    environment: github-releases
+    needs: ["publish-nuget"]
+    runs-on: ubuntu-latest
+    steps:     
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - run: go get gopkg.in/aktau/github-release.v0
+
+      - run:
+          name: Download and run GitHub release script
+          command: |
+            curl https://raw.githubusercontent.com/dequelabs/attest-release-scripts/develop/src/node-github-release.sh -s -o ./node-github-release.sh
+            chmod +x ./node-github-release.sh
+            ./node-github-release.sh

@@ -1,0 +1,71 @@
+name: Build and test
+
+on:
+  # This is a reusable workflow, not intended to be invoked directly
+  workflow_call:
+    inputs:
+      configuration:
+        description: "Build configuration for use with dotnet CLI's -c argument."
+        required: true
+        type: choice
+        options:
+          - debug
+          - release
+      version-suffix:
+        description: "Version suffix (eg, for a version of 1.2.3-alpha.1, pass, \"-alpha.1\")"
+        required: true
+        type: string
+
+jobs:
+  build-and-test:
+    name: Build and test
+    runs-on: windows-latest # Must use windows to build the net471 target framework
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Install .NET Core 3.1 and 6
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: | 
+            3.1.x
+            6.x.x
+        
+      - name: Install browsers required for Selenium testing
+        run: |
+          choco upgrade firefox
+          choco upgrade googlechrome
+
+      - name: Install NuGet dependencies
+        run: dotnet restore
+      
+      - name: Check formatting
+        run: dotnet format --check
+
+      - name: Build
+        run: dotnet build --no-restore -c ${{ inputs.configuration }} -p:VersionSuffix=${{ inputs.version-suffix }}
+      
+      - name: Test
+        run: dotnet test --no-restore -c ${{ inputs.configuration }} -p:VersionSuffix=${{ inputs.version-suffix }}
+
+      - uses: actions/upload-artifact@v2
+        if: ${{ success() || failure() }}
+        name: Upload test-results artifact
+        with:
+          name: test-results
+          path: |
+            ${{ github.workspace }}/packages/*/test/TestResults
+      
+      - name: Pack
+        run: dotnet pack --no-restore -c ${{ inputs.configuration }} -p:VersionSuffix=${{ inputs.version-suffix }}
+
+      - uses: actions/upload-artifact@v2
+        name: Upload packages artifact
+        with:
+          name: packages
+          # Listing them separately instead of using .../packages/*/... is important to ensure
+          # the resulting artifact has a flat layout
+          path: |
+            ${{ github.workspace }}/packages/commons/src/bin/${{ inputs.configuration }}/*.s?nupkg
+            ${{ github.workspace }}/packages/selenium/src/bin/${{ inputs.configuration }}/*.s?nupkg
+            ${{ github.workspace }}/packages/playwright/src/bin/${{ inputs.configuration }}/*.s?nupkg
