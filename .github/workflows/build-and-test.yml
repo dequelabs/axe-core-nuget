@@ -39,8 +39,9 @@ jobs:
       - name: Install NuGet dependencies
         run: dotnet restore
       
-      - name: Check formatting
-        run: dotnet format --check
+      # Enabling this alongside changes to make the existing code consistent is tracked by #33
+      # - name: Check formatting
+      #   run: dotnet format --verify-no-changes
 
       - name: Build
         run: dotnet build --no-restore -c ${{ inputs.configuration }} -p:VersionSuffix=${{ inputs.version-suffix }}
