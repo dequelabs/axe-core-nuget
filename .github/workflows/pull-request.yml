@@ -2,8 +2,6 @@ name: PR checks
 
 on:
   pull_request:
-  # TODO: remove this before un-drafting PR
-  push: { branches: ['initial-ci-builds'] }
 
 jobs:
   build-and-test:
