@@ -14,6 +14,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using WebDriverManager;
+using WebDriverManager.DriverConfigs;
 using WebDriverManager.DriverConfigs.Impl;
 
 // Setup parallelization
@@ -28,10 +29,8 @@ namespace Deque.AxeCore.Selenium.Test
         private readonly ConcurrentDictionary<string, IWebDriver> localDriver = new ConcurrentDictionary<string, IWebDriver>();
         private readonly ConcurrentDictionary<string, WebDriverWait> localWaitDriver = new ConcurrentDictionary<string, WebDriverWait>();
 
-        // These environment variables are used in GitHub Actions hosted runners.
-        // If these are null (eg, a local dev environment), WebDriverManager will download them as-needed.
-        private static string ChromeDriverPath = Environment.GetEnvironmentVariable("CHROMEWEBDRIVER");
-        private static string FirefoxDriverPath = Environment.GetEnvironmentVariable("GECKOWEBDRIVER");
+        private static string ChromeDriverPath = null;
+        private static string FirefoxDriverPath = null;
 
         public IWebDriver WebDriver
         {
@@ -417,7 +416,7 @@ namespace Deque.AxeCore.Selenium.Test
             switch (browser.ToUpper())
             {
                 case "CHROME":
-                    LazyInitializer.EnsureInitialized(ref ChromeDriverPath, () => new DriverManager().SetUpDriver(new ChromeConfig()));
+                    EnsureWebdriverPathInitialized(ref ChromeDriverPath, "CHROMEWEBDRIVER", "chromedriver", new ChromeConfig());
 
                     ChromeOptions options = new ChromeOptions
                     {
@@ -435,7 +434,7 @@ namespace Deque.AxeCore.Selenium.Test
                     break;
 
                 case "FIREFOX":
-                    LazyInitializer.EnsureInitialized(ref FirefoxDriverPath, () => new DriverManager().SetUpDriver(new FirefoxConfig()));
+                    EnsureWebdriverPathInitialized(ref FirefoxDriverPath, "GECKOWEBDRIVER", "geckodriver", new FirefoxConfig());
                     WebDriver = new FirefoxDriver(Path.GetDirectoryName(FirefoxDriverPath));
                     break;
 
@@ -447,6 +446,17 @@ namespace Deque.AxeCore.Selenium.Test
             Wait = new WebDriverWait(WebDriver, TimeSpan.FromSeconds(20));
             WebDriver.Manage().Timeouts().AsynchronousJavaScript = TimeSpan.FromSeconds(20);
             WebDriver.Manage().Window.Maximize();
+        }
+
+        private static void EnsureWebdriverPathInitialized(ref string driverPath, string dirEnvVar, string binaryName, IDriverConfig driverManagerConfig) {
+            LazyInitializer.EnsureInitialized(ref driverPath, () => {
+                var dirFromEnv = Environment.GetEnvironmentVariable(dirEnvVar);
+                if (dirFromEnv != null) {
+                    return $"{dirFromEnv}/${binaryName}";
+                } else {
+                    return new DriverManager().SetUpDriver(driverManagerConfig);
+                }
+            });
         }
 
         private static string GetFullyQualifiedTestName()
