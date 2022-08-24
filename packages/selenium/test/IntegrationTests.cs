@@ -418,24 +418,29 @@ namespace Deque.AxeCore.Selenium.Test
                 case "CHROME":
                     EnsureWebdriverPathInitialized(ref ChromeDriverPath, "CHROMEWEBDRIVER", "chromedriver", new ChromeConfig());
 
-                    ChromeOptions options = new ChromeOptions
+                    ChromeOptions chromeOptions = new ChromeOptions
                     {
                         UnhandledPromptBehavior = UnhandledPromptBehavior.Accept,
                     };
-                    options.AddArgument("no-sandbox");
-                    options.AddArgument("--log-level=3");
-                    options.AddArgument("--silent");
-                    options.AddArgument("--allow-file-access-from-files");
+                    chromeOptions.AddArgument("--headless");
+                    chromeOptions.AddArgument("no-sandbox");
+                    chromeOptions.AddArgument("--log-level=3");
+                    chromeOptions.AddArgument("--silent");
+                    chromeOptions.AddArgument("--allow-file-access-from-files");
 
                     ChromeDriverService service = ChromeDriverService.CreateDefaultService(Path.GetDirectoryName(ChromeDriverPath));
                     service.SuppressInitialDiagnosticInformation = true;
-                    WebDriver = new ChromeDriver(ChromeDriverService.CreateDefaultService(), options);
+                    WebDriver = new ChromeDriver(ChromeDriverService.CreateDefaultService(), chromeOptions);
 
                     break;
 
                 case "FIREFOX":
                     EnsureWebdriverPathInitialized(ref FirefoxDriverPath, "GECKOWEBDRIVER", "geckodriver", new FirefoxConfig());
-                    WebDriver = new FirefoxDriver(Path.GetDirectoryName(FirefoxDriverPath));
+
+                    FirefoxOptions firefoxOptions = new FirefoxOptions();
+                    firefoxOptions.AddArgument("-headless");
+
+                    WebDriver = new FirefoxDriver(Path.GetDirectoryName(FirefoxDriverPath), firefoxOptions);
                     break;
 
                 default:
