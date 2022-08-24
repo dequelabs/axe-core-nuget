@@ -13,6 +13,7 @@ jobs:
       version-suffix: "-alpha.${{ github.run_number }}"
 
   publish-nuget:
+    if: github.repository_owner == 'dequelabs' # don't attempt to publish from forks
     environment: nuget-canary
     needs: ["build-and-test"]
     uses: ./.github/workflows/publish-nuget-packages.yml
