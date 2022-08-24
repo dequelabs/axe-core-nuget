@@ -36,7 +36,9 @@ namespace Deque.AxeCore.Selenium.Test
         {
             get
             {
-                return localDriver[GetFullyQualifiedTestName()];
+                IWebDriver value;
+                localDriver.TryGetValue(GetFullyQualifiedTestName(), out value);
+                return value;
             }
 
             set
@@ -49,7 +51,9 @@ namespace Deque.AxeCore.Selenium.Test
         {
             get
             {
-                return localWaitDriver[GetFullyQualifiedTestName()];
+                WebDriverWait value;
+                localWaitDriver.TryGetValue(GetFullyQualifiedTestName(), out value);
+                return value;
             }
 
             set
@@ -246,7 +250,7 @@ namespace Deque.AxeCore.Selenium.Test
         public void ReportRespectsIframeImplicitTrue(string browser)
         {
             string path = CreateReportPath();
-            string filename = new Uri(Path.GetFullPath(IntegrationTestTargetComplexTargetsFile)).AbsoluteUri;
+            string filename = new Uri("file://" + Path.GetFullPath(IntegrationTestTargetComplexTargetsFile)).AbsoluteUri;
 
             InitDriver(browser);
             WebDriver.Navigate().GoToUrl(filename);
@@ -264,7 +268,7 @@ namespace Deque.AxeCore.Selenium.Test
         public void ReportRespectsIframeTrue(string browser)
         {
             string path = CreateReportPath();
-            string filename = new Uri(Path.GetFullPath(IntegrationTestTargetComplexTargetsFile)).AbsoluteUri;
+            string filename = new Uri("file://" + Path.GetFullPath(IntegrationTestTargetComplexTargetsFile)).AbsoluteUri;
 
             InitDriver(browser);
             WebDriver.Navigate().GoToUrl(filename);
@@ -287,7 +291,7 @@ namespace Deque.AxeCore.Selenium.Test
         public void ReportRespectsIframeFalse(string browser)
         {
             string path = CreateReportPath();
-            string filename = new Uri(Path.GetFullPath(IntegrationTestTargetComplexTargetsFile)).AbsoluteUri;
+            string filename = new Uri("file://" + Path.GetFullPath(IntegrationTestTargetComplexTargetsFile)).AbsoluteUri;
 
             InitDriver(browser);
             WebDriver.Navigate().GoToUrl(filename);
@@ -309,7 +313,7 @@ namespace Deque.AxeCore.Selenium.Test
         [TestCase("Chrome")]
         public void RunSiteThatReturnsMultipleTargets(string browser)
         {
-            var filename = new Uri(Path.GetFullPath(IntegrationTestTargetComplexTargetsFile)).AbsoluteUri;
+            var filename = new Uri("file://" + Path.GetFullPath(IntegrationTestTargetComplexTargetsFile)).AbsoluteUri;
             InitDriver(browser);
             WebDriver.Navigate().GoToUrl(filename);
             var axeResult = new AxeBuilder(WebDriver).Analyze();
@@ -331,7 +335,7 @@ namespace Deque.AxeCore.Selenium.Test
         private string CreateReportPath()
         {
             string codeBase = System.Reflection.Assembly.GetExecutingAssembly().Location;
-            UriBuilder uri = new UriBuilder(codeBase);
+            UriBuilder uri = new UriBuilder("file://" + codeBase);
             string path = Uri.UnescapeDataString(uri.Path);
             return Path.Combine(Path.GetDirectoryName(path), Guid.NewGuid() + ".html");
         }
@@ -405,7 +409,7 @@ namespace Deque.AxeCore.Selenium.Test
 
         private void LoadSimpleTestPage()
         {
-            var filename = new Uri(IntegrationTestTargetSimpleFile).AbsoluteUri;
+            var filename = new Uri("file://" + IntegrationTestTargetSimpleFile).AbsoluteUri;
             WebDriver.Navigate().GoToUrl(filename);
 
             Wait.Until(drv => drv.FindElement(By.TagName(mainElementSelector)));
