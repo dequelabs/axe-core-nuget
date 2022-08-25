@@ -3,52 +3,61 @@
   <Sdk Name="Yarn.MSBuild" Version="1.22.17" />
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
-	  <Title>Playwright.Axe</Title>
-	  <PackageId>Playwright.Axe</PackageId>
-	  <Authors>Isaac Walker</Authors>
-	  <Summary>Axe integration for Playwright .Net.</Summary>
-	  <Description>Automated accessibility testing via Axe for tests written with Microsoft Playwright .Net.</Description>
-	  <PublishRepositoryUrl>true</PublishRepositoryUrl>
-	  <PackageProjectUrl>https://github.com/IsaacWalker/PlaywrightAxeDotnet</PackageProjectUrl>
-      <RepositoryUrl>https://github.com/IsaacWalker/PlaywrightAxeDotnet</RepositoryUrl>
-	  <RepositoryType>git</RepositoryType>
-	  <PackageTags>Playwright Axe</PackageTags>
-	  <IncludeSymbols>true</IncludeSymbols>
-	  <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-	  <GenerateDocumentationFile>true</GenerateDocumentationFile>
-	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Authors>Deque</Authors>
+    <Description>Automated accessibility testing via axe for tests written with Microsoft Playwright .NET</Description>
+    <PackageTags>accessibility deque dequelabs axe axe-core ada playwright</PackageTags>
+
+    <Copyright>Copyright 2022 Deque</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/dequelabs/axe-core-nuget</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/dequelabs/axe-core-nuget</RepositoryUrl>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+
+    <TargetFrameworks>net471;netstandard2.0</TargetFrameworks>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
+    <!-- override this in official/release build/pack/publish commands with -p:Version=x.y.z -->
+    <VersionPrefix>4.4.0</VersionPrefix>
+    <VersionSuffix>development</VersionSuffix>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../../../LICENSE-Deque.AxeCore.Playwright.txt" Pack="true" PackagePath="LICENSE.txt"/>
+    <None Include="../../../NOTICE.txt" Pack="true" PackagePath="NOTICE.txt"/>
+  </ItemGroup>
 		
-	<Target Name="InstallClientDependencies" BeforeTargets="BeforeBuild">
-		<Yarn Command="install" WorkingDirectory="NodeDependencies" />
-		<CallTarget Targets="BuildClientDependencies" />
-	</Target>
+  <Target Name="InstallClientDependencies" BeforeTargets="BeforeBuild">
+    <Yarn Command="install" WorkingDirectory="NodeDependencies" />
+    <CallTarget Targets="BuildClientDependencies" />
+  </Target>
 
-	<Target Name="BuildClientDependencies">
-		<Yarn Command="build" WorkingDirectory="NodeDependencies" />
-		<CallTarget Targets="IncludeClientContent" />
-	</Target>
+  <Target Name="BuildClientDependencies">
+    <Yarn Command="build" WorkingDirectory="NodeDependencies" />
+    <CallTarget Targets="IncludeClientContent" />
+  </Target>
 
-	<Target Name="IncludeClientContent">
-		<ItemGroup>
-			<EmbeddedResource Include="NodeDependencies/dist/index.axe-core.js" Link="axe.js">
-			</EmbeddedResource>
-			<EmbeddedResource Include="NodeDependencies/dist/index.report.js" Link="index.report.js">
-			</EmbeddedResource>
-			<EmbeddedResource Include="NodeDependencies/dist/index.html" Link="index.html">
-			</EmbeddedResource>
-		</ItemGroup>
-	</Target>
+  <Target Name="IncludeClientContent">
+    <ItemGroup>
+      <EmbeddedResource Include="NodeDependencies/dist/index.axe-core.js" Link="axe.js">
+      </EmbeddedResource>
+      <EmbeddedResource Include="NodeDependencies/dist/index.report.js" Link="index.report.js">
+      </EmbeddedResource>
+      <EmbeddedResource Include="NodeDependencies/dist/index.html" Link="index.html">
+      </EmbeddedResource>
+    </ItemGroup>
+  </Target>
 
-	<ItemGroup>
-	  <Compile Remove="NodeDependencies/**" />
-	  <EmbeddedResource Remove="NodeDependencies/**" />
-	  <None Remove="NodeDependencies/**" />
-	</ItemGroup>
+  <ItemGroup>
+    <Compile Remove="NodeDependencies/**" />
+    <EmbeddedResource Remove="NodeDependencies/**" />
+    <None Remove="NodeDependencies/**" />
+  </ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Microsoft.Playwright" Version="1.20.2" />
-		<PackageReference Include="System.IO.Abstractions" Version="17.0.24" />
-	</ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Playwright" Version="1.20.2" />
+    <PackageReference Include="System.IO.Abstractions" Version="17.0.24" />
+  </ItemGroup>
 </Project>
