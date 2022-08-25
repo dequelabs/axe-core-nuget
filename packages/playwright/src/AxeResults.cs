@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Playwright.Axe
+namespace Deque.AxeCore.Playwright
 {
     /// <summary>
     /// Axe Results.

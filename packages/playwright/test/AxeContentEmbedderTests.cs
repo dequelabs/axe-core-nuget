@@ -3,11 +3,11 @@
 using Microsoft.Playwright;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Playwright.Axe.AxeContent;
+using Deque.AxeCore.Playwright.AxeContent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Playwright.Axe.Test
+namespace Deque.AxeCore.Playwright.Test
 {
     [TestClass]
     public sealed class AxeContentEmbedderTests

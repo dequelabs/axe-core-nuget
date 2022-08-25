@@ -1,16 +1,16 @@
 ﻿#nullable enable
 
 using Microsoft.Playwright;
-using Playwright.Axe.AxeContent;
-using Playwright.Axe.AxeCoreWrapper;
-using Playwright.Axe.HtmlReport;
+using Deque.AxeCore.Playwright.AxeContent;
+using Deque.AxeCore.Playwright.AxeCoreWrapper;
+using Deque.AxeCore.Playwright.HtmlReport;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Playwright.Axe
+namespace Deque.AxeCore.Playwright
 {
     /// <summary>
     /// Extensions for adding Axe to Playwright Page.

@@ -2,7 +2,7 @@
 
 using System.Collections.Generic;
 
-namespace Playwright.Axe
+namespace Deque.AxeCore.Playwright
 {
     /// <summary>
     /// Information about other nodes related to a check.

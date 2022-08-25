@@ -2,7 +2,7 @@
 
 using System;
 
-namespace Playwright.Axe
+namespace Deque.AxeCore.Playwright
 {
     /// <summary>
     /// Data related to the environment that Axe executed in.

@@ -2,7 +2,7 @@
 
 using System.Threading.Tasks;
 
-namespace Playwright.Axe.HtmlReport
+namespace Deque.AxeCore.Playwright.HtmlReport
 {
     /// <summary>
     /// Builds Html Reports for

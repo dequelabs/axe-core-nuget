@@ -1,14 +1,14 @@
 ﻿#nullable enable
 
 using Microsoft.Playwright;
-using Playwright.Axe.AxeContent;
+using Deque.AxeCore.Playwright.AxeContent;
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace Playwright.Axe.AxeCoreWrapper
+namespace Deque.AxeCore.Playwright.AxeCoreWrapper
 {
     /// <inheritdoc/>
     internal sealed class DefaultAxeCoreWrapper : IAxeCoreWrapper

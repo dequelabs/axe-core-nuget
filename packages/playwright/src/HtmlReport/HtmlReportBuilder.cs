@@ -1,13 +1,13 @@
 ﻿#nullable enable
 
-using Playwright.Axe.AxeContent;
+using Deque.AxeCore.Playwright.AxeContent;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Playwright.Axe.HtmlReport
+namespace Deque.AxeCore.Playwright.HtmlReport
 {
     /// <inheritdoc />
     internal sealed class HtmlReportBuilder : IHtmlReportBuilder

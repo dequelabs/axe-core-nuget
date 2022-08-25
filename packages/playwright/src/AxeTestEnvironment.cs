@@ -1,6 +1,6 @@
 ﻿#nullable enable
 
-namespace Playwright.Axe
+namespace Deque.AxeCore.Playwright
 {
     /// <summary>
     /// Information about the current browser or node application that ran the audit.

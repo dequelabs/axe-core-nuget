@@ -1,6 +1,6 @@
 ﻿#nullable enable
 
-namespace Playwright.Axe
+namespace Deque.AxeCore.Playwright
 {
     /// <summary>
     /// Options for the creation of a Html Report of an Axe Run

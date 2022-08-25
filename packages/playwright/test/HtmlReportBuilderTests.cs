@@ -2,14 +2,14 @@
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Playwright.Axe.AxeContent;
+using Deque.AxeCore.Playwright.AxeContent;
 using System.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO.Abstractions;
-using Playwright.Axe.HtmlReport;
+using Deque.AxeCore.Playwright.HtmlReport;
 
-namespace Playwright.Axe.Test
+namespace Deque.AxeCore.Playwright.Test
 {
     [TestClass]
     public sealed class HtmlReportBuilderTests

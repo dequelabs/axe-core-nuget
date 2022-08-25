@@ -2,7 +2,7 @@
 
 using System.Collections.Generic;
 
-namespace Playwright.Axe
+namespace Deque.AxeCore.Playwright
 {
     /// <summary>
     /// Axe Run context parameter for string CSS selectors.

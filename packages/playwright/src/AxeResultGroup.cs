@@ -2,7 +2,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Playwright.Axe
+namespace Deque.AxeCore.Playwright
 {
     /// <summary>
     /// Axe Result Group.

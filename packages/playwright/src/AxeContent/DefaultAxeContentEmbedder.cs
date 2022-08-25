@@ -3,7 +3,7 @@
 using Microsoft.Playwright;
 using System.Threading.Tasks;
 
-namespace Playwright.Axe.AxeContent
+namespace Deque.AxeCore.Playwright.AxeContent
 {
     /// <inheritdoc />
     internal sealed class DefaultAxeContentEmbedder : IAxeContentEmbedder

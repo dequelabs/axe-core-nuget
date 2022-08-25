@@ -2,7 +2,7 @@
 
 using System.Collections.Generic;
 
-namespace Playwright.Axe.AxeContent
+namespace Deque.AxeCore.Playwright.AxeContent
 {
     /// <summary>
     /// Provides Axe File Content

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace Playwright.Axe.AxeContent
+namespace Deque.AxeCore.Playwright.AxeContent
 {
     /// <inheritdoc />
     public sealed class DefaultAxeContentProvider : IAxeContentProvider
@@ -30,7 +30,7 @@ namespace Playwright.Axe.AxeContent
         {
             Stream resourceStream = Assembly
                 .GetExecutingAssembly()
-                .GetManifestResourceStream($"Playwright.Axe.{filename}");
+                .GetManifestResourceStream($"Deque.AxeCore.Playwright.{filename}");
 
             using var reader = new StreamReader(resourceStream, Encoding.UTF8);
                 return reader.ReadToEnd();

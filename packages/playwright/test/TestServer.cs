@@ -7,7 +7,7 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace Playwright.Axe.Test
+namespace Deque.AxeCore.Playwright.Test
 {
     /// <summary>
     /// Server for hosting test files for integration testing.

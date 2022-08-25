@@ -1,6 +1,6 @@
 ﻿#nullable enable
 
-namespace Playwright.Axe
+namespace Deque.AxeCore.Playwright
 {
     /// <summary>
     /// The application and version that ran the audit.

@@ -1,6 +1,6 @@
 ﻿#nullable enable
 
-namespace Playwright.Axe
+namespace Deque.AxeCore.Playwright
 {
     /// <summary>
     /// Axe Test Runner

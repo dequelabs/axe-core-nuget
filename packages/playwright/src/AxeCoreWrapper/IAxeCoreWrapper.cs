@@ -4,7 +4,7 @@ using Microsoft.Playwright;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Playwright.Axe.AxeCoreWrapper
+namespace Deque.AxeCore.Playwright.AxeCoreWrapper
 {
     /// <summary>
     /// Wrapper for Axe Core Library

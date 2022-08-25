@@ -8,7 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Playwright.Axe.Test
+namespace Deque.AxeCore.Playwright.Test
 {
     [TestClass]
     public class IntegrationTests : PageTest

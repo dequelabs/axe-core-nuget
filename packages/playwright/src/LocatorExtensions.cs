@@ -1,11 +1,11 @@
 ﻿#nullable enable
 
 using Microsoft.Playwright;
-using Playwright.Axe.AxeContent;
-using Playwright.Axe.AxeCoreWrapper;
+using Deque.AxeCore.Playwright.AxeContent;
+using Deque.AxeCore.Playwright.AxeCoreWrapper;
 using System.Threading.Tasks;
 
-namespace Playwright.Axe
+namespace Deque.AxeCore.Playwright
 {
     /// <summary>
     /// Extensions for adding Axe to Playwright Locator.
