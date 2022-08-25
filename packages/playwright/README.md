@@ -1,16 +1,27 @@
-# Playwright Axe for .NET
+# Deque.AxeCore.Playwright
 
-Combines [Microsoft Playwright](https://playwright.dev/dotnet/) with [Deque's Axe](https://www.deque.com/axe/core-documentation/api-documentation/#section-1-introduction) for automated accessibility testing in C#/.NET.
-Works by injecting and wrapping the axe-core library via the [JavaScript Evaluation API](https://playwright.dev/dotnet/docs/evaluating).
+[![Deque.AxeCore.Playwright NuGet package](https://img.shields.io/nuget/v/Deque.AxeCore.Playwright)](https://www.nuget.org/packages/Deque.AxeCore.Selenium) 
+[![NuGet package download counter](https://img.shields.io/nuget/dt/Deque.AxeCore.Playwright)](https://www.nuget.org/packages/Deque.AxeCore.Selenium/) 
 
-Approach and setup heavily inspired by similar projects, particular thanks to [SeleniumAxeDotnet](https://github.com/TroyWalshProf/SeleniumAxeDotnet).
+Automated web accessibility testing with .NET, C#, and Playwright. Wraps the [axe-core](https://github.com/dequelabs/axe-core) accessibility scanning engine and the [Selenium.WebDriver](https://www.seleniumhq.org/) browser automation framework.
 
-## Quickstart
+Compatible with .NET Standard 2.0+, .NET Framework 4.7.1+, and .NET Core 2.0+.
 
-```cs
+## Getting Started
+
+Install via NuGet:
+
+```powershell
+PM> Install-Package Deque.AxeCore.Playwright
+# or, use the Visual Studio "Manage NuGet Packages" UI
+```
+
+Example usage:
+
+```csharp
 using System.Threading.Tasks;
 using Microsoft.Playwright;
-using Playwright.Axe;
+using Deque.AxeCore.Playwright;
 
 class Program
 {
@@ -197,4 +208,16 @@ AxeResults axeResults = await page.RunAxe(reportOptions: reportOptions);
 
 ```
 
+## Contributing
 
+Refer to the general [axe-core-nuget CONTRIBUTING.md](../../CONTRIBUTING.md).
+
+## License
+
+This package is distributed under the terms of the [MIT License](../../LICENSE-Deque.AxeCore.Playwright.txt).
+
+However, note that it has a dependency on the ([MPL licensed](../../LICENSE-Deque.AxeCore.Commons.txt)) `Deque.AxeCore.Commons` NuGet package.
+
+## Acknowledgements
+
+This package builds on past work from the [PlaywrightAxeDotnet](https://github.com/IsaacWalker/PlaywrightAxeDotnet) project (see [NOTICE.txt](../../NOTICE.txt)). We @IsaacWalker for his work on that project.
