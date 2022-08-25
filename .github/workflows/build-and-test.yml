@@ -8,6 +8,7 @@ on:
         description: "debug or release (for use with dotnet CLI's -c argument)"
         required: true
         type: string
+        default: release
       version-suffix:
         description: "Version suffix (eg, for a version of 1.2.3-alpha.1, pass, \"-alpha.1\")"
         required: true
