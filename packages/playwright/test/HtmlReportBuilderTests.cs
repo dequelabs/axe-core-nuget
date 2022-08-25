@@ -1,9 +1,8 @@
 ﻿#nullable enable
 
+using Deque.AxeCore.Playwright.AxeContent;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Deque.AxeCore.Playwright.AxeContent;
-using System.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO.Abstractions;

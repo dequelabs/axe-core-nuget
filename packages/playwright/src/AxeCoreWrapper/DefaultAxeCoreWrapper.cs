@@ -1,7 +1,7 @@
 ﻿#nullable enable
 
-using Microsoft.Playwright;
 using Deque.AxeCore.Playwright.AxeContent;
+using Microsoft.Playwright;
 using System;
 using System.Collections.Generic;
 using System.Text.Json;

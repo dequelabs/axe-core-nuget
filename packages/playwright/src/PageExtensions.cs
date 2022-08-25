@@ -1,11 +1,10 @@
 ﻿#nullable enable
 
-using Microsoft.Playwright;
 using Deque.AxeCore.Playwright.AxeContent;
 using Deque.AxeCore.Playwright.AxeCoreWrapper;
 using Deque.AxeCore.Playwright.HtmlReport;
+using Microsoft.Playwright;
 using System.Collections.Generic;
-using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Threading.Tasks;

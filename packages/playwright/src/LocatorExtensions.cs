@@ -1,8 +1,8 @@
 ﻿#nullable enable
 
-using Microsoft.Playwright;
 using Deque.AxeCore.Playwright.AxeContent;
 using Deque.AxeCore.Playwright.AxeCoreWrapper;
+using Microsoft.Playwright;
 using System.Threading.Tasks;
 
 namespace Deque.AxeCore.Playwright
