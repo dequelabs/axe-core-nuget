@@ -35,6 +35,6 @@
 	</ItemGroup>
 
 	<Target Name="InstallPlaywright" AfterTargets="AfterBuild">
-		<Exec Command="powershell ./$(OutDir)playwright.ps1 install"></Exec>
+		<Exec Command="powershell -NoProfile -ExecutionPolicy Unrestricted ./$(OutDir)playwright.ps1 install"></Exec>
 	</Target>
 </Project>
