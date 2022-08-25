@@ -14,17 +14,11 @@
       <RepositoryUrl>https://github.com/IsaacWalker/PlaywrightAxeDotnet</RepositoryUrl>
 	  <RepositoryType>git</RepositoryType>
 	  <PackageTags>Playwright Axe</PackageTags>
-	  <PackageIcon>icon.png</PackageIcon>
 	  <IncludeSymbols>true</IncludeSymbols>
 	  <SymbolPackageFormat>snupkg</SymbolPackageFormat>
 	  <GenerateDocumentationFile>true</GenerateDocumentationFile>
 	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
-
-	<Import Project="../SignAssembly.props" />
-	<ItemGroup>
-		<None Include="..\icon.png" Pack="true" Visible="false" PackagePath="icon.png" />
-	</ItemGroup>
 		
 	<Target Name="InstallClientDependencies" BeforeTargets="BeforeBuild">
 		<Yarn Command="install" WorkingDirectory="NodeDependencies" />

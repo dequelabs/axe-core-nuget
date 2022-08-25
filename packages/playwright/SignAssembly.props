@@ -1,8 +1,0 @@
-<Project>
-  <PropertyGroup>
-      <AssemblyOriginatorKeyFile>../keypair.snk</AssemblyOriginatorKeyFile>
-	  <SignAssembly>True</SignAssembly>
-	  <AssemblyPublicKey>00240000048000009400000006020000002400005253413100040000010001008d6f3bf78d32913a1ebc51a2b847653857601ea9d4afd9950523010df835af240dcf8780f6f3c1b92162378352e1291d199579e1b8e5ea7397226dbfe8ce70ca3d9634a710aebf2b53f0fd4a656ab04dde575c2d88daaff7ab9bd75b3991803846f64db14640ea7c3dee6891db172bb8235ce055242261315db58b830674b0aa</AssemblyPublicKey>	
-      <PublicSign>false</PublicSign>
-  </PropertyGroup>
-</Project>

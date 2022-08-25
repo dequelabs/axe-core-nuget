@@ -4,7 +4,6 @@
     <TargetFramework>net6.0</TargetFramework>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
-  <Import Project="../SignAssembly.props" />
   <ItemGroup>
 	  <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
 	  <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
