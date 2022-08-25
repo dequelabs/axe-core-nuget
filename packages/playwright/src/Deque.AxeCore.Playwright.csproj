@@ -42,9 +42,9 @@
 	</Target>
 
 	<ItemGroup>
-	  <Compile Remove="NodeDependencies\**" />
-	  <EmbeddedResource Remove="NodeDependencies\**" />
-	  <None Remove="NodeDependencies\**" />
+	  <Compile Remove="NodeDependencies/**" />
+	  <EmbeddedResource Remove="NodeDependencies/**" />
+	  <None Remove="NodeDependencies/**" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -16,18 +16,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Playwright.Axe\Playwright.Axe.csproj" />
+    <ProjectReference Include="../src/Deque.AxeCore.Playwright.csproj" />
   </ItemGroup>
 
 	<ItemGroup>
-		<None Include="TestFiles\**" CopyToOutputDirectory="PreserveNewest" LinkBase="TestFiles\" />
+		<None Include="TestFiles/**" CopyToOutputDirectory="PreserveNewest" LinkBase="TestFiles/" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="TestFiles\frames\" />
+	  <Folder Include="TestFiles/frames/" />
 	</ItemGroup>
 
 	<Target Name="InstallPlaywright" AfterTargets="AfterBuild">
-		<Exec Command="powershell .\$(OutDir)playwright.ps1 install"></Exec>
+		<Exec Command="powershell ./$(OutDir)playwright.ps1 install"></Exec>
 	</Target>
 </Project>
