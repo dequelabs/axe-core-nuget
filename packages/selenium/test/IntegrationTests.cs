@@ -14,6 +14,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using WebDriverManager;
+using WebDriverManager.DriverConfigs;
 using WebDriverManager.DriverConfigs.Impl;
 
 // Setup parallelization
@@ -27,6 +28,7 @@ namespace Deque.AxeCore.Selenium.Test
     {
         private readonly ConcurrentDictionary<string, IWebDriver> localDriver = new ConcurrentDictionary<string, IWebDriver>();
         private readonly ConcurrentDictionary<string, WebDriverWait> localWaitDriver = new ConcurrentDictionary<string, WebDriverWait>();
+
         private static string ChromeDriverPath = null;
         private static string FirefoxDriverPath = null;
 
@@ -34,7 +36,9 @@ namespace Deque.AxeCore.Selenium.Test
         {
             get
             {
-                return localDriver[GetFullyQualifiedTestName()];
+                IWebDriver value;
+                localDriver.TryGetValue(GetFullyQualifiedTestName(), out value);
+                return value;
             }
 
             set
@@ -47,7 +51,9 @@ namespace Deque.AxeCore.Selenium.Test
         {
             get
             {
-                return localWaitDriver[GetFullyQualifiedTestName()];
+                WebDriverWait value;
+                localWaitDriver.TryGetValue(GetFullyQualifiedTestName(), out value);
+                return value;
             }
 
             set
@@ -244,7 +250,7 @@ namespace Deque.AxeCore.Selenium.Test
         public void ReportRespectsIframeImplicitTrue(string browser)
         {
             string path = CreateReportPath();
-            string filename = new Uri(Path.GetFullPath(IntegrationTestTargetComplexTargetsFile)).AbsoluteUri;
+            string filename = new Uri("file://" + Path.GetFullPath(IntegrationTestTargetComplexTargetsFile)).AbsoluteUri;
 
             InitDriver(browser);
             WebDriver.Navigate().GoToUrl(filename);
@@ -262,7 +268,7 @@ namespace Deque.AxeCore.Selenium.Test
         public void ReportRespectsIframeTrue(string browser)
         {
             string path = CreateReportPath();
-            string filename = new Uri(Path.GetFullPath(IntegrationTestTargetComplexTargetsFile)).AbsoluteUri;
+            string filename = new Uri("file://" + Path.GetFullPath(IntegrationTestTargetComplexTargetsFile)).AbsoluteUri;
 
             InitDriver(browser);
             WebDriver.Navigate().GoToUrl(filename);
@@ -285,7 +291,7 @@ namespace Deque.AxeCore.Selenium.Test
         public void ReportRespectsIframeFalse(string browser)
         {
             string path = CreateReportPath();
-            string filename = new Uri(Path.GetFullPath(IntegrationTestTargetComplexTargetsFile)).AbsoluteUri;
+            string filename = new Uri("file://" + Path.GetFullPath(IntegrationTestTargetComplexTargetsFile)).AbsoluteUri;
 
             InitDriver(browser);
             WebDriver.Navigate().GoToUrl(filename);
@@ -307,7 +313,7 @@ namespace Deque.AxeCore.Selenium.Test
         [TestCase("Chrome")]
         public void RunSiteThatReturnsMultipleTargets(string browser)
         {
-            var filename = new Uri(Path.GetFullPath(IntegrationTestTargetComplexTargetsFile)).AbsoluteUri;
+            var filename = new Uri("file://" + Path.GetFullPath(IntegrationTestTargetComplexTargetsFile)).AbsoluteUri;
             InitDriver(browser);
             WebDriver.Navigate().GoToUrl(filename);
             var axeResult = new AxeBuilder(WebDriver).Analyze();
@@ -329,7 +335,7 @@ namespace Deque.AxeCore.Selenium.Test
         private string CreateReportPath()
         {
             string codeBase = System.Reflection.Assembly.GetExecutingAssembly().Location;
-            UriBuilder uri = new UriBuilder(codeBase);
+            UriBuilder uri = new UriBuilder("file://" + codeBase);
             string path = Uri.UnescapeDataString(uri.Path);
             return Path.Combine(Path.GetDirectoryName(path), Guid.NewGuid() + ".html");
         }
@@ -403,7 +409,7 @@ namespace Deque.AxeCore.Selenium.Test
 
         private void LoadSimpleTestPage()
         {
-            var filename = new Uri(IntegrationTestTargetSimpleFile).AbsoluteUri;
+            var filename = new Uri("file://" + IntegrationTestTargetSimpleFile).AbsoluteUri;
             WebDriver.Navigate().GoToUrl(filename);
 
             Wait.Until(drv => drv.FindElement(By.TagName(mainElementSelector)));
@@ -414,26 +420,31 @@ namespace Deque.AxeCore.Selenium.Test
             switch (browser.ToUpper())
             {
                 case "CHROME":
-                    LazyInitializer.EnsureInitialized(ref ChromeDriverPath, () => new DriverManager().SetUpDriver(new ChromeConfig()));
+                    EnsureWebdriverPathInitialized(ref ChromeDriverPath, "CHROMEWEBDRIVER", "chromedriver", new ChromeConfig());
 
-                    ChromeOptions options = new ChromeOptions
+                    ChromeOptions chromeOptions = new ChromeOptions
                     {
                         UnhandledPromptBehavior = UnhandledPromptBehavior.Accept,
                     };
-                    options.AddArgument("no-sandbox");
-                    options.AddArgument("--log-level=3");
-                    options.AddArgument("--silent");
-                    options.AddArgument("--allow-file-access-from-files");
+                    chromeOptions.AddArgument("--headless");
+                    chromeOptions.AddArgument("no-sandbox");
+                    chromeOptions.AddArgument("--log-level=3");
+                    chromeOptions.AddArgument("--silent");
+                    chromeOptions.AddArgument("--allow-file-access-from-files");
 
                     ChromeDriverService service = ChromeDriverService.CreateDefaultService(Path.GetDirectoryName(ChromeDriverPath));
                     service.SuppressInitialDiagnosticInformation = true;
-                    WebDriver = new ChromeDriver(ChromeDriverService.CreateDefaultService(), options);
+                    WebDriver = new ChromeDriver(ChromeDriverService.CreateDefaultService(), chromeOptions);
 
                     break;
 
                 case "FIREFOX":
-                    LazyInitializer.EnsureInitialized(ref FirefoxDriverPath, () => new DriverManager().SetUpDriver(new FirefoxConfig()));
-                    WebDriver = new FirefoxDriver(Path.GetDirectoryName(FirefoxDriverPath));
+                    EnsureWebdriverPathInitialized(ref FirefoxDriverPath, "GECKOWEBDRIVER", "geckodriver", new FirefoxConfig());
+
+                    FirefoxOptions firefoxOptions = new FirefoxOptions();
+                    firefoxOptions.AddArgument("-headless");
+
+                    WebDriver = new FirefoxDriver(Path.GetDirectoryName(FirefoxDriverPath), firefoxOptions);
                     break;
 
                 default:
@@ -444,6 +455,17 @@ namespace Deque.AxeCore.Selenium.Test
             Wait = new WebDriverWait(WebDriver, TimeSpan.FromSeconds(20));
             WebDriver.Manage().Timeouts().AsynchronousJavaScript = TimeSpan.FromSeconds(20);
             WebDriver.Manage().Window.Maximize();
+        }
+
+        private static void EnsureWebdriverPathInitialized(ref string driverPath, string dirEnvVar, string binaryName, IDriverConfig driverManagerConfig) {
+            LazyInitializer.EnsureInitialized(ref driverPath, () => {
+                var dirFromEnv = Environment.GetEnvironmentVariable(dirEnvVar);
+                if (dirFromEnv != null) {
+                    return $"{dirFromEnv}/${binaryName}";
+                } else {
+                    return new DriverManager().SetUpDriver(driverManagerConfig);
+                }
+            });
         }
 
         private static string GetFullyQualifiedTestName()

@@ -1,0 +1,8 @@
+{
+  "name": "axe-core-nuget",
+  "description": "this file is used by release workflows as the source of truth for the current version of all NuGet packages",
+  "version": "4.4.0",
+  "license": "MPL-2.0 AND MIT",
+  "repository": "dequelabs/axe-core-nuget",
+  "private": true
+}
