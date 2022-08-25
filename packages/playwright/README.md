@@ -5,7 +5,7 @@
 
 Automated web accessibility testing with .NET, C#, and Playwright. Wraps the [axe-core](https://github.com/dequelabs/axe-core) accessibility scanning engine and the [Selenium.WebDriver](https://www.seleniumhq.org/) browser automation framework.
 
-Compatible with .NET Standard 2.0+, .NET Framework 4.7.1+, and .NET Core 2.0+.
+Compatible with .NET Standard 2.1.
 
 ## Getting Started
 
