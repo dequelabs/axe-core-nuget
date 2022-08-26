@@ -32,6 +32,11 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
 
+      - name: Setup go
+        uses: actions/setup-go@v3
+        with:
+          go-version: '^1.19.0'
+
       - name: Install github-release tool
         run: go install gopkg.in/aktau/github-release.v0@v0.10.0
 
