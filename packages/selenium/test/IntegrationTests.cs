@@ -79,7 +79,7 @@ namespace Deque.AxeCore.Selenium.Test
         [Test]
         [TestCase("Chrome")]
         [TestCase("Firefox")]
-        public void RunScanOnPage(string browser)
+        public void FullPageScanFindsExpectedViolations(string browser)
         {
             InitDriver(browser);
             LoadSimpleTestPage();
@@ -105,7 +105,7 @@ namespace Deque.AxeCore.Selenium.Test
         [Test]
         [TestCase("Chrome")]
         [TestCase("Firefox")]
-        public void RunScanOnGivenElement(string browser)
+        public void SingleElementScanFindsExpectedViolations(string browser)
         {
             InitDriver(browser);
             LoadSimpleTestPage();
@@ -118,7 +118,7 @@ namespace Deque.AxeCore.Selenium.Test
 
         [Test]
         [TestCase("Chrome")]
-        public void RunSiteThatReturnsMultipleTargets(string browser)
+        public void ScanFindsViolationsInShadowDomIframes(string browser)
         {
             var filename = new Uri("file://" + Path.GetFullPath(IntegrationTestTargetComplexTargetsFile)).AbsoluteUri;
             InitDriver(browser);
@@ -130,13 +130,37 @@ namespace Deque.AxeCore.Selenium.Test
                 .FirstOrDefault(x => x.Id == "color-contrast");
 
             Assert.IsNotNull(colorContrast);
-            var complexTargetNode = colorContrast
+            Assert.AreEqual(3 /* including 1 from the top-level frame and 2 from the iframe */, colorContrast.Nodes.Length);
+
+            var shadowDomIframeTargetNode = colorContrast
                 .Nodes
                 .Where(x => x.Target.Any(node => node.Selectors.Any()))
                 .Select(x => x.Target.Last())
                 .First();
-            Assert.IsNotNull(complexTargetNode);
-            Assert.IsTrue(complexTargetNode.Selectors.Count == 2);
+            Assert.IsNotNull(shadowDomIframeTargetNode);
+            Assert.IsTrue(shadowDomIframeTargetNode.Selectors.Count == 2);
+        }
+
+        [Test]
+        [TestCase("Chrome")]
+        public void ScanRespectsIframeFalseOption(string browser)
+        {
+            var filename = new Uri("file://" + Path.GetFullPath(IntegrationTestTargetComplexTargetsFile)).AbsoluteUri;
+            InitDriver(browser);
+            WebDriver.Navigate().GoToUrl(filename);
+
+            var axeResult = new AxeBuilder(WebDriver)
+                .WithOptions(new AxeRunOptions {
+                    Iframes = false
+                })
+                .Analyze();
+
+            var colorContrast = axeResult
+                .Violations
+                .FirstOrDefault(x => x.Id == "color-contrast");
+
+            Assert.IsNotNull(colorContrast);
+            Assert.AreEqual(1 /* missing the 2 from the iframe */, colorContrast.Nodes.Length);
         }
 
         private void LoadSimpleTestPage()
