@@ -15,13 +15,15 @@ jobs:
 
   publish-nuget:
     uses: ./.github/workflows/publish-nuget-packages.yml
-    if: github.repository_owner == 'dequelabs' # don't attempt to publish from forks
+    # TODO: restore this before un-drafting PR
+    # if: github.repository_owner == 'dequelabs' # don't attempt to publish from forks
     needs: ["build-and-test"]
     secrets:
       NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
 
   publish-github-release:
-    if: github.repository_owner == 'dequelabs' # don't attempt to publish from forks
+    # TODO: restore this before un-drafting PR
+    # if: github.repository_owner == 'dequelabs' # don't attempt to publish from forks
     needs: ["publish-nuget"]
     runs-on: ubuntu-latest
     permissions:
