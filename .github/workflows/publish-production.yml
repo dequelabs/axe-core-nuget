@@ -32,7 +32,8 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
 
-      - run: go get gopkg.in/aktau/github-release.v0
+      - name: Install github-release tool
+        run: go install gopkg.in/aktau/github-release.v0@v0.10.0
 
       - name: Download and run GitHub release script
         run: |
