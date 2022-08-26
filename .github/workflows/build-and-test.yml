@@ -9,7 +9,7 @@ on:
         type: string
         default: release
       version-suffix:
-        description: "Version suffix (eg, for a version of 1.2.3-alpha.1, pass, \"-alpha.1\")"
+        description: "Version suffix (eg, for a version of 1.2.3-alpha.1, pass \"alpha.1\")"
         type: string
         default: "development.${{ github.sha }}"
 
