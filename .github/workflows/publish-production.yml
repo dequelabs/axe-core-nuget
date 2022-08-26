@@ -14,16 +14,14 @@ jobs:
       version-suffix: ""
 
   publish-nuget:
-    if: github.repository_owner == 'dequelabs' # don't attempt to publish from forks
-    environment: nuget-production
-    needs: ["build-and-test"]
     uses: ./.github/workflows/publish-nuget-packages.yml
+    if: github.repository_owner == 'dequelabs' # don't attempt to publish from forks
+    needs: ["build-and-test"]
     secrets:
       NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
 
   publish-github-release:
     if: github.repository_owner == 'dequelabs' # don't attempt to publish from forks
-    environment: github-releases
     needs: ["publish-nuget"]
     runs-on: ubuntu-latest
     permissions:
