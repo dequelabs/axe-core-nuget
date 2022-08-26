@@ -54,8 +54,6 @@
     <EmbeddedResource Include="node_modules\axe-core\axe.min.js">
         <Link>Resources\axe.min.js</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\htmlReporterElements.js" />
-    <EmbeddedResource Include="Resources\htmlReporter.css" />    
     <EmbeddedResource Include="Resources\scan.js" />
   </ItemGroup>
   <Choose>
