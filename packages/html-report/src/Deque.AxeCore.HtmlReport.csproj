@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Authors>Deque</Authors>
+    <Description>Html report generation for aXe accessibility runs.</Description>
+    <PackageTags>accessibility deque dequelabs axe axe-core ada webdriver</PackageTags>
+
+    <Copyright>Copyright 2022 Deque</Copyright>
+    <PackageLicenseExpression>MPL-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/dequelabs/axe-core-nuget</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/dequelabs/axe-core-nuget</RepositoryUrl>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+
+    <TargetFrameworks>net471;netstandard2.0</TargetFrameworks>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
+    <!-- Do not update this by-hand; updates are automated via the create-release workflow -->
+    <VersionPrefix>4.4.0</VersionPrefix>
+    <VersionSuffix>development</VersionSuffix>
+  </PropertyGroup>
+</Project>

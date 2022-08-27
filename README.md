@@ -9,6 +9,7 @@ The packages are listed below:
 - [`Deque.AxeCore.Playwright`](./packages/playwright/README.md)
 - [`Deque.AxeCore.Selenium`](./packages/selenium/README.md)
 - [`Deque.AxeCore.Commons`](./packages/commons/README.md)
+- [`Deque.AxeCore.HtmlReport`](./packages/html-report/README.md)
 
 ## Philosophy
 
@@ -28,6 +29,7 @@ We believe that automated testing has an important role to play in achieving dig
 * The `Deque.AxeCore.Playwright` NuGet package and its source code under the [`packages/playwright/` directory](./packages/playwright) are distributed under the terms of the [MIT License](./LICENSE-Deque.AxeCore.Playwright.txt).
 * The `Deque.AxeCore.Selenium` NuGet package and its source code under the [`packages/selenium/` directory](./packages/selenium) are distributed under the terms of the [MIT License](./LICENSE-Deque.AxeCore.Selenium.txt).
 * The `Deque.AxeCore.Commons` NuGet package, its source code under [`packages/commons/` directory](./packages/commons), its embedded copy of [`axe-core`](https://github.com/dequelabs/axe-core), and all other source code in this repository outside of the `packages/` directory are distributed under the terms of the [Mozilla Public License, version 2.0](./LICENSE-Deque.AxeCore.Commons.txt).
+* The `Deque.AxeCore.HtmlReport` NuGet package, its source code under [`packages/html-report/` directory](./packages/html-report) is distributed under the terms of the [Mozilla Public License, version 2.0](./LICENSE-Deque.AxeCore.HtmlReport.txt).
 
 Note that the (MIT licensed) `Deque.AxeCore.Playwright` and `Deque.AxeCore.Selenium` NuGet packages each have a dependency on the (MPL licensed) `Deque.AxeCore.Commons` NuGet package.
 
