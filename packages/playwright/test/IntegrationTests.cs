@@ -1,16 +1,16 @@
 #nullable enable
 
-using Microsoft.Playwright.MSTest;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Playwright.NUnit;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Deque.AxeCore.Playwright.Test
 {
-    [TestClass]
+    [TestFixture]
+    [Category("Integration")]
     public class IntegrationTests : PageTest
     {
         private readonly TestServer m_testServer;
@@ -23,39 +23,47 @@ namespace Deque.AxeCore.Playwright.Test
             m_testServer = new();
         }
 
-        [TestInitialize]
+        [OneTimeSetUp]
         public async Task InitializeTest()
         {
             await m_testServer.StartAsync();
         }
 
-        [TestCleanup]
+        [OneTimeTearDown]
         public async Task CleanupTest()
         {
             await m_testServer.StopAsync();
         }
 
-        [TestMethod]
-        [DynamicData(nameof(GetAxeRulesParameters), DynamicDataSourceType.Method)]
+        static object?[] GetAxeRulesCases = {
+            null,
+            new List<string>() { "wcag2aa", "wcag2a" },
+        };
+
+        [Test]
+        [TestCaseSource(nameof(GetAxeRulesCases))]
         public async Task GetAxeRules_WithTags_ReturnsAxeRules(IList<string>? tags)
         {
             await NavigateToPage("basic.html");
             IList<AxeRuleMetadata> axeRules = await Page!.GetAxeRules(tags);
 
             AxeRuleMetadata? rule = axeRules.FirstOrDefault();
-            Assert.IsNotNull(rule);
-            Assert.IsNotNull(rule.RuleId);
-            Assert.IsNotNull(rule.Description);
-            Assert.IsNotNull(rule.Help);
-            Assert.IsNotNull(rule.HelpUrl);
 
-            if (tags != null)
+            Assert.Multiple(() =>
             {
-                Assert.IsTrue(axeRules.All(axeRule => tags.Any(tag => axeRule.Tags.Contains(tag))));
-            }
+                Assert.That(rule, Is.Not.Null);
+                Assert.That(rule!.RuleId, Is.Not.Null);
+                Assert.That(rule.Description, Is.Not.Null);
+                Assert.That(rule.Help, Is.Not.Null);
+                Assert.That(rule.HelpUrl, Is.Not.Null);
+                if (tags != null)
+                {
+                    Assert.That(axeRules.All(axeRule => tags.Any(tag => axeRule.Tags.Contains(tag))));
+                }
+            });
         }
 
-        [TestMethod]
+        [Test]
         public async Task RunAxe_NoOptions()
         {
             const string expectedViolationId = "color-contrast";
@@ -65,26 +73,44 @@ namespace Deque.AxeCore.Playwright.Test
             AxeResults axeResults = await Page!.RunAxe();
             AxeResult violation = axeResults.Violations.First();
 
-            Assert.AreEqual(violation.Id, expectedViolationId);
-            Assert.AreEqual(violation.Impact!.Value, AxeImpactValue.Serious);
-            Assert.IsFalse(string.IsNullOrEmpty(violation.Description));
-            Assert.IsFalse(string.IsNullOrEmpty(violation.Help));
+            Assert.Multiple(() =>
+            {
+                Assert.That(violation.Id, Is.EqualTo(expectedViolationId));
+                Assert.That(violation.Impact!.Value, Is.EqualTo(AxeImpactValue.Serious));
+                Assert.That(violation.Description, Is.Not.Null.Or.Empty);
+                Assert.That(violation.Help, Is.Not.Null.Or.Empty);
+            });
         }
 
-        [TestMethod]
-        [DynamicData(nameof(GetRunsOnlyParameters), DynamicDataSourceType.Method)]
-        public async Task RunAxe_WithRunOnly_RunsOnlySpecified(IList<string> values, AxeRunOnlyType type, Func<AxeResults, IList<string>, bool> validator)
+        [Test]
+        public async Task RunAxe_WithRunOnly_RunsOnlySpecifiedTags()
         {
             await NavigateToPage("basic.html");
 
-            AxeRunOnly runOnly = new(type, values);
+            AxeRunOnly runOnly = new(AxeRunOnlyType.Tag, new List<string> { "wcag2a" });
             AxeRunOptions options = new(runOnly);
 
             AxeResults axeResults = await Page!.RunAxe(options);
-            Assert.IsTrue(validator(axeResults, values));
+
+            IEnumerable<AxeResult> violationsWithoutExpectedTag = axeResults.Violations.Where(violation => !violation.Tags!.Any(tag => tag == "wcag2a"));
+            Assert.That(violationsWithoutExpectedTag, Is.Empty);
         }
 
-        [TestMethod]
+        [Test]
+        public async Task RunAxe_WithRunOnly_RunsOnlySpecifiedRules()
+        {
+            await NavigateToPage("basic.html");
+
+            AxeRunOnly runOnly = new(AxeRunOnlyType.Rule, new List<string> { "color-contrast" });
+            AxeRunOptions options = new(runOnly);
+
+            AxeResults axeResults = await Page!.RunAxe(options);
+
+            IEnumerable<AxeResult> inapplicablesForUnexpectedRule = axeResults.Inapplicable.Where(result => result.Id != "color-contrast");
+            Assert.That(inapplicablesForUnexpectedRule, Is.Empty);
+        }
+
+        [Test]
         public async Task RunAxe_WithRules_RunsOnlySpecified()
         {
             await NavigateToPage("basic.html");
@@ -97,13 +123,17 @@ namespace Deque.AxeCore.Playwright.Test
             AxeRunOptions options = new(rules: rules);
 
             AxeResults axeResults = await Page!.RunAxe(options);
-            Assert.IsFalse(axeResults.Passes.Any(result => result.Id.Equals(ruleId)));
-            Assert.IsFalse(axeResults.Violations.Any(result => result.Id.Equals(ruleId)));
-            Assert.IsFalse(axeResults.Incomplete.Any(result => result.Id.Equals(ruleId)));
-            Assert.IsFalse(axeResults.Inapplicable.Any(result => result.Id.Equals(ruleId)));
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(axeResults.Passes.Any(result => result.Id.Equals(ruleId)), Is.False);
+                Assert.That(axeResults.Violations.Any(result => result.Id.Equals(ruleId)), Is.False);
+                Assert.That(axeResults.Incomplete.Any(result => result.Id.Equals(ruleId)), Is.False);
+                Assert.That(axeResults.Inapplicable.Any(result => result.Id.Equals(ruleId)), Is.False);
+            });
         }
 
-        [TestMethod]
+        [Test]
         public async Task RunAxe_WithResultTypes_RunsOnlySpecified()
         {
             await NavigateToPage("basic.html");
@@ -114,28 +144,51 @@ namespace Deque.AxeCore.Playwright.Test
             };
 
             AxeRunOptions options = new(resultTypes: resultGroups);
-            
-            AxeResults axeResults = await Page!.RunAxe(options);      
-            Assert.AreEqual(1, axeResults.Violations.First(v => v.Id.Equals("color-contrast")).Nodes!.Count, 
-                "There are two color-contrast issues, but the Nodes should be capped at 1.");
-            Assert.IsTrue(axeResults.Passes.First(v => v.Id.Equals("region")).Nodes!.Count > 1);
+
+            AxeResults axeResults = await Page!.RunAxe(options);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(axeResults.Violations.First(v => v.Id.Equals("color-contrast")).Nodes, Has.Count.EqualTo(1),
+                            "There are two color-contrast issues, but the Nodes should be capped at 1.");
+                Assert.That(axeResults.Passes.First(v => v.Id.Equals("region")).Nodes, Has.Count.GreaterThan(1));
+            });
         }
 
-        [TestMethod]
-        [DynamicData(nameof(GetRemainingRunOptionsParameters), DynamicDataSourceType.Method)]
-        public async Task RunAxe_WithRunOptions_ValidatorHolds(
-            AxeRunOptions runOptions, 
-            Func<AxeResults, bool> validator,
-            string testFile)
+        [Test]
+        public async Task RunAxe_WithRunOptions_SelectorsFalse_ProducesResultsWithoutTargets()
         {
-            await NavigateToPage(testFile);
+            await NavigateToPage("basic.html");
 
-            AxeResults axeResults = await Page!.RunAxe(runOptions);
-            Assert.IsTrue(validator(axeResults));
+            AxeResults axeResults = await Page!.RunAxe(new AxeRunOptions(selectors: false));
+
+            var violationsWithTargets = axeResults.Violations.Where(violation => violation.Nodes!.Any(node => node.Target.Any()));
+            Assert.That(violationsWithTargets, Is.Empty);
         }
 
-        [TestMethod]
-        public async Task RunAxe_NestedIframes_ExecutesSuccessfully()
+        [Test]
+        public async Task RunAxe_WithRunOptions_AncestryTrue_ProducesResultsWithAncestry()
+        {
+            await NavigateToPage("basic.html");
+
+            AxeResults axeResults = await Page!.RunAxe(new AxeRunOptions(ancestry: true));
+
+            var violationsWithoutAncestry = axeResults.Violations.Where(violation => violation.Nodes!.Any(node => node.Ancestry == null || !node.Ancestry.Any()));
+            Assert.That(violationsWithoutAncestry, Is.Empty);
+        }
+
+        [Test]
+        public async Task RunAxe_WithRunOptions_XPathTrue_ProducesResultsWithXPath()
+        {
+            await NavigateToPage("basic.html");
+
+            AxeResults axeResults = await Page!.RunAxe(new AxeRunOptions(xpath: true));
+            var violationsWithoutAncestry = axeResults.Violations.Where(violation => violation.Nodes!.Any(node => node.XPath == null || !node.XPath.Any()));
+            Assert.That(violationsWithoutAncestry, Is.Empty);
+        }
+
+        [Test]
+        public async Task RunAxe_NestedIframes_FindsNestedViolationsByDefault()
         {
             const string expectedViolationId = "aria-roles";
             const string expectedViolationTarget = "#div-fail";
@@ -144,28 +197,31 @@ namespace Deque.AxeCore.Playwright.Test
 
             AxeResults axeResults = await Page!.RunAxe();
 
-            Assert.AreEqual(1, axeResults.Violations.Count);
+            Assert.That(axeResults.Violations, Has.Count.EqualTo(1));
             AxeResult ariaViolation = axeResults.Violations.First();
             IList<string> targets = ariaViolation.Nodes!.First().Target!;
 
-            Assert.AreEqual(ariaViolation.Id, expectedViolationId);
-            Assert.IsTrue(targets.Any(target => target.Equals(expectedViolationTarget)));
+            Assert.Multiple(() =>
+            {
+                Assert.That(ariaViolation.Id, Is.EqualTo(expectedViolationId));
+                Assert.That(targets.Any(target => target.Equals(expectedViolationTarget)));
+            });
         }
 
-        [TestMethod]
-        [DataRow("button")]
-        [DataRow("text=Text example")]
-        [DataRow("[aria-label='Accessibility Label']")]
-        [DataRow("id=id-example")]
+        [Test]
+        [TestCase("button")]
+        [TestCase("text=Text example")]
+        [TestCase("[aria-label='Accessibility Label']")]
+        [TestCase("id=id-example")]
         public async Task RunAxeOnLocator_NoOptions(string selector)
         {
             await NavigateToPage("selector.html");
 
             AxeResults axeResults = await Page!.Locator(selector).RunAxe();
-            Assert.IsTrue(axeResults.Passes.All(pass => pass.Nodes!.Count == 1));
+            Assert.That(axeResults.Passes.All(pass => pass.Nodes!.Count == 1));
         }
 
-        [TestMethod]
+        [Test]
         public async Task RunAxeOnLocator_WithOptions()
         {
             const string tag = "ACT";
@@ -174,116 +230,25 @@ namespace Deque.AxeCore.Playwright.Test
             AxeRunOptions runOptions = new(new AxeRunOnly(AxeRunOnlyType.Tag, new List<string> { tag }));
 
             AxeResults axeResults = await Page!.Locator("button").RunAxe(runOptions);
-            Assert.IsTrue(axeResults.Passes.All(pass => pass.Tags!.Contains(tag)));
+            Assert.That(axeResults.Passes.All(pass => pass.Tags!.Contains(tag)));
         }
 
-        [TestMethod]
-        [DynamicData(nameof(GetAxeContextParameters), DynamicDataSourceType.Method)]
+        [Test]
+        [TestCaseSource(nameof(RunAxe_WithContext_Cases))]
         public async Task RunAxe_WithContext(AxeRunContext axeRunContext, ISet<string> targets, bool includedInTargets)
         {
             await NavigateToPage("selector.html");
 
             AxeResults axeResults = await Page!.RunAxe(axeRunContext);
 
-            Assert.IsTrue(axeResults.Passes
+            Assert.That(axeResults.Passes
                 .All(pass => pass.Nodes!
                 .All(node => node.Target!
                 .Any(target => includedInTargets == targets.Contains(target)))));
         }
 
-        [TestMethod]
-        [DynamicData(nameof(GetReportParameters), DynamicDataSourceType.Method)]
-        public async Task RunAxe_WithReport_OutputsReport(AxeHtmlReportOptions reportOptions, string? expectedReportPath)
-        {
-            await NavigateToPage("basic.html");
-
-            await Page!.RunAxe(reportOptions: reportOptions);
-
-            Assert.IsTrue(File.Exists(expectedReportPath));
-        }   
-
-        private static IEnumerable<object?[]> GetAxeRulesParameters()
-        {
-            yield return new object?[]
-            {
-                null
-            };
-
-            yield return new object?[]
-            {
-                new List<string>()
-                {
-                    "wcag2aa",
-                    "wcag2a"
-                }
-            };
-        }
-        private static IEnumerable<object?[]> GetRunsOnlyParameters()
-        {
-            Func<AxeResults, IList<string>, bool> f0 = (AxeResults results, IList<string> values) => results.Violations
-                .All(violation => violation.Tags!.Any(tag => values.Contains(tag)));
-            yield return new object?[]
-            {
-                new List<string> { "wcag2a" },
-                AxeRunOnlyType.Tag,
-                f0
-            };
-
-            Func<AxeResults, IList<string>, bool> f1 = (AxeResults results, IList<string> values) => results.Inapplicable
-                .All(inapplicable => values.Contains(inapplicable.Id));
-            yield return new object?[]
-            {
-                new List<string> { "color-contrast" },
-                AxeRunOnlyType.Rule,
-                f1
-            };
-        }
-    
-        private static IEnumerable<object?[]> GetRemainingRunOptionsParameters()
-        {
-            Func<AxeResults, bool> selectorValidator = (AxeResults results) => 
-                results.Violations
-                .All(violation => violation.Nodes!
-                .All(node => !node.Target.Any()));
-            yield return new object?[]
-            {
-                new AxeRunOptions(selectors: false),
-                selectorValidator,
-                "basic.html"
-            };
-
-            Func<AxeResults, bool> ancestorValidator = (AxeResults results) => results.Violations
-                .Any(violation => violation.Nodes!
-                .Any(node => node.Ancestry != null && node.Ancestry.Any())); 
-            yield return new object?[]
-            {
-                new AxeRunOptions(ancestry: true),
-                ancestorValidator,
-                "basic.html"
-            };
-
-            Func<AxeResults, bool> xpathValidator = (AxeResults results) => results.Violations
-                .Any(violation => violation.Nodes!
-                .Any(node => node.XPath != null && node.XPath.Any()));
-            yield return new object?[]
-            {
-                new AxeRunOptions(xpath: true),
-                xpathValidator,
-                "basic.html"
-            };
-
-            Func<AxeResults, bool> iframeValidator = (AxeResults results) => true;
-            yield return new object?[]
-            {
-                new AxeRunOptions(iframes: true),
-                iframeValidator,
-                "with-frame.html"
-            };
-        }
-
-        private static IEnumerable<object?[]> GetAxeContextParameters()
-        {
-            yield return new object?[]
+        static object[] RunAxe_WithContext_Cases = {
+            new object[]
             {
                 new AxeRunSerialContext("#id-example"),
                 new HashSet<string>()
@@ -291,9 +256,8 @@ namespace Deque.AxeCore.Playwright.Test
                     "#id-example"
                 },
                 true
-            };
-
-            yield return new object?[]
+            },
+            new object[]
             {
                 new AxeRunSerialContext("a"),
                 new HashSet<string>()
@@ -302,9 +266,8 @@ namespace Deque.AxeCore.Playwright.Test
                     "#id-example"
                 },
                 true
-            };
-
-            yield return new object?[]
+            },
+            new object[]
             {
                 new AxeRunSerialContext(null, "#id-example"),
                 new HashSet<string>()
@@ -312,9 +275,8 @@ namespace Deque.AxeCore.Playwright.Test
                     "#id-example"
                 },
                 false
-            };
-
-            yield return new object?[]
+            },
+            new object[]
             {
                 new AxeRunSerialContext(null, "a"),
                 new HashSet<string>()
@@ -323,23 +285,8 @@ namespace Deque.AxeCore.Playwright.Test
                     "#id-example"
                 },
                 false
-            };
-        }
-
-        private static IEnumerable<object?[]> GetReportParameters()
-        {
-            yield return new object[]
-            {
-                new AxeHtmlReportOptions(),
-                "report/index.html"
-            };
-
-            yield return new object[]
-            {
-                new AxeHtmlReportOptions(reportDir: "custom-report-directory"),
-                "custom-report-directory/index.html"
-            };
-        }
+            },
+        };
 
         private async Task NavigateToPage(string htmlPageName)
         {

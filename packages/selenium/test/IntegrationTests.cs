@@ -1,11 +1,8 @@
 ﻿using FluentAssertions;
-using HtmlAgilityPack;
-using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
-using OpenQA.Selenium.Support.Events;
 using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Concurrent;
@@ -129,16 +126,17 @@ namespace Deque.AxeCore.Selenium.Test
                 .Violations
                 .FirstOrDefault(x => x.Id == "color-contrast");
 
-            Assert.IsNotNull(colorContrast);
-            Assert.AreEqual(3 /* including 1 from the top-level frame and 2 from the iframe */, colorContrast.Nodes.Length);
+            colorContrast.Should().NotBeNull();
+            colorContrast.Nodes.Should().HaveCount(3); // including 1 from the top-level frame and 2 from the iframe
 
             var shadowDomIframeTargetNode = colorContrast
                 .Nodes
                 .Where(x => x.Target.Any(node => node.Selectors.Any()))
                 .Select(x => x.Target.Last())
                 .First();
-            Assert.IsNotNull(shadowDomIframeTargetNode);
-            Assert.IsTrue(shadowDomIframeTargetNode.Selectors.Count == 2);
+
+            shadowDomIframeTargetNode.Should().NotBeNull();
+            shadowDomIframeTargetNode.Selectors.Should().HaveCount(2);
         }
 
         [Test]
@@ -159,8 +157,8 @@ namespace Deque.AxeCore.Selenium.Test
                 .Violations
                 .FirstOrDefault(x => x.Id == "color-contrast");
 
-            Assert.IsNotNull(colorContrast);
-            Assert.AreEqual(1 /* missing the 2 from the iframe */, colorContrast.Nodes.Length);
+            colorContrast.Should().NotBeNull();
+            colorContrast.Nodes.Should().HaveCount(1); // missing the 2 from the iframe
         }
 
         private void LoadSimpleTestPage()
