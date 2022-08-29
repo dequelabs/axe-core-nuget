@@ -51,15 +51,6 @@ jobs:
           name: test-results
           path: |
             ${{ github.workspace }}/packages/*/test/TestResults
-            !${{ github.workspace }}/packages/*/test/TestResults/**/verbose-logs
-
-      - uses: actions/upload-artifact@v2
-        if: ${{ failure() && steps.test.outcome == 'failure' }}
-        name: Upload test-verbose-logs artifact if tests failed
-        with:
-          name: test-results
-          path: |
-            ${{ github.workspace }}/packages/*/test/TestResults/**/verbose-logs
       
       - name: Prepare packages artifact
         run: |
