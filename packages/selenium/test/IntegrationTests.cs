@@ -9,6 +9,7 @@ using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Threading;
 using WebDriverManager;
 using WebDriverManager.DriverConfigs;
@@ -25,6 +26,7 @@ namespace Deque.AxeCore.Selenium.Test
     {
         private readonly ConcurrentDictionary<string, IWebDriver> localDriver = new ConcurrentDictionary<string, IWebDriver>();
         private readonly ConcurrentDictionary<string, WebDriverWait> localWaitDriver = new ConcurrentDictionary<string, WebDriverWait>();
+        private readonly ConcurrentDictionary<string, FirefoxWebDriverLogHook> localWebDriverLogHook = new ConcurrentDictionary<string, FirefoxWebDriverLogHook>();
 
         private static string ChromeDriverPath = null;
         private static string FirefoxDriverPath = null;
@@ -59,6 +61,21 @@ namespace Deque.AxeCore.Selenium.Test
             }
         }
 
+        private FirefoxWebDriverLogHook WebDriverLogHook
+        {
+            get
+            {
+                FirefoxWebDriverLogHook value;
+                localWebDriverLogHook.TryGetValue(GetFullyQualifiedTestName(), out value);
+                return value;
+            }
+
+            set
+            {
+                localWebDriverLogHook.AddOrUpdate(GetFullyQualifiedTestName(), value, (oldkey, oldvalue) => value);
+            }
+        }
+
         private static readonly string TestFileRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         private static readonly string IntegrationTestTargetSimpleFile = Path.Combine(TestFileRoot, @"integration-test-simple.html");
         private static readonly string IntegrationTestTargetComplexTargetsFile = Path.Combine(TestFileRoot, @"integration-test-target-complex.html");
@@ -70,6 +87,7 @@ namespace Deque.AxeCore.Selenium.Test
         public virtual void TearDown()
         {
             WebDriver?.Quit();
+            WebDriverLogHook?.WriteLogs();
             WebDriver?.Dispose();
         }
 
@@ -171,7 +189,10 @@ namespace Deque.AxeCore.Selenium.Test
 
         private void InitDriver(string browser)
         {
-            string logPath = Path.Combine(TestContext.CurrentContext.WorkDirectory, $"{browser}-webdriver-logs", TestContext.CurrentContext.Test.Name);
+            string logDirPath = Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "..", "..", "TestResults", "verbose-logs", $"{browser}-webdriver");
+            string logFilePath = Path.Combine(logDirPath, $"{GetTestNameAsFileName()}.log");
+
+            Directory.CreateDirectory(logDirPath);
 
             switch (browser.ToUpper())
             {
@@ -189,8 +210,7 @@ namespace Deque.AxeCore.Selenium.Test
                     chromeOptions.AddArgument("--allow-file-access-from-files");
 
                     ChromeDriverService chromeService = ChromeDriverService.CreateDefaultService(Path.GetDirectoryName(ChromeDriverPath));
-                    chromeService.SuppressInitialDiagnosticInformation = true;
-                    chromeService.LogPath = logPath;
+                    chromeService.LogPath = logFilePath;
                     WebDriver = new ChromeDriver(chromeService, chromeOptions);
 
                     break;
@@ -202,9 +222,8 @@ namespace Deque.AxeCore.Selenium.Test
                     firefoxOptions.AddArgument("-headless");
 
                     FirefoxDriverService firefoxService = FirefoxDriverService.CreateDefaultService(Path.GetDirectoryName(FirefoxDriverPath));
-                    firefoxService.SuppressInitialDiagnosticInformation = true;
+                    WebDriverLogHook = new FirefoxWebDriverLogHook(firefoxService, logFilePath);
                     WebDriver = new FirefoxDriver(firefoxService, firefoxOptions);
-
                     break;
 
                 default:
@@ -215,6 +234,48 @@ namespace Deque.AxeCore.Selenium.Test
             Wait = new WebDriverWait(WebDriver, TimeSpan.FromSeconds(20));
             WebDriver.Manage().Timeouts().AsynchronousJavaScript = TimeSpan.FromSeconds(20);
             WebDriver.Manage().Window.Maximize();
+        }
+
+        // This is a workaround for FirefoxDriverService not natively implementing a LogPath option like ChromeDriverService
+        // See https://github.com/SeleniumHQ/selenium/issues/7259#issuecomment-498827403
+        private class FirefoxWebDriverLogHook {
+            private StreamReader stdOut;
+            private StreamReader stdErr;
+            private readonly string logPath;
+
+            public FirefoxWebDriverLogHook(FirefoxDriverService service, string logPath)
+            {
+                service.DriverProcessStarted += OnFirefoxDriverProcessStarted;
+                service.DriverProcessStarting += OnFirefoxDriverProcessStarting;
+                this.logPath = logPath;
+            }
+
+            private void OnFirefoxDriverProcessStarting(object sender, DriverProcessStartingEventArgs e)
+            {
+                // Redirect both stdout and stderr to get the output to both locations.
+                e.DriverServiceProcessStartInfo.UseShellExecute = false;
+                e.DriverServiceProcessStartInfo.RedirectStandardOutput = true;
+                e.DriverServiceProcessStartInfo.RedirectStandardError = true;
+            }
+
+            private void OnFirefoxDriverProcessStarted(object sender, DriverProcessStartedEventArgs e)
+            {
+                // Hook into the stream readers for both stdout and stderr.
+                stdOut = e.StandardOutputStreamReader;
+                stdErr = e.StandardErrorStreamReader;
+            }
+
+            public void WriteLogs() {
+                if (stdOut == null || stdErr == null) {
+                    return;
+                }
+
+                string stdOutContent = stdOut.ReadToEnd();
+                string stdErrContent = stdErr.ReadToEnd();
+
+                File.WriteAllText(logPath + ".stdout", stdOut.ReadToEnd());
+                File.WriteAllText(logPath + ".stderr", stdErr.ReadToEnd());
+            }
         }
 
         private static void EnsureWebdriverPathInitialized(ref string driverPath, string dirEnvVar, string binaryName, IDriverConfig driverManagerConfig) {
@@ -231,6 +292,11 @@ namespace Deque.AxeCore.Selenium.Test
         private static string GetFullyQualifiedTestName()
         {
             return TestContext.CurrentContext.Test.FullName;
+        }
+
+        private static string GetTestNameAsFileName()
+        {
+            return Regex.Replace(TestContext.CurrentContext.Test.Name, "[^\\w_ -]", "_");
         }
     }
 }
