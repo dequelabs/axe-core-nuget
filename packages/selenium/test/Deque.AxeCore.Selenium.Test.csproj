@@ -1,12 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <ProjectGuid>{7D5DB0A8-263E-40D4-90C8-B86BA672C783}</ProjectGuid>
+    <!--
+      This list should be maintained in sync with
+      https://dotnet.microsoft.com/en-us/platform/support/policy/dotnet-core and
+      https://docs.microsoft.com/en-us/lifecycle/products/microsoft-net-framework
+    -->
     <TargetFrameworks>net471;netcoreapp3.1;net6.0</TargetFrameworks>
-    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <AssemblyTitle>Deque.AxeCore.Selenium.Test</AssemblyTitle>
-    <Product>Deque.AxeCore.Selenium.Test</Product>
+
     <IsPackable>false</IsPackable>
   </PropertyGroup>
+
   <ItemGroup>
     <None Remove="SampleResults.json" />
   </ItemGroup>
@@ -21,8 +24,13 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
+    <PackageReference Include="GitHubActionsTestLogger" Version="2.0.1">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.0" />
     <PackageReference Include="Moq" Version="4.18.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
@@ -36,10 +44,12 @@
     <PackageReference Include="WebDriverManager" Version="2.15.0" />
     <PackageReference Include="coverlet.collector" Version="3.1.2" />
   </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\src\Deque.AxeCore.Selenium.csproj" />
   </ItemGroup>
+
   <PropertyGroup>
-		<VSTestLogger>trx%3bLogFileName=Results$(TargetFramework).trx</VSTestLogger>
+    <VSTestResultsDirectory>TestResults/$(TargetFramework)</VSTestResultsDirectory>
 	</PropertyGroup>
 </Project>

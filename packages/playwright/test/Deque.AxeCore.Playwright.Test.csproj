@@ -11,6 +11,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="GitHubActionsTestLogger" Version="2.0.1">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.0" />
@@ -38,4 +42,8 @@
 	<Target Name="InstallPlaywright" AfterTargets="AfterBuild">
 		<Exec Command="pwsh -NoProfile -ExecutionPolicy Unrestricted ./$(OutDir)playwright.ps1 install"></Exec>
 	</Target>
+
+  <PropertyGroup>
+    <VSTestResultsDirectory>TestResults/$(TargetFramework)</VSTestResultsDirectory>
+	</PropertyGroup>
 </Project>
