@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+using FluentAssertions;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -171,6 +171,8 @@ namespace Deque.AxeCore.Selenium.Test
 
         private void InitDriver(string browser)
         {
+            string logPath = Path.Combine(TestContext.CurrentContext.WorkDirectory, $"{browser}-webdriver-logs", TestContext.CurrentContext.Test.Name);
+
             switch (browser.ToUpper())
             {
                 case "CHROME":
@@ -186,9 +188,10 @@ namespace Deque.AxeCore.Selenium.Test
                     chromeOptions.AddArgument("--silent");
                     chromeOptions.AddArgument("--allow-file-access-from-files");
 
-                    ChromeDriverService service = ChromeDriverService.CreateDefaultService(Path.GetDirectoryName(ChromeDriverPath));
-                    service.SuppressInitialDiagnosticInformation = true;
-                    WebDriver = new ChromeDriver(ChromeDriverService.CreateDefaultService(), chromeOptions);
+                    ChromeDriverService chromeService = ChromeDriverService.CreateDefaultService(Path.GetDirectoryName(ChromeDriverPath));
+                    chromeService.SuppressInitialDiagnosticInformation = true;
+                    chromeService.LogPath = logPath;
+                    WebDriver = new ChromeDriver(chromeService, chromeOptions);
 
                     break;
 
@@ -198,7 +201,10 @@ namespace Deque.AxeCore.Selenium.Test
                     FirefoxOptions firefoxOptions = new FirefoxOptions();
                     firefoxOptions.AddArgument("-headless");
 
-                    WebDriver = new FirefoxDriver(Path.GetDirectoryName(FirefoxDriverPath), firefoxOptions);
+                    FirefoxDriverService firefoxService = FirefoxDriverService.CreateDefaultService(Path.GetDirectoryName(FirefoxDriverPath));
+                    firefoxService.SuppressInitialDiagnosticInformation = true;
+                    WebDriver = new FirefoxDriver(firefoxService, firefoxOptions);
+
                     break;
 
                 default:
