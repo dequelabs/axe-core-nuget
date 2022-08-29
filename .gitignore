@@ -10,6 +10,9 @@ coverage*.json
 coveragereport
 [Tt]est[Rr]esults
 
-# Selenium drivers
+# Selenium drivers installed at runtime by WebDriverManager
 **/test/[Cc]hrome/
 **/test/[Ff]irefox/
+
+# Can be removed once npm bundling is migrated to commons package (#8)
+packages/playwright/src/NodeDependencies/dist/
