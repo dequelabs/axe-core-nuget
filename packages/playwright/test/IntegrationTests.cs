@@ -191,17 +191,6 @@ namespace Deque.AxeCore.Playwright.Test
                 .Any(target => includedInTargets == targets.Contains(target)))));
         }
 
-        [TestMethod]
-        [DynamicData(nameof(GetReportParameters), DynamicDataSourceType.Method)]
-        public async Task RunAxe_WithReport_OutputsReport(AxeHtmlReportOptions reportOptions, string? expectedReportPath)
-        {
-            await NavigateToPage("basic.html");
-
-            await Page!.RunAxe(reportOptions: reportOptions);
-
-            Assert.IsTrue(File.Exists(expectedReportPath));
-        }   
-
         private static IEnumerable<object?[]> GetAxeRulesParameters()
         {
             yield return new object?[]
@@ -323,21 +312,6 @@ namespace Deque.AxeCore.Playwright.Test
                     "#id-example"
                 },
                 false
-            };
-        }
-
-        private static IEnumerable<object?[]> GetReportParameters()
-        {
-            yield return new object[]
-            {
-                new AxeHtmlReportOptions(),
-                "report/index.html"
-            };
-
-            yield return new object[]
-            {
-                new AxeHtmlReportOptions(reportDir: "custom-report-directory"),
-                "custom-report-directory/index.html"
             };
         }
 
