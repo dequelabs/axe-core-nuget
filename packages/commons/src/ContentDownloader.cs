@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 
-namespace Deque.AxeCore.Selenium
+namespace Deque.AxeCore.Commons
 {
     /// <summary>
     /// Get resources content from URLs

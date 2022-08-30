@@ -1,8 +1,7 @@
-﻿using Deque.AxeCore.Commons;
-using System;
+﻿using System;
 using System.Net;
 
-namespace Deque.AxeCore.Selenium
+namespace Deque.AxeCore.Commons
 {
     public class ExternalAxeScriptProvider : IAxeScriptProvider
     {
