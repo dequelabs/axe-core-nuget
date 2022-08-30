@@ -6,6 +6,7 @@ using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Deque.AxeCore.Commons;
 
 namespace Deque.AxeCore.Selenium.Test
 {

@@ -1,4 +1,4 @@
-﻿namespace Deque.AxeCore.Selenium
+﻿namespace Deque.AxeCore.Commons
 {
     public class AxeTestEnvironment
     {

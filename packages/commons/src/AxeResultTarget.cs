@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Deque.AxeCore.Selenium
+namespace Deque.AxeCore.Commons
 {
     /// <summary>
     /// With AxeResultTarget,  we will have either a <see cref="Selector"/> or <see cref="Selectors"/> for each target.
