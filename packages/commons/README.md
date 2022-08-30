@@ -4,7 +4,7 @@ Provides a .NET wrapper around [axe-core](https://github.com/dequelabs/axe-core)
 
 ## Getting Started
 
-*Note: this package is still under development; these instructions won't work until we perform an initial NuGet release*
+_Note: this package is still under development; these instructions won't work until we perform an initial NuGet release_
 
 Install a [.NET SDK](https://dotnet.microsoft.com/download) if you haven't already.
 
@@ -18,8 +18,20 @@ dotnet add package Deque.AxeCore.Commons
 
 This package exists primarily to help .NET tool developers integrate `axe-core` with different tools and test frameworks. If you are just trying to write test cases using `axe-core`, you probably want to use one of these instead:
 
-* [Deque.AxeCore.Playwright](../playwright/README.md) in combination with [Playwright for .NET](https://playwright.dev/dotnet/)
-* [Deque.AxeCore.Selenium](../selenium/README.md) in combination with [Selenium](https://www.selenium.dev/)'s [C# Selenium.WebDriver package](https://www.nuget.org/packages/Selenium.WebDriver)
+- [Deque.AxeCore.Playwright](../playwright/README.md) in combination with [Playwright for .NET](https://playwright.dev/dotnet/)
+- [Deque.AxeCore.Selenium](../selenium/README.md) in combination with [Selenium](https://www.selenium.dev/)'s [C# Selenium.WebDriver package](https://www.nuget.org/packages/Selenium.WebDriver)
+
+### `AxeResult`
+
+`AxeResult` represents the [axe-core Results Object](https://www.deque.com/axe/core-documentation/api-documentation/#results-object).
+
+### `AxeRunContext`
+
+`AxeRunContext` represents the [axe-core Context Parameter](https://www.deque.com/axe/core-documentation/api-documentation/#context-parameter).
+
+### `AxeRunOptions`
+
+`AxeRunOptions` represents the [axe-core Options Parameter](https://www.deque.com/axe/core-documentation/api-documentation/#options-parameter).
 
 ## License
 
