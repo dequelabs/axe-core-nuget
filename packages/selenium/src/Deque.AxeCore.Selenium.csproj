@@ -56,12 +56,5 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\scan.js" />
   </ItemGroup>
-  <Choose>
-    <When Condition=" '$(TargetFramework)' != 'netstandard2.0' and '$(TargetFramework)' != 'netstandard2.1'   ">
-      <ItemGroup>
-        <Reference Include="System.Web" />
-      </ItemGroup>
-    </When>
-  </Choose>
   
 </Project>
