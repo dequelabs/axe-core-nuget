@@ -1,7 +1,7 @@
 # Deque.AxeCore.Selenium
 
-[![Deque.AxeCore.Selenium NuGet package](https://img.shields.io/nuget/v/Deque.AxeCore.Selenium)](https://www.nuget.org/packages/Deque.AxeCore.Selenium)
-[![NuGet package download counter](https://img.shields.io/nuget/dt/Deque.AxeCore.Selenium)](https://www.nuget.org/packages/Deque.AxeCore.Selenium/)
+[![Deque.AxeCore.Selenium NuGet package](https://img.shields.io/nuget/v/Deque.AxeCore.Selenium)](https://www.nuget.org/packages/Deque.AxeCore.Selenium) 
+[![NuGet package download counter](https://img.shields.io/nuget/dt/Deque.AxeCore.Selenium)](https://www.nuget.org/packages/Deque.AxeCore.Selenium/) 
 
 Automated web accessibility testing with .NET, C#, and Selenium. Wraps the [axe-core](https://github.com/dequelabs/axe-core) accessibility scanning engine and the [Selenium.WebDriver](https://www.seleniumhq.org/) browser automation framework.
 
@@ -80,7 +80,7 @@ AxeResult axeResult = new AxeBuilder(webDriver)
     .Analyze();
 ```
 
-Scopes future `Analyze()` calls to include _only_ the element(s) matching the given CSS selector.
+Scopes future `Analyze()` calls to include *only* the element(s) matching the given CSS selector.
 
 `Include` may be chained multiple times to include multiple selectors in a scan.
 
@@ -220,7 +220,7 @@ AxeResult axeResult = new AxeBuilder(webDriver)
 
 ### `AxeBuilder.WithOptions(AxeRunOptions options)`
 
-_Note: in most cases, the simpler `WithRules`, `WithTags`, and `DisableRules` can be used instead._
+*Note: in most cases, the simpler `WithRules`, `WithTags`, and `DisableRules` can be used instead.*
 
 ```csharp
 AxeResult axeResult = new AxeBuilder(webDriver)
@@ -243,7 +243,6 @@ Causes future calls to `Analyze` to use the specified options when calling `axe.
 `WithOptions` is not compatible with the deprecated raw `Options` property.
 
 #### Skip iFrames
-
 If you don't want to run Axe on iFrames you can tell Axe skip with AxeRunOptions.
 
 ```csharp
@@ -254,7 +253,6 @@ AxeResult axeResult = new AxeBuilder(webDriver)
     })
     .Analyze();
 ```
-
 Prevents Axe core from getting injected into page iFrames.
 
 Causes future calls to `Analyze` to use the specified options when calling `axe.run` in axe-core. See [the axe-core API documentation](https://github.com/dequelabs/axe-core/blob/develop/doc/API.md#options-parameter) for descriptions of the different properties of `AxeRunOptions`.
@@ -267,7 +265,7 @@ AxeResult axeResult = new AxeBuilder(webDriver)
     .Analyze();
 ```
 
-Causes future calls to `Analyze` to export their results to a JSON file, _in addition_ to being returned as an `AxeResult` object as usual.
+Causes future calls to `Analyze` to export their results to a JSON file, *in addition* to being returned as an `AxeResult` object as usual.
 
 The output format is exactly the same as axe-core would have produced natively, and is compatible with other tools that read axe result JSON, like [axe-sarif-converter](https://github.com/microsoft/axe-sarif-converter).
 
@@ -283,9 +281,9 @@ AxeBuilderOptions axeBuilderOptions = new AxeBuilderOptions
 AxeResult axeResult = new AxeBuilder(webDriver, axeBuilderOptions).Analyze();
 ```
 
-### _Deprecated_: `AxeBuilder.Options`
+### *Deprecated*: `AxeBuilder.Options`
 
-_This property is deprecated; instead, use `WithOptions`, `WithRules`, `WithTags`, and `DisableRules`_
+*This property is deprecated; instead, use `WithOptions`, `WithRules`, `WithTags`, and `DisableRules`*
 
 ```csharp
 AxeBuilder axeBuilder = new AxeBuilder(webDriver);
