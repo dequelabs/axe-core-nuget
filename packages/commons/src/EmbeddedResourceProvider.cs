@@ -8,7 +8,7 @@ namespace Deque.AxeCore.Commons
         public static string ReadEmbeddedFile(string fileName)
         {
             var assembly = typeof(EmbeddedResourceProvider).Assembly;
-            var resourceStream = assembly.GetManifestResourceStream($"Deque.AxeCore.Common.Resources.{fileName}");
+            var resourceStream = assembly.GetManifestResourceStream($"Deque.AxeCore.Commons.Resources.{fileName}");
             using (var reader = new StreamReader(resourceStream, Encoding.UTF8))
             {
                 return reader.ReadToEnd();
