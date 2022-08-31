@@ -39,7 +39,7 @@ namespace Deque.AxeCore.Selenium
         /// Initialize an instance of <see cref="AxeBuilder"/>
         /// </summary>
         /// <param name="webDriver">Selenium driver to use</param>
-        public AxeBuilder(IWebDriver webDriver) : this(webDriver, new AxeBuilderOptions { ScriptProvider = new EmbeddedResourceAxeProvider() })
+        public AxeBuilder(IWebDriver webDriver) : this(webDriver, new AxeBuilderOptions { ScriptProvider = new BundledAxeScriptProvider() })
         {
         }
 
