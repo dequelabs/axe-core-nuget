@@ -21,6 +21,30 @@ This package exists primarily to help .NET tool developers integrate `axe-core` 
 * [Deque.AxeCore.Playwright](../playwright/README.md) in combination with [Playwright for .NET](https://playwright.dev/dotnet/)
 * [Deque.AxeCore.Selenium](../selenium/README.md) in combination with [Selenium](https://www.selenium.dev/)'s [C# Selenium.WebDriver package](https://www.nuget.org/packages/Selenium.WebDriver)
 
+
+## `CachedContentDownloader`
+
+Allows cacheing of downloaded external resources.
+
+## `ContentDownloader`
+
+Provides access to content from specific resources using a provided URL.
+## `EmbeddedResourceAxeProvider`
+
+This class is used to provide access to an embedded axe resources for accessibility.
+
+## `EmbeddedResourceProvider`
+
+This class provides access to other embedded file and resources. 
+
+## `ExternalAxeScriptProvider`
+
+Provides access to external Axe Scripts using a URI.
+
+## `FileAxeScriptProvider`
+
+Provides access to an Axe Script using a specified file path.
+
 ## License
 
 This package, including its embedded copy of [axe-core][axe-core], is distributed under the terms of the [Mozilla Public License, version 2.0](../../LICENSE-Deque.AxeCore.Commons.txt).
