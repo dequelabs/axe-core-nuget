@@ -21,29 +21,31 @@ This package exists primarily to help .NET tool developers integrate `axe-core` 
 * [Deque.AxeCore.Playwright](../playwright/README.md) in combination with [Playwright for .NET](https://playwright.dev/dotnet/)
 * [Deque.AxeCore.Selenium](../selenium/README.md) in combination with [Selenium](https://www.selenium.dev/)'s [C# Selenium.WebDriver package](https://www.nuget.org/packages/Selenium.WebDriver)
 
+## Axe script providers
 
-## `CachedContentDownloader`
+The `IAxeScriptProvider` interface is suitable for use as an option in an API for running an `axe-core` scan of a page. It specifies a single method, `GetScript()`, which returns a string containing JavaScript code suitable for injecting into a running page.
 
-Allows cacheing of downloaded external resources.
+This library provides two `IAxeScriptProvider` implementations:
 
-## `ContentDownloader`
+### 1. `BundledAxeScriptProvider`
 
-Provides access to content from specific resources using a provided URL.
-## `EmbeddedResourceAxeProvider`
+`BundledAxeScriptProvider` provides a bundled copy of [`axe-core`](https://github.com/dequelabs/axe-core) which is included with the library. The included version will match the major and minor version of the library, but may not match the patch version.
 
-This class is used to provide access to an embedded axe resources for accessibility.
+This script provider is suitable as a default option for users that don't wish to explicitly override the version of `axe-core` to use.
+```csharp
+IAxeScriptProvider axeScriptProvider = new BundledAxeScriptProvider();
+axeScriptProvider.GetScript(); // a string containing the contents of the bundled copy of axe.min.js
+```
 
-## `EmbeddedResourceProvider`
+### 2. `FileAxeScriptProvider`
 
-This class provides access to other embedded file and resources. 
+`FileAxeScriptProvider` is an alternate option for users that wish to provide their own separate implementation of `axe-core`, usually for the purposes of pinning to a specific `axe-core` version independently of this library's version.
 
-## `ExternalAxeScriptProvider`
+```csharp
+new FileAxeScriptProvider("./path/to/axe.min.js");
+axeScriptProvider.GetScript(); // synchronously reads the contents of file ./path/to/axe.min.js
+```
 
-Provides access to external Axe Scripts using a URI.
-
-## `FileAxeScriptProvider`
-
-Provides access to an Axe Script using a specified file path.
 
 ## License
 
