@@ -33,6 +33,31 @@ This package exists primarily to help .NET tool developers integrate `axe-core` 
 
 `AxeRunOptions` represents the [axe-core Options Parameter](https://www.deque.com/axe/core-documentation/api-documentation/#options-parameter).
 
+## Axe script providers
+
+The `IAxeScriptProvider` interface is suitable for use as an option in an API for running an `axe-core` scan of a page. It specifies a single method, `GetScript()`, which returns a string containing JavaScript code suitable for injecting into a running page.
+
+This library provides two `IAxeScriptProvider` implementations:
+
+### 1. `BundledAxeScriptProvider`
+
+`BundledAxeScriptProvider` provides a bundled copy of [`axe-core`](https://github.com/dequelabs/axe-core) which is included with the library. The included version will match the major and minor version of the library, but may not match the patch version.
+
+This script provider is suitable as a default option for users that don't wish to explicitly override the version of `axe-core` to use.
+```csharp
+IAxeScriptProvider axeScriptProvider = new BundledAxeScriptProvider();
+axeScriptProvider.GetScript(); // a string containing the contents of the bundled copy of axe.min.js
+```
+
+### 2. `FileAxeScriptProvider`
+
+`FileAxeScriptProvider` is an alternate option for users that wish to provide their own separate implementation of `axe-core`, usually for the purposes of pinning to a specific `axe-core` version independently of this library's version.
+
+```csharp
+new FileAxeScriptProvider("./path/to/axe.min.js");
+axeScriptProvider.GetScript(); // synchronously reads the contents of file ./path/to/axe.min.js
+```
+
 ## License
 
 This package, including its embedded copy of [axe-core][axe-core], is distributed under the terms of the [Mozilla Public License, version 2.0](../../LICENSE-Deque.AxeCore.Commons.txt).

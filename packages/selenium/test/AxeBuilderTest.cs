@@ -10,8 +10,15 @@ using Deque.AxeCore.Commons;
 
 namespace Deque.AxeCore.Selenium.Test
 {
+    public class TestAxeScriptProvider : IAxeScriptProvider {
+        public static string stubAxeScript = "stub axe script";
+        public string GetScript() {
+            return stubAxeScript;
+        } 
+    }
+
     [TestFixture]
-    [NonParallelizable]
+    [NonParallelizable] 
     public class AxeBuilderTest
     {
         private static Mock<IWebDriver> webDriverMock = new Mock<IWebDriver>();
@@ -21,6 +28,10 @@ namespace Deque.AxeCore.Selenium.Test
         {
             Formatting = Formatting.None,
             NullValueHandling = NullValueHandling.Ignore
+        };
+
+        private static readonly AxeBuilderOptions stubAxeBuilderOptions = new AxeBuilderOptions {
+            ScriptProvider = new TestAxeScriptProvider()
         };
 
         private readonly object testAxeResult = new
@@ -39,7 +50,7 @@ namespace Deque.AxeCore.Selenium.Test
             Assert.Throws<ArgumentNullException>(() =>
             {
                 //arrange / act /assert
-                var axeBuilder = new AxeBuilder(null);
+                var axeBuilder = new AxeBuilder(null, stubAxeBuilderOptions);
                 axeBuilder.Should().NotBeNull();
             });
         }
@@ -65,7 +76,7 @@ namespace Deque.AxeCore.Selenium.Test
             SetupVerifiableAxeInjectionCall();
             SetupVerifiableScanCall(null, "{}");
 
-            var builder = new AxeBuilder(webDriverMock.Object);
+            var builder = new AxeBuilder(webDriverMock.Object, stubAxeBuilderOptions);
             var result = builder.Analyze();
 
             VerifyAxeResult(result);
@@ -87,7 +98,7 @@ namespace Deque.AxeCore.Selenium.Test
             SetupVerifiableAxeInjectionCall();
             SetupVerifiableScanCall(expectedContext, "{}");
 
-            var builder = new AxeBuilder(webDriverMock.Object).Include("#div1");
+            var builder = new AxeBuilder(webDriverMock.Object, stubAxeBuilderOptions).Include("#div1");
 
             var result = builder.Analyze();
 
@@ -112,7 +123,7 @@ namespace Deque.AxeCore.Selenium.Test
             SetupVerifiableAxeInjectionCall();
             SetupVerifiableScanCall(expectedContext, "{}");
 
-            var builder = new AxeBuilder(webDriverMock.Object).Include(includeSelector).Exclude(excludeSelector);
+            var builder = new AxeBuilder(webDriverMock.Object, stubAxeBuilderOptions).Include(includeSelector).Exclude(excludeSelector);
 
             var result = builder.Analyze();
 
@@ -135,7 +146,7 @@ namespace Deque.AxeCore.Selenium.Test
             SetupVerifiableAxeInjectionCall();
             SetupVerifiableScanCall(expectedContext, "{}");
 
-            var builder = new AxeBuilder(webDriverMock.Object).Exclude("#div1");
+            var builder = new AxeBuilder(webDriverMock.Object, stubAxeBuilderOptions).Exclude("#div1");
 
             var result = builder.Analyze();
 
@@ -155,7 +166,7 @@ namespace Deque.AxeCore.Selenium.Test
             SetupVerifiableAxeInjectionCall();
             SetupVerifiableScanCall(null, expectedOptions);
 
-            var builder = new AxeBuilder(webDriverMock.Object);
+            var builder = new AxeBuilder(webDriverMock.Object, stubAxeBuilderOptions);
 #pragma warning disable CS0618
             builder.Options = expectedOptions;
 #pragma warning restore CS0618
@@ -178,7 +189,7 @@ namespace Deque.AxeCore.Selenium.Test
             SetupVerifiableAxeInjectionCall();
             SetupVerifiableScanElementCall(expectedContext.Object, expectedOptions);
 
-            var builder = new AxeBuilder(webDriverMock.Object);
+            var builder = new AxeBuilder(webDriverMock.Object, stubAxeBuilderOptions);
 #pragma warning disable CS0618
             builder.Options = expectedOptions;
 #pragma warning restore CS0618
@@ -215,7 +226,7 @@ namespace Deque.AxeCore.Selenium.Test
             SetupVerifiableAxeInjectionCall();
             SetupVerifiableScanCall(null, expectedOptions);
 
-            var builder = new AxeBuilder(webDriverMock.Object)
+            var builder = new AxeBuilder(webDriverMock.Object, stubAxeBuilderOptions)
                 .DisableRules("excludeRule1", "excludeRule2")
                 .WithRules("rule1", "rule2");
 
@@ -245,7 +256,7 @@ namespace Deque.AxeCore.Selenium.Test
             SetupVerifiableAxeInjectionCall();
             SetupVerifiableScanCall(null, expectedOptions);
 
-            var builder = new AxeBuilder(webDriverMock.Object)
+            var builder = new AxeBuilder(webDriverMock.Object, stubAxeBuilderOptions)
                 .WithTags("tag1", "tag2");
 
             var result = builder.Analyze();
@@ -271,7 +282,7 @@ namespace Deque.AxeCore.Selenium.Test
             SetupVerifiableAxeInjectionCall();
             SetupVerifiableScanCall(null, expectedRunOptions);
 
-            var builder = new AxeBuilder(webDriverMock.Object)
+            var builder = new AxeBuilder(webDriverMock.Object, stubAxeBuilderOptions)
                 .WithOptions(runOptions);
 
             var result = builder.Analyze();
@@ -291,7 +302,7 @@ namespace Deque.AxeCore.Selenium.Test
             VerifyExceptionThrown<ArgumentNullException>(() => new AxeBuilder(webDriverMock.Object, null));
             VerifyExceptionThrown<ArgumentNullException>(() => new AxeBuilder(null));
 
-            var builder = new AxeBuilder(webDriverMock.Object);
+            var builder = new AxeBuilder(webDriverMock.Object, stubAxeBuilderOptions);
 
             VerifyExceptionThrown<ArgumentNullException>(() => builder.WithRules(null));
             VerifyExceptionThrown<ArgumentNullException>(() => builder.DisableRules(null));
@@ -308,7 +319,7 @@ namespace Deque.AxeCore.Selenium.Test
 
             SetupVerifiableAxeInjectionCall();
 
-            var builder = new AxeBuilder(webDriverMock.Object);
+            var builder = new AxeBuilder(webDriverMock.Object, stubAxeBuilderOptions);
 
             VerifyExceptionThrown<ArgumentException>(() => builder.WithRules(values));
             VerifyExceptionThrown<ArgumentException>(() => builder.DisableRules(values));
@@ -322,7 +333,7 @@ namespace Deque.AxeCore.Selenium.Test
         {
             SetupVerifiableAxeInjectionCall();
 
-            var builder = new AxeBuilder(webDriverMock.Object);
+            var builder = new AxeBuilder(webDriverMock.Object, stubAxeBuilderOptions);
 #pragma warning disable CS0618
             builder.Options = "{xpath:true}";
 #pragma warning restore CS0618
@@ -361,7 +372,7 @@ namespace Deque.AxeCore.Selenium.Test
             webDriverMock.Setup(d => d.SwitchTo()).Returns(targetLocatorMock.Object);
 
             jsExecutorMock
-                .Setup(js => js.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("axe.min.js"))).Verifiable();
+                .Setup(js => js.ExecuteScript(TestAxeScriptProvider.stubAxeScript)).Verifiable();
         }
 
         private void SetupVerifiableScanCall(string serializedContext, string serialzedOptions)

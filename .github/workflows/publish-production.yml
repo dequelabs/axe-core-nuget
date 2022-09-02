@@ -1,0 +1,47 @@
+name: Publish production
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-test:
+    uses: ./.github/workflows/build-and-test.yml
+    with:
+      version-suffix: ""
+
+  publish-nuget:
+    uses: ./.github/workflows/publish-nuget-packages.yml
+    if: github.repository_owner == 'dequelabs' # don't attempt to publish from forks
+    needs: ["build-and-test"]
+    secrets:
+      NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+
+  publish-github-release:
+    if: github.repository_owner == 'dequelabs' # don't attempt to publish from forks
+    needs: ["publish-nuget"]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # this permission controls release creation
+    steps:     
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Setup go
+        uses: actions/setup-go@v3
+        with:
+          go-version: '^1.19.0'
+
+      - name: Install github-release tool
+        run: go install gopkg.in/aktau/github-release.v0@v0.10.0
+
+      - name: Download and run GitHub release script
+        run: |
+          curl https://raw.githubusercontent.com/dequelabs/attest-release-scripts/develop/src/node-github-release.sh -s -o ./node-github-release.sh
+          chmod +x ./node-github-release.sh
+          ./node-github-release.sh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CIRCLE_PROJECT_USERNAME: ${{ github.repository_owner }}
+          CIRCLE_PROJECT_REPONAME: ${{ github.event.repository.name }}
