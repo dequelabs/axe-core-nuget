@@ -17,9 +17,6 @@ namespace Deque.AxeCore.Playwright.Test
 
         public IntegrationTests()
         {
-#if DEBUG
-            Environment.SetEnvironmentVariable("HEADED", "1");
-#endif
             m_testServer = new();
         }
 
