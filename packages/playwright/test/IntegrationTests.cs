@@ -183,8 +183,8 @@ namespace Deque.AxeCore.Playwright.Test
             await NavigateToPage("basic.html");
 
             AxeResults axeResults = await Page!.RunAxe(new AxeRunOptions(xpath: true));
-            var violationsWithoutAncestry = axeResults.Violations.Where(violation => violation.Nodes!.Any(node => node.XPath == null || !node.XPath.Any()));
-            Assert.That(violationsWithoutAncestry, Is.Empty);
+            var violationsWithoutXPath = axeResults.Violations.Where(violation => violation.Nodes!.Any(node => node.XPath == null || !node.XPath.Any()));
+            Assert.That(violationsWithoutXPath, Is.Empty);
         }
 
         [Test]
