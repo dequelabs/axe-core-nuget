@@ -24,7 +24,7 @@ The files in this project are formatted by using the `dotnet format` command
 
 We expect all code to be 100% covered by tests. We don't have or want code coverage metrics but we will review tests and suggest changes when we think the test(s) do(es) not adequately exercise the code/code changes.
 
-## Getting started
+## Getting Started
 
 ### Prerequisites
 
