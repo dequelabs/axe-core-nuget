@@ -11,22 +11,19 @@ namespace Deque.AxeCore.Commons.Test
     [NonParallelizable]
     public class FileAxeScriptProviderTest
     {
-        private readonly static string testFile = Path.Join(Directory.GetParent(Environment.CurrentDirectory), "/src/Resources/sampleFile.txt");
         //Tests for creating a FileAxeScriptProvider
-        [Test]
-        public void ConstructorPassedValidFile()
-        {
-            //Construction
-            // Console.WriteLine(Environment.CurrentDirectory);
-            // Console.WriteLine(Directory.GetParent(Environment.CurrentDirectory));
-            var scriptProvider = new FileAxeScriptProvider(testFile);
-            scriptProvider.Should().NotBeNull();
-            // scriptProvider._filePath.Should().Be(testFile);
+        // [Test]
+        // public void ConstructorPassedValidFile()
+        // {
+        //     //Construction
+        //     var scriptProvider = new FileAxeScriptProvider($"Deque.AxeCore.Commons.Resources.sampleFile.txt");
+        //     scriptProvider.Should().NotBeNull();
+        //     // scriptProvider._filePath.Should().Be(testFile);
 
-            //Checking GetScript
-            var readResult = scriptProvider.GetScript();
-            readResult.Should().Be("sample output");
-        }
+        //     //Checking GetScript
+        //     var readResult = scriptProvider.GetScript();
+        //     readResult.Should().Be("sample output");
+        // }
 
         [Test]
         public void ConstructorPassedNullOrEmptyString()
@@ -39,7 +36,7 @@ namespace Deque.AxeCore.Commons.Test
             
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var scriptProvider = new FileAxeScriptProvider(" ");                
+                var scriptProvider = new FileAxeScriptProvider("");                
                 scriptProvider.Should().NotBeNull();
             });
         }
@@ -50,9 +47,19 @@ namespace Deque.AxeCore.Commons.Test
             Assert.Throws<ArgumentException>(() =>
             {
                 var scriptProvider = new FileAxeScriptProvider("foo.html");
-                // scriptProvider.Should().NotBeNull();
+                scriptProvider.Should().NotBeNull();
             });
-            //Assert an error was thrown
-        }    
+        }
+
+        [Test]
+        //Add a file to the directory
+        //Create a FileAxeScriptProvider
+        //Remove the file from the directory
+        //Call GetScript and Assert the InvalidOperationException is thrown
+            // Assert.Throws<InvalidOperationException>(() =>
+            // {
+            //     scriptProvider.GetScript();
+            //     scriptProvider.Should().NotBeNull();
+            // });    
     }
 }
