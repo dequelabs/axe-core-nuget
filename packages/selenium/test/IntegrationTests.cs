@@ -1,17 +1,15 @@
-﻿using FluentAssertions;
-using HtmlAgilityPack;
-using Newtonsoft.Json.Linq;
+using FluentAssertions;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
-using OpenQA.Selenium.Support.Events;
 using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Threading;
 using WebDriverManager;
 using WebDriverManager.DriverConfigs;
@@ -129,16 +127,17 @@ namespace Deque.AxeCore.Selenium.Test
                 .Violations
                 .FirstOrDefault(x => x.Id == "color-contrast");
 
-            Assert.IsNotNull(colorContrast);
-            Assert.AreEqual(3 /* including 1 from the top-level frame and 2 from the iframe */, colorContrast.Nodes.Length);
+            colorContrast.Should().NotBeNull();
+            colorContrast.Nodes.Should().HaveCount(3); // including 1 from the top-level frame and 2 from the iframe
 
             var shadowDomIframeTargetNode = colorContrast
                 .Nodes
                 .Where(x => x.Target.Any(node => node.Selectors.Any()))
                 .Select(x => x.Target.Last())
                 .First();
-            Assert.IsNotNull(shadowDomIframeTargetNode);
-            Assert.IsTrue(shadowDomIframeTargetNode.Selectors.Count == 2);
+
+            shadowDomIframeTargetNode.Should().NotBeNull();
+            shadowDomIframeTargetNode.Selectors.Should().HaveCount(2);
         }
 
         [Test]
@@ -159,8 +158,8 @@ namespace Deque.AxeCore.Selenium.Test
                 .Violations
                 .FirstOrDefault(x => x.Id == "color-contrast");
 
-            Assert.IsNotNull(colorContrast);
-            Assert.AreEqual(1 /* missing the 2 from the iframe */, colorContrast.Nodes.Length);
+            colorContrast.Should().NotBeNull();
+            colorContrast.Nodes.Should().HaveCount(1); // missing the 2 from the iframe
         }
 
         private void LoadSimpleTestPage()
@@ -188,9 +187,9 @@ namespace Deque.AxeCore.Selenium.Test
                     chromeOptions.AddArgument("--silent");
                     chromeOptions.AddArgument("--allow-file-access-from-files");
 
-                    ChromeDriverService service = ChromeDriverService.CreateDefaultService(Path.GetDirectoryName(ChromeDriverPath));
-                    service.SuppressInitialDiagnosticInformation = true;
-                    WebDriver = new ChromeDriver(ChromeDriverService.CreateDefaultService(), chromeOptions);
+                    ChromeDriverService chromeService = ChromeDriverService.CreateDefaultService(Path.GetDirectoryName(ChromeDriverPath));
+                    chromeService.SuppressInitialDiagnosticInformation = true;
+                    WebDriver = new ChromeDriver(chromeService, chromeOptions);
 
                     break;
 
@@ -200,7 +199,9 @@ namespace Deque.AxeCore.Selenium.Test
                     FirefoxOptions firefoxOptions = new FirefoxOptions();
                     firefoxOptions.AddArgument("-headless");
 
-                    WebDriver = new FirefoxDriver(Path.GetDirectoryName(FirefoxDriverPath), firefoxOptions);
+                    FirefoxDriverService firefoxService = FirefoxDriverService.CreateDefaultService(Path.GetDirectoryName(FirefoxDriverPath));
+                    firefoxService.SuppressInitialDiagnosticInformation = true;
+                    WebDriver = new FirefoxDriver(firefoxService, firefoxOptions);
                     break;
 
                 default:
