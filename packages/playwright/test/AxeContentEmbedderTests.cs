@@ -2,20 +2,21 @@
 
 using Deque.AxeCore.Playwright.AxeContent;
 using Microsoft.Playwright;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Moq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Deque.AxeCore.Playwright.Test
 {
-    [TestClass]
+    [TestFixture]
+    [Category("Unit")]
     public sealed class AxeContentEmbedderTests
     {
-        [TestMethod]
-        [DataRow(false, 1, 0)]
-        [DataRow(true, 0, 1)]
-        [DataRow(null, 0, 1)]
+        [Test]
+        [TestCase(false, 1, 0)]
+        [TestCase(true, 0, 1)]
+        [TestCase(null, 0, 1)]
         public async Task EmbedAxeCoreIntoPage_NoIFrames_EmbedsIntoPage(bool? embedIntoFrames, int expectedPageEvalCount, int expectedIframeEvalCount)
         {
             const string axeContent = "() => void";

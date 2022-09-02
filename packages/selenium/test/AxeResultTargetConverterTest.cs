@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+using FluentAssertions;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using System.IO;
 using System.Linq;
@@ -26,7 +27,7 @@ namespace Deque.AxeCore.Selenium.Test
             var json = $@"{{""target"":[""{testObject.Selector}""]}}";
             var axeResultTarget = DeserializeJsonAndReturnFirstTarget(json);
 
-            Assert.AreEqual(axeResultTarget?.Selector, testObject.Selector);
+            axeResultTarget?.Selector.Should().Be(testObject.Selector);
         }
 
         [Test]
@@ -40,8 +41,7 @@ namespace Deque.AxeCore.Selenium.Test
 
             var axeResultTarget = DeserializeJsonAndReturnFirstTarget(json);
 
-            Assert.AreEqual(axeResultTarget?.Selectors.First(), testObject.Selectors.First());
-            Assert.AreEqual(axeResultTarget?.Selectors.Last(), testObject.Selectors.Last());
+            axeResultTarget?.Selectors.Should().ContainInOrder(testObject.Selectors);
         }
 
         [Test]
