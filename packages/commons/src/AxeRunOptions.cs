@@ -3,7 +3,7 @@ using Newtonsoft.Json.Converters;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace Deque.AxeCore.Selenium
+namespace Deque.AxeCore.Commons
 {
     /// <summary>
     /// Used as part of <see cref="AxeRunOptions" to configure rules/tags to be executed/>
