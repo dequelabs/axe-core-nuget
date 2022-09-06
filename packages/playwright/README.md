@@ -199,15 +199,6 @@ axeResults = await locator.RunAxe(options);
 
 ```
 
-It is also possible to create a html report of a run.
-
-```cs
-
-AxeHtmlReportOptions reportOptions = new(reportDir: "C:\myReport");
-AxeResults axeResults = await page.RunAxe(reportOptions: reportOptions);
-
-```
-
 ## Contributing
 
 Refer to the general [axe-core-nuget CONTRIBUTING.md](../../CONTRIBUTING.md).

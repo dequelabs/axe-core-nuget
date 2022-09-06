@@ -2,7 +2,6 @@
 
 using Deque.AxeCore.Playwright.AxeContent;
 using Deque.AxeCore.Playwright.AxeCoreWrapper;
-using Deque.AxeCore.Playwright.HtmlReport;
 using Microsoft.Playwright;
 using System.Collections.Generic;
 using System.IO.Abstractions;
@@ -37,11 +36,10 @@ namespace Deque.AxeCore.Playwright
         /// </summary>
         /// <param name="page">The Playwright Page object</param>
         /// <param name="options">Options for running Axe.</param>
-        /// <param name="reportOptions">Options for creating a Html report of the run.</param>
         /// <returns>The AxeResults</returns>
-        public static async Task<AxeResults> RunAxe(this IPage page, AxeRunOptions? options = null, AxeHtmlReportOptions? reportOptions = null)
+        public static async Task<AxeResults> RunAxe(this IPage page, AxeRunOptions? options = null)
         {
-            return await RunAxeInner(page, null, options, reportOptions);
+            return await RunAxeInner(page, null, options);
         }
 
         /// <summary>
@@ -50,18 +48,16 @@ namespace Deque.AxeCore.Playwright
         /// <param name="page">The Playwright Page object</param>
         /// <param name="context">Context to specify which element to run axe on.</param>
         /// <param name="options">Options for running Axe.</param>
-        /// <param name="reportOptions">Options for creating a Html report of the run.</param>
         /// <returns>The AxeResults</returns>
         public static async Task<AxeResults> RunAxe(
             this IPage page, 
             AxeRunContext context, 
-            AxeRunOptions? options = null, 
-            AxeHtmlReportOptions? reportOptions = null)
+            AxeRunOptions? options = null)
         {
-            return await RunAxeInner(page, context, options, reportOptions);
+            return await RunAxeInner(page, context, options);
         }
 
-        private static async Task<AxeResults> RunAxeInner(this IPage page, AxeRunContext? context, AxeRunOptions? options, AxeHtmlReportOptions? reportOptions)
+        private static async Task<AxeResults> RunAxeInner(this IPage page, AxeRunContext? context, AxeRunOptions? options)
         {
             IAxeContentProvider axeContentProvider = new DefaultAxeContentProvider();
             IAxeContentEmbedder axeContentEmbedder = new DefaultAxeContentEmbedder(axeContentProvider);
@@ -70,12 +66,6 @@ namespace Deque.AxeCore.Playwright
 
             AxeResults results = await axeCoreWrapper.Run(page, context, options);
             IFileSystem fileSystem = new FileSystem();
-
-            if(reportOptions != null && !(reportOptions.OnlyOnViolations && !results.Violations.Any()))
-            {
-                IHtmlReportBuilder htmlReportBuilder = new HtmlReportBuilder(axeContentProvider, fileSystem.Directory, fileSystem.File);
-                htmlReportBuilder.BuildReport(results, reportOptions);
-            }
 
             return results;
         }
