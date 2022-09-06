@@ -61,10 +61,6 @@
   </Target>
 
   <ItemGroup>
-    <EmbeddedResource Include="node_modules/axe-core/axe.min.js" Link="Resources/axe.min.js" />
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Include="Resources/sampleFile.txt" />
   </ItemGroup>
 </Project>
