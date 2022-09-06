@@ -12,12 +12,13 @@ namespace Deque.AxeCore.Commons.Test
     [NonParallelizable]
     public class FileAxeScriptProviderTest
     {
+        private static readonly string testContext = TestContext.CurrentContext.TestDirectory.ToString();
+        private readonly string basePath = testContext.Split(new string[] { "test" }, StringSplitOptions.None)[0];
+        
         //Tests for creating a FileAxeScriptProvider
         [Test]
         public void ConstructorPassedValidFile()
         {
-            var targetFramework = RuntimeInformation.FrameworkDescription.ToString();
-            var basePath = targetFramework.Contains("Framework") ? Directory.GetParent(Environment.CurrentDirectory).FullName : Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.Parent.FullName;
             var absolutePath = Path.Combine(basePath, "src", "Resources", "sampleFile.txt");
             
             //Construction
@@ -50,20 +51,29 @@ namespace Deque.AxeCore.Commons.Test
         {
             Assert.Throws<ArgumentException>(() =>
             {
-                var scriptProvider = new FileAxeScriptProvider("foo.html");
+                var scriptProvider = new FileAxeScriptProvider("sample.html");
                 scriptProvider.Should().NotBeNull();
             });
         }
 
-        //[Test]
-        //Add a file to the directory
-        //Create a FileAxeScriptProvider
-        //Remove the file from the directory
-        //Call GetScript and Assert the InvalidOperationException is thrown
-            // Assert.Throws<InvalidOperationException>(() =>
-            // {
-            //     scriptProvider.GetScript();
-            //     scriptProvider.Should().NotBeNull();
-            // });    
+        // [Test]
+        // public void GetScriptForNonexistentFile()
+        // {
+        //     //Add a file to the directory
+        //     var newPath = Path.Combine(basePath, "src", "Resources", "foo.txt");
+        //     Console.WriteLine(newPath);
+        //     File.Create(newPath);
+        //     //Create a FileAxeScriptProvider
+        //     var scriptProvider = new FileAxeScriptProvider(newPath);
+        //     //Remove the file from the directory
+        //     File.Delete(newPath);
+        //     //Call GetScript and Assert the InvalidOperationException is thrown
+        //     Assert.Throws<InvalidOperationException>(() =>
+        //     {
+        //         scriptProvider.GetScript();
+        //         scriptProvider.Should().NotBeNull();
+        //     });
+        // }
+            
     }
 }
