@@ -1,5 +1,6 @@
 ﻿#nullable enable
 
+using Deque.AxeCore.Commons;
 using Deque.AxeCore.Playwright.AxeContent;
 using Microsoft.Playwright;
 using NUnit.Framework;
@@ -33,8 +34,8 @@ namespace Deque.AxeCore.Playwright.Test
                 frameTwo.Object 
             };
 
-            Mock<IAxeContentProvider> contentProviderMock = new();
-            contentProviderMock.Setup(mock => mock.GetAxeCoreScriptContent())
+            Mock<IAxeScriptProvider> contentProviderMock = new();
+            contentProviderMock.Setup(mock => mock.GetScript())
                 .Returns(axeContent);
 
             DefaultAxeContentEmbedder contentEmbedder = new(contentProviderMock.Object);
