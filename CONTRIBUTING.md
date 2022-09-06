@@ -8,7 +8,7 @@ In order to contribute, you must accept the [contributor license agreement](http
 
 For code contributions, we recommend reviewing the following docs from the axe-core repo:
 1. [Code submission guidelines](https://github.com/dequelabs/axe-core/blob/develop/doc/code-submission-guidelines.md) 
-2. [CONTRIBUTING.md](https://github.com/dequelabs/axe-core/blob/develop/doc/code-submission-guidelines.md) 
+2. [CONTRIBUTING.md](https://github.com/dequelabs/axe-core/blob/develop/CONTRIBUTING.md) 
 
 This documentation covers a variety of important information you'll need to review before making code changes, including our commitment to code quality, preferred commit structure, and relevant pull request formatting and processes. 
 
@@ -23,6 +23,10 @@ The files in this project are formatted by using the `dotnet format` command
 ### Testing
 
 We expect all code to be 100% covered by tests. We don't have or want code coverage metrics but we will review tests and suggest changes when we think the test(s) do(es) not adequately exercise the code/code changes.
+
+### Style
+
+This project uses the default `dotnet format` settings for formatting C# files. PR builds include an automated formatting check.
 
 ## Getting Started
 
