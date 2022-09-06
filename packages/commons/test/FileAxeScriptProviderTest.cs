@@ -56,24 +56,20 @@ namespace Deque.AxeCore.Commons.Test
             });
         }
 
-        // [Test]
-        // public void GetScriptForNonexistentFile()
-        // {
-        //     //Add a file to the directory
-        //     var newPath = Path.Combine(basePath, "src", "Resources", "foo.txt");
-        //     Console.WriteLine(newPath);
-        //     File.Create(newPath);
-        //     //Create a FileAxeScriptProvider
-        //     var scriptProvider = new FileAxeScriptProvider(newPath);
-        //     //Remove the file from the directory
-        //     File.Delete(newPath);
-        //     //Call GetScript and Assert the InvalidOperationException is thrown
-        //     Assert.Throws<InvalidOperationException>(() =>
-        //     {
-        //         scriptProvider.GetScript();
-        //         scriptProvider.Should().NotBeNull();
-        //     });
-        // }
-            
+        [Test]
+        public void GetScriptForNonexistentFile()
+        {
+            var testFilePath = Path.Combine(basePath, "src", "Resources", "foo.txt");
+            Console.WriteLine(testFilePath);
+            //This creates a file at the specified path and releases the lock on the file
+            File.Create(testFilePath).Dispose();
+            var scriptProvider = new FileAxeScriptProvider(testFilePath);
+            File.Delete(testFilePath);
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                scriptProvider.GetScript();
+                scriptProvider.Should().NotBeNull();
+            });
+        }
     }
 }
