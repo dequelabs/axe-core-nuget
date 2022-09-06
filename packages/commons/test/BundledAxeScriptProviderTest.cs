@@ -10,7 +10,6 @@ namespace Deque.AxeCore.Commons.Test
     [NonParallelizable]
     public class BundledAxeScriptProviderTest
     {
-        // private static Mock<EmbeddedResourceProvider> mock = new Mock<EmbeddedResourceProvider>();
         private static BundledAxeScriptProvider testProvider = new BundledAxeScriptProvider();
         [Test]
         public void GetScriptCalled() 
