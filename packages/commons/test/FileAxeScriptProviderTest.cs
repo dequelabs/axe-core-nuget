@@ -56,7 +56,6 @@ namespace Deque.AxeCore.Commons.Test
         public void GetScriptForNonexistentFile()
         {
             var testFilePath = Path.Combine(basePath, "src", "Resources", "foo.txt");
-            Console.WriteLine(testFilePath);
             File.Create(testFilePath).Dispose();
             var scriptProvider = new FileAxeScriptProvider(testFilePath);
             File.Delete(testFilePath);
