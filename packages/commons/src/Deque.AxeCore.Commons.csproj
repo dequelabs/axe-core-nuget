@@ -10,6 +10,7 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/dequelabs/axe-core-nuget</RepositoryUrl>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
 
     <TargetFrameworks>net471;netstandard2.0</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -22,8 +23,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="../../../LICENSE-Deque.AxeCore.Commons.txt" Pack="true" PackagePath="LICENSE.txt" />
+    <None Include="../../../LICENSE-Deque.AxeCore.Commons.txt" Pack="true" PackagePath="LICENSE.txt"  />
     <None Include="../../../NOTICE.txt" Pack="true" PackagePath="NOTICE.txt" />
+    <None Include="../README.md" Pack="true" PackagePath="README.md"  />
   </ItemGroup>
 
   <ItemGroup>
