@@ -15,17 +15,13 @@ namespace Deque.AxeCore.Commons.Test
         private static readonly string testContext = TestContext.CurrentContext.TestDirectory.ToString();
         private readonly string basePath = testContext.Split(new string[] { "test" }, StringSplitOptions.None)[0];
         
-        //Tests for creating a FileAxeScriptProvider
         [Test]
         public void ConstructorPassedValidFile()
         {
             var absolutePath = Path.Combine(basePath, "src", "Resources", "sampleFile.txt");
             
-            //Construction
             var scriptProvider = new FileAxeScriptProvider(absolutePath);
             scriptProvider.Should().NotBeNull();
-
-            //Checking GetScript
             var readResult = scriptProvider.GetScript();
             readResult.Should().Be("sample output");
         }
@@ -61,7 +57,6 @@ namespace Deque.AxeCore.Commons.Test
         {
             var testFilePath = Path.Combine(basePath, "src", "Resources", "foo.txt");
             Console.WriteLine(testFilePath);
-            //This creates a file at the specified path and releases the lock on the file
             File.Create(testFilePath).Dispose();
             var scriptProvider = new FileAxeScriptProvider(testFilePath);
             File.Delete(testFilePath);
