@@ -39,7 +39,10 @@ jobs:
         run: dotnet build --no-restore -c ${{ inputs.configuration }} -p:VersionSuffix=${{ inputs.version-suffix }}
       
       - name: Test
-        run: dotnet test --no-build -c ${{ inputs.configuration }} -p:VersionSuffix=${{ inputs.version-suffix }}
+        id: test
+        run: |
+          dotnet test --no-build -c ${{ inputs.configuration }} -p:VersionSuffix=${{ inputs.version-suffix }} \
+            --logger GitHubActions --logger trx --logger html --logger "console;verbosity=minimal"
 
       - uses: actions/upload-artifact@v2
         if: ${{ success() || failure() }}

@@ -21,6 +21,18 @@ This package exists primarily to help .NET tool developers integrate `axe-core` 
 * [Deque.AxeCore.Playwright](../playwright/README.md) in combination with [Playwright for .NET](https://playwright.dev/dotnet/)
 * [Deque.AxeCore.Selenium](../selenium/README.md) in combination with [Selenium](https://www.selenium.dev/)'s [C# Selenium.WebDriver package](https://www.nuget.org/packages/Selenium.WebDriver)
 
+### `AxeResult`
+
+`AxeResult` represents the [axe-core Results Object](https://www.deque.com/axe/core-documentation/api-documentation/#results-object).
+
+### `AxeRunContext`
+
+`AxeRunContext` represents the [axe-core Context Parameter](https://www.deque.com/axe/core-documentation/api-documentation/#context-parameter).
+
+### `AxeRunOptions`
+
+`AxeRunOptions` represents the [axe-core Options Parameter](https://www.deque.com/axe/core-documentation/api-documentation/#options-parameter).
+
 ## Axe script providers
 
 The `IAxeScriptProvider` interface is suitable for use as an option in an API for running an `axe-core` scan of a page. It specifies a single method, `GetScript()`, which returns a string containing JavaScript code suitable for injecting into a running page.
@@ -45,7 +57,6 @@ axeScriptProvider.GetScript(); // a string containing the contents of the bundle
 new FileAxeScriptProvider("./path/to/axe.min.js");
 axeScriptProvider.GetScript(); // synchronously reads the contents of file ./path/to/axe.min.js
 ```
-
 
 ## License
 

@@ -19,6 +19,7 @@ PM> Install-Package Deque.AxeCore.Selenium
 Import this namespace:
 
 ```csharp
+using Deque.AxeCore.Commons;
 using Deque.AxeCore.Selenium;
 ```
 

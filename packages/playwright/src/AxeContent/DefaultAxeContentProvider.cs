@@ -14,18 +14,6 @@ namespace Deque.AxeCore.Playwright.AxeContent
         /// <inheritdoc />
         public string GetAxeCoreScriptContent() => GetFileContents("axe.js");
 
-        /// <inheritdoc />
-        public IDictionary<string, string> GetHtmlReportFiles()
-        {
-            IList<string> reportStaticFiles = new List<string>()
-            {
-                "index.html",
-                "index.report.js"
-            };
-
-            return reportStaticFiles.ToDictionary(sf => sf, sf => GetFileContents(sf));
-        }
-
         private string GetFileContents(string filename)
         {
             Stream resourceStream = Assembly
