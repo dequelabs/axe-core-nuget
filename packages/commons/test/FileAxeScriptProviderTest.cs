@@ -4,6 +4,7 @@ using Moq;
 using FluentAssertions;
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace Deque.AxeCore.Commons.Test
 {
@@ -12,18 +13,21 @@ namespace Deque.AxeCore.Commons.Test
     public class FileAxeScriptProviderTest
     {
         //Tests for creating a FileAxeScriptProvider
-        // [Test]
-        // public void ConstructorPassedValidFile()
-        // {
-        //     //Construction
-        //     var scriptProvider = new FileAxeScriptProvider($"Deque.AxeCore.Commons.Resources.sampleFile.txt");
-        //     scriptProvider.Should().NotBeNull();
-        //     // scriptProvider._filePath.Should().Be(testFile);
+        [Test]
+        public void ConstructorPassedValidFile()
+        {
+            var targetFramework = RuntimeInformation.FrameworkDescription.ToString();
+            var basePath = targetFramework.Contains("Framework") ? Directory.GetParent(Environment.CurrentDirectory).FullName : Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.Parent.FullName;
+            var absolutePath = Path.Combine(basePath, "src", "Resources", "sampleFile.txt");
+            
+            //Construction
+            var scriptProvider = new FileAxeScriptProvider(absolutePath);
+            scriptProvider.Should().NotBeNull();
 
-        //     //Checking GetScript
-        //     var readResult = scriptProvider.GetScript();
-        //     readResult.Should().Be("sample output");
-        // }
+            //Checking GetScript
+            var readResult = scriptProvider.GetScript();
+            readResult.Should().Be("sample output");
+        }
 
         [Test]
         public void ConstructorPassedNullOrEmptyString()
@@ -51,7 +55,7 @@ namespace Deque.AxeCore.Commons.Test
             });
         }
 
-        [Test]
+        //[Test]
         //Add a file to the directory
         //Create a FileAxeScriptProvider
         //Remove the file from the directory
