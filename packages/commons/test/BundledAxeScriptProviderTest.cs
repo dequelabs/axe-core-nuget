@@ -20,15 +20,6 @@ namespace Deque.AxeCore.Commons.Test
                 var readResult = testProvider.GetScript();
                 readResult.Should().NotBeNull();
             });
-            // var getScriptCalled = readResult != null ? readResult : null;
-            // Console.WriteLine(getScriptCalled);
-            // getScriptCalled.Should().NotBeNull();
-            // mock.Setup(mock => mock.GetScript())
-            //     .Returns("foo string")
-            //     .Verifiable();
-            // var testBundledProvider = new BundledAxeScriptProvider();
-            // var scriptResult = testBundledProvider.GetScript();
-            // mock.Verify(mock => mock.GetScript(), Times.Once);
         }
     }
 }
