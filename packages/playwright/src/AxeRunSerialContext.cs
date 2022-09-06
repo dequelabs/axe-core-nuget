@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 
 using System.Collections.Generic;
 
@@ -36,7 +36,7 @@ namespace Deque.AxeCore.Playwright
         /// </summary>
         public AxeRunSerialContext(string? include = null, string? exclude = null)
         {
-            if(include != null)
+            if (include != null)
             {
                 Include = new List<IList<string>>()
                 {
@@ -47,7 +47,7 @@ namespace Deque.AxeCore.Playwright
                 };
             }
 
-            if(exclude != null)
+            if (exclude != null)
             {
                 Exclude = new List<IList<string>>()
                 {
@@ -86,12 +86,12 @@ namespace Deque.AxeCore.Playwright
         /// </summary>
         public AxeRunSerialContext(IList<IList<string>>? include = null, IList<IList<string>>? exclude = null)
         {
-            if(include != null)
+            if (include != null)
             {
                 Include = include;
             }
 
-            if(exclude != null)
+            if (exclude != null)
             {
                 Exclude = exclude;
             }

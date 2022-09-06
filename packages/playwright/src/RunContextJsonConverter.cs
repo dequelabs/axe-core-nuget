@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 
 using System;
 using System.Text.Json;
@@ -24,7 +24,7 @@ namespace Deque.AxeCore.Playwright
 
         public override void Write(Utf8JsonWriter writer, AxeRunContext value, JsonSerializerOptions options)
         {
-            if(value is AxeRunSerialContext serialContext)
+            if (value is AxeRunSerialContext serialContext)
             {
                 writer.WriteRawValue(JsonSerializer.Serialize(serialContext, s_jsonOptions));
             }

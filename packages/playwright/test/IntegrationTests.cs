@@ -140,7 +140,7 @@ namespace Deque.AxeCore.Playwright.Test
 
             IList<AxeResultGroup> resultGroups = new List<AxeResultGroup>()
             {
-                AxeResultGroup.Passes 
+                AxeResultGroup.Passes
             };
 
             AxeRunOptions options = new(resultTypes: resultGroups);

@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 
 using Deque.AxeCore.Playwright.AxeContent;
 using Deque.AxeCore.Playwright.AxeCoreWrapper;
@@ -50,8 +50,8 @@ namespace Deque.AxeCore.Playwright
         /// <param name="options">Options for running Axe.</param>
         /// <returns>The AxeResults</returns>
         public static async Task<AxeResults> RunAxe(
-            this IPage page, 
-            AxeRunContext context, 
+            this IPage page,
+            AxeRunContext context,
             AxeRunOptions? options = null)
         {
             return await RunAxeInner(page, context, options);
