@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
-namespace Deque.AxeCore.Selenium
+namespace Deque.AxeCore.Commons
 {
     class AxeResultTargetConverter : JsonConverter
     {

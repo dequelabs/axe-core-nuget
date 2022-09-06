@@ -14,6 +14,7 @@ using System.Threading;
 using WebDriverManager;
 using WebDriverManager.DriverConfigs;
 using WebDriverManager.DriverConfigs.Impl;
+using Deque.AxeCore.Commons;
 
 // Setup parallelization
 [assembly: Parallelizable(ParallelScope.All)]

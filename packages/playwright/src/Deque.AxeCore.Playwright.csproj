@@ -1,6 +1,4 @@
-﻿<Project>
-  <Sdk Name="Microsoft.NET.Sdk" />
-  <Sdk Name="Yarn.MSBuild" Version="1.22.17" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Authors>Deque</Authors>
@@ -30,34 +28,7 @@
     <None Include="../../../NOTICE.txt" Pack="true" PackagePath="NOTICE.txt"/>
     <None Include="../README.md" Pack="true" PackagePath="README.md" />
   </ItemGroup>
-		
-  <Target Name="InstallClientDependencies" BeforeTargets="BeforeBuild">
-    <Yarn Command="install" WorkingDirectory="NodeDependencies" />
-    <CallTarget Targets="BuildClientDependencies" />
-  </Target>
-
-  <Target Name="BuildClientDependencies">
-    <Yarn Command="build" WorkingDirectory="NodeDependencies" />
-    <CallTarget Targets="IncludeClientContent" />
-  </Target>
-
-  <Target Name="IncludeClientContent">
-    <ItemGroup>
-      <EmbeddedResource Include="NodeDependencies/dist/index.axe-core.js" Link="axe.js">
-      </EmbeddedResource>
-      <EmbeddedResource Include="NodeDependencies/dist/index.report.js" Link="index.report.js">
-      </EmbeddedResource>
-      <EmbeddedResource Include="NodeDependencies/dist/index.html" Link="index.html">
-      </EmbeddedResource>
-    </ItemGroup>
-  </Target>
-
-  <ItemGroup>
-    <Compile Remove="NodeDependencies/**" />
-    <EmbeddedResource Remove="NodeDependencies/**" />
-    <None Remove="NodeDependencies/**" />
-  </ItemGroup>
-
+	
   <ItemGroup>
     <PackageReference Include="Microsoft.Playwright" Version="1.20.2" />
     <PackageReference Include="System.IO.Abstractions" Version="17.0.24" />
@@ -65,5 +36,20 @@
 
   <ItemGroup>
     <ProjectReference Include="../../commons/src/Deque.AxeCore.Commons.csproj" />
+  </ItemGroup>
+
+  <!--
+    Running this using BeforeTagets="Restore" doesn't work if we run "dotnet restore" from solution folder. 
+    Running it before CollectPackageReferences, will work in both vs & command line. But, this task will be executed in both build & restore multiple times on multi-target project.
+    So, skipping this task if the copied package-lock.json file is same as the source file, to support incremental builds.
+  -->
+  <Target Name="DownloadAxe" Inputs="package-lock.json" Outputs="node_modules\package-lock.json" BeforeTargets="CollectPackageReferences">
+    <Exec Command="npm ci" />
+    <!-- Copying this file to support incremental builds -->
+    <Copy SourceFiles="package-lock.json" DestinationFolder="node_modules" />
+  </Target>
+
+  <ItemGroup>
+    <EmbeddedResource Include="node_modules\axe-core\axe.min.js" Link="axe.js" />
   </ItemGroup>
 </Project>
