@@ -1,5 +1,6 @@
 ﻿using OpenQA.Selenium;
 using System;
+using Deque.AxeCore.Commons;
 
 namespace Deque.AxeCore.Selenium
 {
