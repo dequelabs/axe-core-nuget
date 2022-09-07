@@ -1,4 +1,4 @@
-﻿namespace Deque.AxeCore.Commons
+namespace Deque.AxeCore.Commons
 {
     public class AxeResultItem
     {

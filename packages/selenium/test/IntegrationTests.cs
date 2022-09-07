@@ -150,7 +150,8 @@ namespace Deque.AxeCore.Selenium.Test
             WebDriver.Navigate().GoToUrl(filename);
 
             var axeResult = new AxeBuilder(WebDriver)
-                .WithOptions(new AxeRunOptions {
+                .WithOptions(new AxeRunOptions
+                {
                     Iframes = false
                 })
                 .Analyze();
@@ -173,6 +174,9 @@ namespace Deque.AxeCore.Selenium.Test
 
         private void InitDriver(string browser)
         {
+            string headedEnvVar = Environment.GetEnvironmentVariable("HEADED");
+            bool headless = headedEnvVar == null || headedEnvVar == "" || headedEnvVar == "0";
+
             switch (browser.ToUpper())
             {
                 case "CHROME":
@@ -182,7 +186,9 @@ namespace Deque.AxeCore.Selenium.Test
                     {
                         UnhandledPromptBehavior = UnhandledPromptBehavior.Accept,
                     };
-                    chromeOptions.AddArgument("--headless");
+                    if (headless) {
+                        chromeOptions.AddArgument("--headless");
+                    }
                     chromeOptions.AddArgument("no-sandbox");
                     chromeOptions.AddArgument("--log-level=3");
                     chromeOptions.AddArgument("--silent");
@@ -198,7 +204,9 @@ namespace Deque.AxeCore.Selenium.Test
                     EnsureWebdriverPathInitialized(ref FirefoxDriverPath, "GECKOWEBDRIVER", "geckodriver", new FirefoxConfig());
 
                     FirefoxOptions firefoxOptions = new FirefoxOptions();
-                    firefoxOptions.AddArgument("-headless");
+                    if (headless) {
+                        firefoxOptions.AddArgument("-headless");
+                    }
 
                     FirefoxDriverService firefoxService = FirefoxDriverService.CreateDefaultService(Path.GetDirectoryName(FirefoxDriverPath));
                     firefoxService.SuppressInitialDiagnosticInformation = true;
@@ -215,12 +223,17 @@ namespace Deque.AxeCore.Selenium.Test
             WebDriver.Manage().Window.Maximize();
         }
 
-        private static void EnsureWebdriverPathInitialized(ref string driverPath, string dirEnvVar, string binaryName, IDriverConfig driverManagerConfig) {
-            LazyInitializer.EnsureInitialized(ref driverPath, () => {
+        private static void EnsureWebdriverPathInitialized(ref string driverPath, string dirEnvVar, string binaryName, IDriverConfig driverManagerConfig)
+        {
+            LazyInitializer.EnsureInitialized(ref driverPath, () =>
+            {
                 var dirFromEnv = Environment.GetEnvironmentVariable(dirEnvVar);
-                if (dirFromEnv != null) {
+                if (dirFromEnv != null)
+                {
                     return $"{dirFromEnv}/${binaryName}";
-                } else {
+                }
+                else
+                {
                     return new DriverManager().SetUpDriver(driverManagerConfig);
                 }
             });

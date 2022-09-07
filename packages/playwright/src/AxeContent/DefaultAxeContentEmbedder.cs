@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 
 using Deque.AxeCore.Commons;
 using Microsoft.Playwright;
@@ -24,7 +24,7 @@ namespace Deque.AxeCore.Playwright.AxeContent
         {
             string axeCoreScriptContent = m_axeScriptProvider.GetScript();
 
-            if(!embedIntoIFrames.HasValue || embedIntoIFrames.Value)
+            if (!embedIntoIFrames.HasValue || embedIntoIFrames.Value)
             {
                 foreach (IFrame frame in page.Frames)
                 {

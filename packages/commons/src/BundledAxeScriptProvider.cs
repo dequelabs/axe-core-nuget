@@ -1,4 +1,4 @@
-﻿
+
 namespace Deque.AxeCore.Commons
 {
     public class BundledAxeScriptProvider : IAxeScriptProvider

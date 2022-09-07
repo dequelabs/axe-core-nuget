@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 
 using Deque.AxeCore.Commons;
 using Deque.AxeCore.Playwright.AxeContent;

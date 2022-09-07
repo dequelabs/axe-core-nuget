@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 
 using Deque.AxeCore.Commons;
 using Deque.AxeCore.Playwright.AxeContent;
@@ -28,10 +28,10 @@ namespace Deque.AxeCore.Playwright.Test
             frameOne.Setup(mock => mock.EvaluateAsync(axeFunctionExpression, null));
             frameTwo.Setup(mock => mock.EvaluateAsync(axeFunctionExpression, null));
 
-            IReadOnlyList<IFrame> frames = new List<IFrame>() 
-            { 
-                frameOne.Object, 
-                frameTwo.Object 
+            IReadOnlyList<IFrame> frames = new List<IFrame>()
+            {
+                frameOne.Object,
+                frameTwo.Object
             };
 
             Mock<IAxeScriptProvider> contentProviderMock = new();

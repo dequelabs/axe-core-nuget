@@ -17,9 +17,6 @@ namespace Deque.AxeCore.Playwright.Test
 
         public IntegrationTests()
         {
-#if DEBUG
-            Environment.SetEnvironmentVariable("HEADED", "1");
-#endif
             m_testServer = new();
         }
 
@@ -140,7 +137,7 @@ namespace Deque.AxeCore.Playwright.Test
 
             IList<AxeResultGroup> resultGroups = new List<AxeResultGroup>()
             {
-                AxeResultGroup.Passes 
+                AxeResultGroup.Passes
             };
 
             AxeRunOptions options = new(resultTypes: resultGroups);
