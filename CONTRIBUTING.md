@@ -53,3 +53,4 @@ You'll need the following installed:
 * To run one test project, run `dotnet test` from that test project's folder (eg, `packages/commons/test`)
 * To run one individual test case, run `dotnet test --filter "Name=TestCaseMethodName"`
   * `dotnet test --list-tests` will list the available test cases
+* To have integration tests use headed browsers instead of headless ones, run `dotnet test -e HEADED=1`
