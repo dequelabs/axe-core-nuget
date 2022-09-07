@@ -1,4 +1,4 @@
-﻿using Deque.AxeCore.Commons;
+using Deque.AxeCore.Commons;
 
 namespace Deque.AxeCore.Selenium
 {

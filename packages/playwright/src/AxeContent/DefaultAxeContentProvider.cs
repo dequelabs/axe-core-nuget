@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 
 using System.Collections.Generic;
 using System.IO;
@@ -21,7 +21,7 @@ namespace Deque.AxeCore.Playwright.AxeContent
                 .GetManifestResourceStream($"Deque.AxeCore.Playwright.{filename}");
 
             using var reader = new StreamReader(resourceStream, Encoding.UTF8);
-                return reader.ReadToEnd();
+            return reader.ReadToEnd();
         }
     }
 }

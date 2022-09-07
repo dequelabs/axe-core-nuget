@@ -150,7 +150,8 @@ namespace Deque.AxeCore.Selenium.Test
             WebDriver.Navigate().GoToUrl(filename);
 
             var axeResult = new AxeBuilder(WebDriver)
-                .WithOptions(new AxeRunOptions {
+                .WithOptions(new AxeRunOptions
+                {
                     Iframes = false
                 })
                 .Analyze();
@@ -215,12 +216,17 @@ namespace Deque.AxeCore.Selenium.Test
             WebDriver.Manage().Window.Maximize();
         }
 
-        private static void EnsureWebdriverPathInitialized(ref string driverPath, string dirEnvVar, string binaryName, IDriverConfig driverManagerConfig) {
-            LazyInitializer.EnsureInitialized(ref driverPath, () => {
+        private static void EnsureWebdriverPathInitialized(ref string driverPath, string dirEnvVar, string binaryName, IDriverConfig driverManagerConfig)
+        {
+            LazyInitializer.EnsureInitialized(ref driverPath, () =>
+            {
                 var dirFromEnv = Environment.GetEnvironmentVariable(dirEnvVar);
-                if (dirFromEnv != null) {
+                if (dirFromEnv != null)
+                {
                     return $"{dirFromEnv}/${binaryName}";
-                } else {
+                }
+                else
+                {
                     return new DriverManager().SetUpDriver(driverManagerConfig);
                 }
             });
