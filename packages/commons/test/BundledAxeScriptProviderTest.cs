@@ -9,7 +9,6 @@ namespace Deque.AxeCore.Commons.Test
     [TestFixture]
     public class BundledAxeScriptProviderTest
     {
-        // private static BundledAxeScriptProvider testProvider = new BundledAxeScriptProvider();
         [Test]
         public void GetScriptCalled()
         {
