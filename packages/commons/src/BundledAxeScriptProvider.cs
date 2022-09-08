@@ -5,7 +5,7 @@ namespace Deque.AxeCore.Commons
 {
     public class BundledAxeScriptProvider : IAxeScriptProvider
     {
-        public static string ReadEmbeddedFile(string manifestResourceName)
+        private static string ReadEmbeddedFile(string manifestResourceName)
         {
             var assembly = typeof(BundledAxeScriptProvider).Assembly;
             var resourceStream = assembly.GetManifestResourceStream(manifestResourceName);
