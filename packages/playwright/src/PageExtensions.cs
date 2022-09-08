@@ -1,5 +1,6 @@
 #nullable enable
 
+using Deque.AxeCore.Commons;
 using Deque.AxeCore.Playwright.AxeContent;
 using Deque.AxeCore.Playwright.AxeCoreWrapper;
 using Microsoft.Playwright;
@@ -23,8 +24,8 @@ namespace Deque.AxeCore.Playwright
         /// <returns>List of <see cref="AxeRuleMetadata"/></returns>
         public static async Task<IList<AxeRuleMetadata>> GetAxeRules(this IPage page, IList<string>? tags = null)
         {
-            IAxeContentProvider axeContentProvider = new DefaultAxeContentProvider();
-            IAxeContentEmbedder axeContentEmbedder = new DefaultAxeContentEmbedder(axeContentProvider);
+            IAxeScriptProvider axeScriptProvider = new BundledAxeScriptProvider();
+            IAxeContentEmbedder axeContentEmbedder = new DefaultAxeContentEmbedder(axeScriptProvider);
 
             IAxeCoreWrapper axeCoreWrapper = new DefaultAxeCoreWrapper(axeContentEmbedder);
 
@@ -59,8 +60,8 @@ namespace Deque.AxeCore.Playwright
 
         private static async Task<AxeResults> RunAxeInner(this IPage page, AxeRunContext? context, AxeRunOptions? options)
         {
-            IAxeContentProvider axeContentProvider = new DefaultAxeContentProvider();
-            IAxeContentEmbedder axeContentEmbedder = new DefaultAxeContentEmbedder(axeContentProvider);
+            IAxeScriptProvider axeScriptProvider = new BundledAxeScriptProvider();
+            IAxeContentEmbedder axeContentEmbedder = new DefaultAxeContentEmbedder(axeScriptProvider);
 
             IAxeCoreWrapper axeCoreWrapper = new DefaultAxeCoreWrapper(axeContentEmbedder);
 

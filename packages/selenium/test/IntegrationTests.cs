@@ -186,7 +186,8 @@ namespace Deque.AxeCore.Selenium.Test
                     {
                         UnhandledPromptBehavior = UnhandledPromptBehavior.Accept,
                     };
-                    if (headless) {
+                    if (headless)
+                    {
                         chromeOptions.AddArgument("--headless");
                     }
                     chromeOptions.AddArgument("no-sandbox");
@@ -204,7 +205,8 @@ namespace Deque.AxeCore.Selenium.Test
                     EnsureWebdriverPathInitialized(ref FirefoxDriverPath, "GECKOWEBDRIVER", "geckodriver", new FirefoxConfig());
 
                     FirefoxOptions firefoxOptions = new FirefoxOptions();
-                    if (headless) {
+                    if (headless)
+                    {
                         firefoxOptions.AddArgument("-headless");
                     }
 
