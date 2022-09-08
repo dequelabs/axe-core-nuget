@@ -10,15 +10,17 @@ using Deque.AxeCore.Commons;
 
 namespace Deque.AxeCore.Selenium.Test
 {
-    public class TestAxeScriptProvider : IAxeScriptProvider {
+    public class TestAxeScriptProvider : IAxeScriptProvider
+    {
         public static string stubAxeScript = "stub axe script";
-        public string GetScript() {
+        public string GetScript()
+        {
             return stubAxeScript;
-        } 
+        }
     }
 
     [TestFixture]
-    [NonParallelizable] 
+    [NonParallelizable]
     public class AxeBuilderTest
     {
         private static Mock<IWebDriver> webDriverMock = new Mock<IWebDriver>();
@@ -30,7 +32,8 @@ namespace Deque.AxeCore.Selenium.Test
             NullValueHandling = NullValueHandling.Ignore
         };
 
-        private static readonly AxeBuilderOptions stubAxeBuilderOptions = new AxeBuilderOptions {
+        private static readonly AxeBuilderOptions stubAxeBuilderOptions = new AxeBuilderOptions
+        {
             ScriptProvider = new TestAxeScriptProvider()
         };
 
