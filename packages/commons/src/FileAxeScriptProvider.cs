@@ -9,7 +9,7 @@ namespace Deque.AxeCore.Commons
 
         public FileAxeScriptProvider(string filePath)
         {
-            if (string.IsNullOrEmpty(filePath))
+            if (filePath == null)
                 throw new ArgumentNullException(nameof(filePath));
 
             if (!File.Exists(filePath))
