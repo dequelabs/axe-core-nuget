@@ -1,4 +1,5 @@
-namespace Deque.AxeCore.Commons {
+namespace Deque.AxeCore.Commons
+{
     public interface IAxeScriptProvider
     {
         string GetScript();

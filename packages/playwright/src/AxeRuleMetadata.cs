@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ namespace Deque.AxeCore.Playwright
     /// <summary>
     /// Axe Rule Metadata
     /// </summary>
-    public sealed class AxeRuleMetadata 
+    public sealed class AxeRuleMetadata
     {
         /// <summary>
         /// The Rule Id e.g. "color-contrast"
