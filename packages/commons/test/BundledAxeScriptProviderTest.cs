@@ -7,12 +7,11 @@ using System;
 namespace Deque.AxeCore.Commons.Test
 {
     [TestFixture]
-    [NonParallelizable]
     public class BundledAxeScriptProviderTest
     {
         // private static BundledAxeScriptProvider testProvider = new BundledAxeScriptProvider();
         [Test]
-        public void GetScriptCalled() 
+        public void GetScriptCalled()
         {
             var scriptProvider = new BundledAxeScriptProvider();
             Assert.DoesNotThrow(() =>

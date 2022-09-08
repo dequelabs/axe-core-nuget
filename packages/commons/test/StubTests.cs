@@ -1,6 +1,7 @@
 using NUnit.Framework;
 
-namespace Deque.AxeCore.Commons.Test {
+namespace Deque.AxeCore.Commons.Test
+{
     public class StubTests
     {
         [Test]

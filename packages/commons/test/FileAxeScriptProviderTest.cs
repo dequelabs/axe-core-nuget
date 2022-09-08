@@ -14,12 +14,12 @@ namespace Deque.AxeCore.Commons.Test
     {
         private static readonly string testContext = TestContext.CurrentContext.TestDirectory.ToString();
         private readonly string basePath = testContext.Split(new string[] { "test" }, StringSplitOptions.None)[0];
-        
+
         [Test]
         public void ConstructorPassedValidFile()
         {
             var absolutePath = Path.Combine(basePath, "src", "Resources", "sampleFile.txt");
-            
+
             var scriptProvider = new FileAxeScriptProvider(absolutePath);
             scriptProvider.Should().NotBeNull();
             var readResult = scriptProvider.GetScript();
@@ -31,14 +31,12 @@ namespace Deque.AxeCore.Commons.Test
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var scriptProvider = new FileAxeScriptProvider(null);                
-                scriptProvider.Should().NotBeNull();
+                var scriptProvider = new FileAxeScriptProvider(null);
             });
-            
+
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var scriptProvider = new FileAxeScriptProvider("");                
-                scriptProvider.Should().NotBeNull();
+                var scriptProvider = new FileAxeScriptProvider("");
             });
         }
 
@@ -55,7 +53,7 @@ namespace Deque.AxeCore.Commons.Test
         [Test]
         public void GetScriptForNonexistentFile()
         {
-            var testFilePath = Path.Combine(basePath, "src", "Resources", "foo.txt");
+            var testFilePath = Path.Combine(typeof(FileAxeScriptProviderTest).Assembly.Location, "..", "foo.txt");
             File.Create(testFilePath).Dispose();
             var scriptProvider = new FileAxeScriptProvider(testFilePath);
             File.Delete(testFilePath);
