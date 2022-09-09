@@ -10,8 +10,8 @@ namespace Deque.AxeCore.Commons
     public class AxeRunContext
     {
         [JsonProperty("include")]
-        public List<string[]> Include { get; set; }
+        public List<AxeSelector> Include { get; set; }
         [JsonProperty("exclude")]
-        public List<string[]> Exclude { get; set; }
+        public List<AxeSelector> Exclude { get; set; }
     }
 }

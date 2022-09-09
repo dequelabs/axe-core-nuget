@@ -1,13 +1,9 @@
-using Newtonsoft.Json;
-using System.Collections.Generic;
-
 namespace Deque.AxeCore.Commons
 {
     public class AxeResultNode
     {
-        [JsonProperty("target", ItemConverterType = typeof(AxeResultTargetConverter), NullValueHandling = NullValueHandling.Ignore)]
-        public List<AxeResultTarget> Target { get; set; }
-        public List<string> XPath { get; set; }
+        public AxeSelector Target { get; set; }
+        public AxeSelector XPath { get; set; }
         public string Html { get; set; }
         public string Impact { get; set; }
         public AxeResultCheck[] Any { get; set; }
