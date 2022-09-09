@@ -32,4 +32,8 @@
   <PropertyGroup>
     <VSTestResultsDirectory>TestResults/$(TargetFramework)</VSTestResultsDirectory>
 	</PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources/sampleFile.txt" />
+  </ItemGroup>
 </Project>

@@ -18,7 +18,7 @@ namespace Deque.AxeCore.Commons.Test
         [Test]
         public void ConstructorPassedValidFile()
         {
-            var absolutePath = Path.Combine(basePath, "src", "Resources", "sampleFile.txt");
+            var absolutePath = Path.Combine(basePath, "test", "Resources", "sampleFile.txt");
 
             var scriptProvider = new FileAxeScriptProvider(absolutePath);
             scriptProvider.Should().NotBeNull();
