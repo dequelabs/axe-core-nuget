@@ -1,6 +1,5 @@
 using NUnit.Framework;
 using Deque.AxeCore.Commons;
-using Moq;
 using FluentAssertions;
 using System;
 using System.IO;
@@ -9,7 +8,6 @@ using System.Runtime.InteropServices;
 namespace Deque.AxeCore.Commons.Test
 {
     [TestFixture]
-    [NonParallelizable]
     public class FileAxeScriptProviderTest
     {
         private static readonly string testContext = TestContext.CurrentContext.TestDirectory.ToString();
@@ -55,7 +53,6 @@ namespace Deque.AxeCore.Commons.Test
             Assert.Throws<InvalidOperationException>(() =>
             {
                 scriptProvider.GetScript();
-                scriptProvider.Should().NotBeNull();
             });
         }
     }
