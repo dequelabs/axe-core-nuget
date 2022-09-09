@@ -10,13 +10,12 @@ namespace Deque.AxeCore.Commons.Test
     [TestFixture]
     public class FileAxeScriptProviderTest
     {
-        private static readonly string testContext = TestContext.CurrentContext.TestDirectory.ToString();
-        private readonly string basePath = testContext.Split(new string[] { "test" }, StringSplitOptions.None)[0];
-
         [Test]
         public void ConstructorPassedValidFile()
         {
-            var absolutePath = Path.Combine(basePath, "test", "Resources", "sampleFile.txt");
+            string testContext = TestContext.CurrentContext.TestDirectory.ToString();
+            string basePath = testContext.Split(new string[] { "test" }, StringSplitOptions.None)[0];
+            string absolutePath = Path.Combine(basePath, "test", "Resources", "sampleFile.txt");
 
             var scriptProvider = new FileAxeScriptProvider(absolutePath);
             scriptProvider.Should().NotBeNull();
