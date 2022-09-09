@@ -1,5 +1,6 @@
 #nullable enable
 
+using Deque.AxeCore.Commons;
 using Deque.AxeCore.Playwright.AxeContent;
 using Deque.AxeCore.Playwright.AxeCoreWrapper;
 using Microsoft.Playwright;
@@ -20,8 +21,8 @@ namespace Deque.AxeCore.Playwright
         /// <returns>The AxeResults</returns>
         public static async Task<AxeResults> RunAxe(this ILocator locator, AxeRunOptions? options = null)
         {
-            IAxeContentProvider axeContentProvider = new DefaultAxeContentProvider();
-            IAxeContentEmbedder axeContentEmbedder = new DefaultAxeContentEmbedder(axeContentProvider);
+            IAxeScriptProvider axeScriptProvider = new BundledAxeScriptProvider();
+            IAxeContentEmbedder axeContentEmbedder = new DefaultAxeContentEmbedder(axeScriptProvider);
 
             IAxeCoreWrapper axeCoreWrapper = new DefaultAxeCoreWrapper(axeContentEmbedder);
 
