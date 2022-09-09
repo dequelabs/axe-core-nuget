@@ -12,8 +12,8 @@ namespace Deque.AxeCore.Commons.Test
     [TestFixture]
     public class BundledAxeScriptProviderTest
     {
-
         private static readonly string copyrightHeader = "* Your use of this Source Code Form is subject to the terms of the Mozilla Public\n * License, v. 2.0.";
+        
         [Test]
         public void GetScriptCalled()
         {
