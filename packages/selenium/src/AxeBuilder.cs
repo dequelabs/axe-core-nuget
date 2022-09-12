@@ -139,37 +139,51 @@ namespace Deque.AxeCore.Selenium
         }
 
         /// <summary>
-        /// Selectors to include in the validation. 
-        /// Note that the selectors array uniquely identifies one element in the page,
-        /// Valid usage: 
-        ///     axeBuilder.Include("#parent-iframe1", "#element-inside-iframe"); => to select #element-inside-iframe under #parent-iframe1
-        ///     axeBuilder.Include("#element-inside-main-frame1");
-        ///     
-        /// Invalid usage:
-        ///      axeBuilder.Include("#element-inside-main-frame1", "#element-inside-main-frame2");
+        /// Restricts the analysis to include only the given CSS selector and its descendants, instead of the whole page.
+        /// To include multiple selectors, call Include multiple times.
+        /// To include a selector inside an iframe, see <see cref="Include(AxeSelector)"/> and <see cref="AxeSelector.AxeSelector(string, List{string})"/>.
+        /// To include a selector inside a shadow DOM, see <see cref="Include(AxeSelector)"/> and <see cref="AxeSelector.FromFrameShadowSelectors(List{List{string}})"/>.
         /// </summary>
-        /// <param name="selectors">Any valid CSS selectors</param>
-        public AxeBuilder Include(params string[] selectors)
-        {
-            ValidateParameters(selectors, nameof(selectors));
+        /// <param name="selector">A CSS selector in the topmost frame of the page</param>
+        public AxeBuilder Include(string selector) => this.Include(new AxeSelector(selector));
 
-            runContext.Include = runContext.Include ?? new List<string[]>();
-            runContext.Include.Add(selectors);
+        /// <summary>
+        /// Restricts the analysis to include only the given <see cref="AxeSelector"/> and its descendants, instead of the whole page.
+        /// This overload can include selectors inside iframes (with <see cref="AxeSelector.AxeSelector(string, List{string})"/>) or shadow DOMs
+        /// (<see cref="AxeSelector.FromFrameShadowSelectors(List{List{string}})"/>).
+        /// To include multiple selectors, call Include multiple times.
+        /// </summary>
+        /// <param name="selector">An <see cref="AxeSelector"/> representing an element anywhere in the page, including nested in an iframe or shadow DOM</param>
+        public AxeBuilder Include(AxeSelector selector)
+        {
+            ValidateNotNullParameter(selector, nameof(selector));
+
+            runContext.Include = runContext.Include ?? new List<AxeSelector>();
+            runContext.Include.Add(selector);
             return this;
         }
 
         /// <summary>
-        /// Selectors to exclude in the validation.
-        /// Note that the selectors array uniquely identifies one element in the page. Refer <see cref="Include(string[]) for more information on the usage"/>
+        /// Excludes the given CSS selector and its descendants from analysis.
+        /// To exclude multiple selectors, call Exclude multiple times.
+        /// To exclude a selector inside an iframe, see <see cref="Exclude(AxeSelector)"/> and <see cref="AxeSelector.AxeSelector(string, List{string})"/>.
+        /// To exclude a selector inside a shadow DOM, see <see cref="Exclude(AxeSelector)"/> and <see cref="AxeSelector.FromFrameShadowSelectors(List{List{string}})"/>.
         /// </summary>
-        /// <param name="selectors">Any valid CSS selectors</param>
-        /// <returns></returns>
-        public AxeBuilder Exclude(params string[] selectors)
-        {
-            ValidateParameters(selectors, nameof(selectors));
+        /// <param name="selector">A CSS selector in the topmost frame of the page</param>
+        public AxeBuilder Exclude(string selector) => this.Exclude(new AxeSelector(selector));
 
-            runContext.Exclude = runContext.Exclude ?? new List<string[]>();
-            runContext.Exclude.Add(selectors);
+        /// <summary>
+        /// Excludes the given <see cref="AxeSelector"/> and its descendants from analysis. This overload can exclude selectors inside iframes
+        /// (with <see cref="AxeSelector.AxeSelector(string, List{string})"/>) or shadow DOMs (<see cref="AxeSelector.FromFrameShadowSelectors(List{List{string}})"/>).
+        /// To exclude multiple selectors, call Exclude multiple times.
+        /// </summary>
+        /// <param name="selector">An AxeSelector representing an element anywhere in the page, including nested in an iframe or shadow DOM</param>
+        public AxeBuilder Exclude(AxeSelector selector)
+        {
+            ValidateNotNullParameter(selector, nameof(selector));
+
+            runContext.Exclude = runContext.Exclude ?? new List<AxeSelector>();
+            runContext.Exclude.Add(selector);
             return this;
         }
 
