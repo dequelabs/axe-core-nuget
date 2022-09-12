@@ -6,6 +6,15 @@ using System.Linq;
 
 namespace Deque.AxeCore.Commons
 {
+    // This converter is a bit complicated because axe-core can return several different kinds of JSON to represent a selector:
+    //
+    //   * For simple cases (no iframes, no shadow DOMs), it's just a plain string
+    //   * For complex cases (involving either iframes and/or shadow DOMs), it's an array with an element per frame where each element is either:
+    //       * For simple frames (no shadow DOMs), a plain string selector for the iframe/target
+    //       * For complex frames (the frame/target element is in a shadow DOM), an array of selectors traversing shadow DOM root elements up to the iframe/target
+    //
+    // Note that a single-frame case involving a shadow DOM results in an array-of-arrays where the outer array has only one array child, as opposed to
+    // the multiple-frame case involving no shadow DOMs which results in an array-of-strings.
     class AxeSelectorJsonConverter : JsonConverter<AxeSelector>
     {
         public override AxeSelector ReadJson(JsonReader reader, Type objectType, AxeSelector existingValue, bool hasExistingValue, JsonSerializer serializer)

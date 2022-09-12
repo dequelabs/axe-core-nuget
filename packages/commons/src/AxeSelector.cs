@@ -23,6 +23,7 @@ namespace Deque.AxeCore.Commons
     /// ]]></example>
     /// <example><![CDATA[
     /// var selectorInIframe = new AxeSelector("#child-element", new List<string> { "#parent-iframe-element" });
+    /// 
     /// // selectorInIframe.Selector throws InvalidOperationException
     /// // selectorInIframe.FrameSelectors == ["#parent-iframe-element", "#child-element"]
     /// // selectorInIframe.FrameShadowSelectors == [["#parent-iframe-element"], ["#child-element"]]
@@ -93,6 +94,9 @@ namespace Deque.AxeCore.Commons
         ///  
         /// ...then FrameShadowSelectors for an AxeSelector representing #e would be structured like [["#a", "#b"], ["#c"], ["#d", "#e"]].
         /// </example>
+        /// <remarks>
+        /// It is invalid for either the outer list or any inner list to be empty.
+        /// </remarks>
         public List<List<string>> FrameShadowSelectors { get; }
 
         /// <summary>
