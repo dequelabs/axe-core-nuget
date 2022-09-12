@@ -41,7 +41,7 @@ namespace Deque.AxeCore.Commons
     /// // selectorInShadowDomInIframe.ToString() == "[\"#parent-iframe-element\", [\"#shadow-root-in-iframe\", \"#child-element\"]]" 
     /// ]]></example>
     [JsonConverter(typeof(AxeSelectorJsonConverter))]
-    public class AxeSelector
+    public class AxeSelector : IEquatable<AxeSelector>
     {
         /// <summary>
         /// For simple selectors which do not require traversing iframes or shadow DOMs, this property can be used as a shortcut
@@ -162,7 +162,37 @@ namespace Deque.AxeCore.Commons
             return $"\"{quoteEscapedString}\"";
         }
 
-        // TODO: implement equality/hashcode
+        /// <summary>
+        /// Compares by-value to another object.
+        /// </summary>
+        /// <param name="other">The other object to compare to</param>
+        /// <returns>Whether the two objects are both AxeSelectors which represent the same logical value</returns>
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as AxeSelector);
+        }
+
+        /// <summary>
+        /// Compares by-value to another AxeSelector.
+        /// </summary>
+        /// <param name="other">The other AxeSelector to compare to</param>
+        /// <returns>Whether the two selectors represent the same logical value</returns>
+        public bool Equals(AxeSelector other)
+        {
+            if (other is null) { return false; }
+
+            if (Object.ReferenceEquals(this, other)) { return true; }
+
+            return other.ToString().Equals(this.ToString(), StringComparison.Ordinal);
+        }
+
+        /// <inheritdoc/>
+        public override int GetHashCode()
+        {
+            // The constant is random and arbitrary, it's just there so the hash code of the object
+            // differs from the hash code of the string.
+            return 1788502736 ^ this.ToString().GetHashCode();
+        }
 
         // TODO: check on axe behavior around empty frame/shadow lists and match it with ArgumentExceptions in all ctors
 
