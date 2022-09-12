@@ -30,7 +30,7 @@ namespace Deque.AxeCore.Commons
     /// // selectorInIframe.ToString() == "[\"#parent-iframe-element\", \"#child-element\"]" 
     /// ]]></example>
     /// <example><![CDATA[
-    /// var selectorInShadowDomInIframe = AxeSelector.FromFrameShadowSelectors(new List<List<string>>
+    /// var selectorInShadowDomInIframe = AxeSelector.FromFrameShadowSelectors(new List<IList<string>>
     /// {
     ///     new List<string> { "#parent-iframe-element" },
     ///     new List<string> { "#shadow-root-in-iframe", "#child-in-shadow-root" }
@@ -58,7 +58,7 @@ namespace Deque.AxeCore.Commons
                 {
                     throw new InvalidOperationException($"AxeSelector {this} represents an element nested within iframe(s); it cannot be represented as a single Selector. Use FrameSelectors or FrameShadowSelectors instead.");
                 }
-                List<string> shadowSelectors = FrameShadowSelectors[0];
+                IList<string> shadowSelectors = FrameShadowSelectors[0];
                 if (shadowSelectors.Count > 1)
                 {
                     throw new InvalidOperationException($"AxeSelector {this} represents an element nested within a shadow DOM; it cannot be represented as a single Selector. Use FrameShadowSelectors instead.");
@@ -104,7 +104,7 @@ namespace Deque.AxeCore.Commons
         /// <remarks>
         /// It is invalid for either the outer list or any inner list to be empty.
         /// </remarks>
-        public List<List<string>> FrameShadowSelectors { get; }
+        public IList<IList<string>> FrameShadowSelectors { get; }
 
         /// <summary>
         /// Constructs an AxeSelector which represents an element in the topmost frame of a page and which does not involve any shadow DOMs.
@@ -117,7 +117,7 @@ namespace Deque.AxeCore.Commons
                 throw new ArgumentNullException(nameof(selector));
             }
 
-            FrameShadowSelectors = new List<List<string>> { new List<string> { selector } };
+            FrameShadowSelectors = new List<IList<string>> { new List<string> { selector } };
         }
 
         /// <summary>
@@ -142,7 +142,7 @@ namespace Deque.AxeCore.Commons
                 throw new ArgumentException($"{nameof(ancestorFrames)} must be non-empty");
             }
 
-            FrameShadowSelectors = ancestorFrames.Select(frameSelector => new List<string> { frameSelector }).ToList();
+            FrameShadowSelectors = ancestorFrames.Select(frameSelector => (IList<string>)new List<string> { frameSelector }).ToList();
             FrameShadowSelectors.Add(new List<string> { selector });
         }
 
@@ -151,12 +151,12 @@ namespace Deque.AxeCore.Commons
         /// </summary>
         /// <param name="frameShadowSelectors">See <see cref="FrameShadowSelectors"/>.</param>
         /// <returns>An AxeSelector wrapping <paramref name="frameShadowSelectors"/></returns>
-        public static AxeSelector FromFrameShadowSelectors(List<List<string>> frameShadowSelectors) => new AxeSelector(frameShadowSelectors);
+        public static AxeSelector FromFrameShadowSelectors(IList<IList<string>> frameShadowSelectors) => new AxeSelector(frameShadowSelectors);
 
         // This constructor is intentionally hidden behind FromFrameShadowSelectors to make it harder to use by accident; in practice,
         // it's rarer for a user to actually need it than it is for a user to accidentally try to misuse it in an attempt to have one
         // AxeSelector represent multiple independent selectors.
-        private AxeSelector(List<List<string>> frameShadowSelectors)
+        private AxeSelector(IList<IList<string>> frameShadowSelectors)
         {
             if (frameShadowSelectors is null)
             {
@@ -193,7 +193,7 @@ namespace Deque.AxeCore.Commons
             }
         }
 
-        private static string ShadowSelectorsToString(List<string> shadowSelectors)
+        private static string ShadowSelectorsToString(IList<string> shadowSelectors)
         {
             if (shadowSelectors.Count == 1)
             {

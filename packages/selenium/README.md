@@ -101,7 +101,7 @@ This overload of `Include` only supports CSS selectors which refer to elements w
 
 ```csharp
 AxeResult axeResult = new AxeBuilder(webDriver)
-    .Include(new AxeSelector("#element-inside-iframe", new string[] { "#containing-iframe-element" }))
+    .Include(new AxeSelector("#element-inside-iframe", new List<string> { "#containing-iframe-element" }))
     .Analyze();
 ```
 
@@ -113,19 +113,19 @@ Scopes future `Analyze()` calls to include *only* the element(s) matching the gi
 
 ```csharp
 AxeResult axeResult = new AxeBuilder(webDriver)
-    .Include(new AxeSelector("#element-inside-iframe", new string[] { "#containing-iframe-element" }))
-    .Exclude(new AxeSelector("#element-inside-iframe div.child-class-with-known-issues", new string[] { "#containing-iframe-element" }))
+    .Include(new AxeSelector("#element-inside-iframe", new List<string> { "#containing-iframe-element" }))
+    .Exclude(new AxeSelector("#element-inside-iframe div.child-class-with-known-issues", new List<string> { "#containing-iframe-element" }))
     .Analyze();
 ```
 
 This overload of `Include` supports complex AxeSelectors which specify elements inside iframes and/or shadow DOMs:
 
 ```csharp
-AxeSelector elementInNestedIframes = new AxeSelector("#element-in-nested-iframe", new string[] { "#topmost-iframe", "#nested-iframe" });
-AxeSelector elementInShadowDom = AxeSelector.FromFrameShadowSelectors(new string[][] { { "#shadow-root-in-topmost-frame", "#element-in-shadow-dom" }});
-AxeSelector elementInComplexFrameShadowLayout = AxeSelector.FromFrameShadowSelectors(new string[][] {
-    { "#shadow-root-in-topmost-frame", "#nested-shadow-root", "#iframe-in-nested-shadow-dom" },
-    { "#shadow-root-in-iframe", "#deeply-nested-target-element" }
+AxeSelector elementInNestedIframes = new AxeSelector("#element-in-nested-iframe", new List<string> { "#topmost-iframe", "#nested-iframe" });
+AxeSelector elementInShadowDom = AxeSelector.FromFrameShadowSelectors(new List<IList<string>> { new List<string> { "#shadow-root-in-topmost-frame", "#element-in-shadow-dom" }});
+AxeSelector elementInComplexFrameShadowLayout = AxeSelector.FromFrameShadowSelectors(new List<IList<string>> {
+    new List<string> { "#shadow-root-in-topmost-frame", "#nested-shadow-root", "#iframe-in-nested-shadow-dom" },
+    new List<string> { "#shadow-root-in-iframe", "#deeply-nested-target-element" }
 });
 ```
 
@@ -158,7 +158,7 @@ This overload of `Include` only supports CSS selectors which refer to elements w
 
 ```csharp
 AxeResult axeResult = new AxeBuilder(webDriver)
-    .Exclude(new AxeSelector("#element-inside-iframe-with-known-issues", new string[] { "#containing-iframe-element" }))
+    .Exclude(new AxeSelector("#element-inside-iframe-with-known-issues", new List<string> { "#containing-iframe-element" }))
     .Analyze();
 ```
 
@@ -170,8 +170,8 @@ Scopes future `Analyze()` calls to exclude the element(s) matching the given CSS
 
 ```csharp
 AxeResult axeResult = new AxeBuilder(webDriver)
-    .Include(new AxeSelector("#element-inside-iframe", new string[] { "#containing-iframe-element" }))
-    .Exclude(new AxeSelector("#element-inside-iframe div.child-class-with-known-issues", new string[] { "#containing-iframe-element" }))
+    .Include(new AxeSelector("#element-inside-iframe", new List<string> { "#containing-iframe-element" }))
+    .Exclude(new AxeSelector("#element-inside-iframe div.child-class-with-known-issues", new List<string> { "#containing-iframe-element" }))
     .Analyze();
 ```
 
@@ -180,11 +180,11 @@ AxeResult axeResult = new AxeBuilder(webDriver)
 This overload of `Exclude` supports complex AxeSelectors which specify elements inside iframes and/or shadow DOMs:
 
 ```csharp
-AxeSelector elementInNestedIframes = new AxeSelector("#element-in-nested-iframe", new string[] { "#topmost-iframe", "#nested-iframe" });
-AxeSelector elementInShadowDom = AxeSelector.FromFrameShadowSelectors(new string[][] { { "#shadow-root-in-topmost-frame", "#element-in-shadow-dom" }});
-AxeSelector elementInComplexFrameShadowLayout = AxeSelector.FromFrameShadowSelectors(new string[][] {
-    { "#shadow-root-in-topmost-frame", "#nested-shadow-root", "#iframe-in-nested-shadow-dom" },
-    { "#shadow-root-in-iframe", "#deeply-nested-target-element" }
+AxeSelector elementInNestedIframes = new AxeSelector("#element-in-nested-iframe", new List<string> { "#topmost-iframe", "#nested-iframe" });
+AxeSelector elementInShadowDom = AxeSelector.FromFrameShadowSelectors(new List<IList<string>> { new List<string> { "#shadow-root-in-topmost-frame", "#element-in-shadow-dom" }});
+AxeSelector elementInComplexFrameShadowLayout = AxeSelector.FromFrameShadowSelectors(new List<IList<string>> {
+    new List<string> { "#shadow-root-in-topmost-frame", "#nested-shadow-root", "#iframe-in-nested-shadow-dom" },
+    new List<string> { "#shadow-root-in-iframe", "#deeply-nested-target-element" }
 });
 ```
 

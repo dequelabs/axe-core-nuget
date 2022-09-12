@@ -35,7 +35,7 @@ namespace Deque.AxeCore.Commons
                 throw new JsonSerializationException("Cannot deserialize AxeSelector: expected a string or non-mepty array, but found empty array");
             }
 
-            return AxeSelector.FromFrameShadowSelectors(rawFrameShadowSelectors.Select(rawShadowSelectors =>
+            return AxeSelector.FromFrameShadowSelectors(rawFrameShadowSelectors.Select<object, IList<string>>(rawShadowSelectors =>
             {
                 string singleSelector = rawShadowSelectors as string;
                 if (singleSelector != null)
@@ -69,7 +69,7 @@ namespace Deque.AxeCore.Commons
                 return;
             }
 
-            serializer.Serialize(writer, value.FrameShadowSelectors.Select<List<string>, object /* either List<string> or string */>(shadowSelectors =>
+            serializer.Serialize(writer, value.FrameShadowSelectors.Select<IList<string>, object /* either List<string> or string */>(shadowSelectors =>
             {
                 if (shadowSelectors.Count == 1)
                 {

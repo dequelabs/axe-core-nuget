@@ -27,7 +27,7 @@ namespace Deque.AxeCore.Commons.Test
         public void CanReadSimpleShadowSelector()
         {
             var result = JsonConvert.DeserializeObject<AxeSelector>("[[\"parent\", \"child\"]]");
-            result.Should().Be(AxeSelector.FromFrameShadowSelectors(new List<List<string>> {
+            result.Should().Be(AxeSelector.FromFrameShadowSelectors(new List<IList<string>> {
                 new List<string> { "parent", "child" } }));
         }
 
@@ -35,7 +35,7 @@ namespace Deque.AxeCore.Commons.Test
         public void CanReadComplexShadowSelector()
         {
             var result = JsonConvert.DeserializeObject<AxeSelector>("[[\"parent-shadow-root\", \"parent-iframe-in-shadow\"], \"middle-without-shadow\", [\"child-shadow-root\", \"child-in-shadow\"]]");
-            result.Should().Be(AxeSelector.FromFrameShadowSelectors(new List<List<string>> {
+            result.Should().Be(AxeSelector.FromFrameShadowSelectors(new List<IList<string>> {
                  new List<string> { "parent-shadow-root", "parent-iframe-in-shadow" },
                  new List<string> { "middle-without-shadow" },
                  new List<string> { "child-shadow-root", "child-in-shadow" },
@@ -81,7 +81,7 @@ namespace Deque.AxeCore.Commons.Test
         [Test]
         public void CanWriteSimpleShadowSelector()
         {
-            var result = JsonConvert.SerializeObject(AxeSelector.FromFrameShadowSelectors(new List<List<string>> {
+            var result = JsonConvert.SerializeObject(AxeSelector.FromFrameShadowSelectors(new List<IList<string>> {
                 new List<string> { "parent", "child" } }));
             result.Should().Be("[[\"parent\",\"child\"]]");
         }
@@ -89,7 +89,7 @@ namespace Deque.AxeCore.Commons.Test
         [Test]
         public void CanWriteComplexShadowSelector()
         {
-            var result = JsonConvert.SerializeObject(AxeSelector.FromFrameShadowSelectors(new List<List<string>> {
+            var result = JsonConvert.SerializeObject(AxeSelector.FromFrameShadowSelectors(new List<IList<string>> {
                  new List<string> { "parent-shadow-root", "parent-iframe-in-shadow" },
                  new List<string> { "middle-without-shadow" },
                  new List<string> { "child-shadow-root", "child-in-shadow" },

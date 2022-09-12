@@ -13,7 +13,7 @@ namespace Deque.AxeCore.Commons.Test
         {
             var simpleSelector1 = new AxeSelector("#some-id");
             var simpleSelector2 = new AxeSelector("#some-id");
-            var simpleSelectorFromFrameShadowSelectors = AxeSelector.FromFrameShadowSelectors(new List<List<string>> { new List<string> { "#some-id" } });
+            var simpleSelectorFromFrameShadowSelectors = AxeSelector.FromFrameShadowSelectors(new List<IList<string>> { new List<string> { "#some-id" } });
 
             simpleSelector1.Should().Be(simpleSelector1);
             simpleSelector1.GetHashCode().Should().Be(simpleSelector1.GetHashCode());
@@ -32,7 +32,7 @@ namespace Deque.AxeCore.Commons.Test
         {
             var simpleSelector1 = new AxeSelector("#first-id");
             var simpleSelector2 = new AxeSelector("#second-id");
-            var simpleSelector3 = AxeSelector.FromFrameShadowSelectors(new List<List<string>> { new List<string> { "#third-id" } });
+            var simpleSelector3 = AxeSelector.FromFrameShadowSelectors(new List<IList<string>> { new List<string> { "#third-id" } });
 
             simpleSelector1.Should().NotBe(simpleSelector2);
             simpleSelector1.GetHashCode().Should().NotBe(simpleSelector2.GetHashCode());
@@ -49,7 +49,7 @@ namespace Deque.AxeCore.Commons.Test
         {
             var iframeSelector1 = new AxeSelector("#some-id", new List<string> { "#frame1", "#frame2" });
             var iframeSelector2 = new AxeSelector("#some-id", new List<string> { "#frame1", "#frame2" });
-            var iframeSelectorFromFrameShadowSelectors = AxeSelector.FromFrameShadowSelectors(new List<List<string>> {
+            var iframeSelectorFromFrameShadowSelectors = AxeSelector.FromFrameShadowSelectors(new List<IList<string>> {
                 new List<string> { "#frame1" },
                 new List<string> { "#frame2" },
                 new List<string> { "#some-id" }
@@ -72,7 +72,7 @@ namespace Deque.AxeCore.Commons.Test
         {
             var iframeSelector1 = new AxeSelector("#some-id", new List<string> { "#frame1", "#frame2" });
             var iframeSelector2 = new AxeSelector("#other-id", new List<string> { "#frame1", "#frame2" });
-            var iframeSelector3 = AxeSelector.FromFrameShadowSelectors(new List<List<string>> {
+            var iframeSelector3 = AxeSelector.FromFrameShadowSelectors(new List<IList<string>> {
                 new List<string> { "#frame1" },
                 new List<string> { "#frame3" },
                 new List<string> { "#some-id" }
@@ -91,12 +91,12 @@ namespace Deque.AxeCore.Commons.Test
         [Test]
         public void LogicallyEquivalentFrameShadowSelectorsShouldBeEqual()
         {
-            var complexSelector1 = AxeSelector.FromFrameShadowSelectors(new List<List<string>> {
+            var complexSelector1 = AxeSelector.FromFrameShadowSelectors(new List<IList<string>> {
                 new List<string> { "#frame1", "#shadow1", "#shadow2" },
                 new List<string> { "#frame2" },
                 new List<string> { "#shadow3", "#some-id" }
             });
-            var complexSelector2 = AxeSelector.FromFrameShadowSelectors(new List<List<string>> {
+            var complexSelector2 = AxeSelector.FromFrameShadowSelectors(new List<IList<string>> {
                 new List<string> { "#frame1", "#shadow1", "#shadow2" },
                 new List<string> { "#frame2" },
                 new List<string> { "#shadow3", "#some-id" }
@@ -113,17 +113,17 @@ namespace Deque.AxeCore.Commons.Test
         [Test]
         public void LogicallyDifferentFrameShadowSelectorsShouldBeUnequal()
         {
-            var complexSelector1 = AxeSelector.FromFrameShadowSelectors(new List<List<string>> {
+            var complexSelector1 = AxeSelector.FromFrameShadowSelectors(new List<IList<string>> {
                 new List<string> { "#frame1", "#shadow1", "#shadow2" },
                 new List<string> { "#frame2" },
                 new List<string> { "#shadow3", "#some-id" }
             });
-            var complexSelector2 = AxeSelector.FromFrameShadowSelectors(new List<List<string>> {
+            var complexSelector2 = AxeSelector.FromFrameShadowSelectors(new List<IList<string>> {
                 new List<string> { "#frame1", "#shadow1", "#shadow2" },
                 new List<string> { "#frame2" },
                 new List<string> { "#shadow3", "#other-id" }
             });
-            var complexSelector3 = AxeSelector.FromFrameShadowSelectors(new List<List<string>> {
+            var complexSelector3 = AxeSelector.FromFrameShadowSelectors(new List<IList<string>> {
                 new List<string> { "#frame1", "#shadow-not-1", "#shadow2" },
                 new List<string> { "#frame2" },
                 new List<string> { "#shadow3", "#some-id" }
@@ -144,7 +144,7 @@ namespace Deque.AxeCore.Commons.Test
         {
             var simpleSelector = new AxeSelector("#some-id");
             var iframeSelector = new AxeSelector("#some-id", new List<string> { "#frame" });
-            var complexSelector = AxeSelector.FromFrameShadowSelectors(new List<List<string>> {
+            var complexSelector = AxeSelector.FromFrameShadowSelectors(new List<IList<string>> {
                 new List<string> { "#frame" },
                 new List<string> { "#shadow-root", "#some-id" }
             });
@@ -194,7 +194,7 @@ namespace Deque.AxeCore.Commons.Test
         [Test]
         public void ShadowSelectorBehaviorMatchesClassDocComment()
         {
-            var selectorInShadowDomInIframe = AxeSelector.FromFrameShadowSelectors(new List<List<string>>
+            var selectorInShadowDomInIframe = AxeSelector.FromFrameShadowSelectors(new List<IList<string>>
             {
                 new List<string> { "#parent-iframe-element" },
                 new List<string> { "#shadow-root-in-iframe", "#child-in-shadow-root" }
@@ -231,9 +231,9 @@ namespace Deque.AxeCore.Commons.Test
         public void ShadowFrameSelectorsFactoryMethodShouldThrowForInvalidInput()
         {
             Assert.That(() => AxeSelector.FromFrameShadowSelectors(null), Throws.ArgumentNullException);
-            Assert.That(() => AxeSelector.FromFrameShadowSelectors(new List<List<string>>()), Throws.ArgumentException);
-            Assert.That(() => AxeSelector.FromFrameShadowSelectors(new List<List<string>> { new List<string>() }), Throws.ArgumentException);
-            Assert.That(() => AxeSelector.FromFrameShadowSelectors(new List<List<string>> {
+            Assert.That(() => AxeSelector.FromFrameShadowSelectors(new List<IList<string>>()), Throws.ArgumentException);
+            Assert.That(() => AxeSelector.FromFrameShadowSelectors(new List<IList<string>> { new List<string>() }), Throws.ArgumentException);
+            Assert.That(() => AxeSelector.FromFrameShadowSelectors(new List<IList<string>> {
                 new List<string> { "#valid-frame" },
                 new List<string>(), // empty, invalid
                 new List<string> { "#valid-child" },
