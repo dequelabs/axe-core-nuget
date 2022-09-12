@@ -7,6 +7,7 @@ namespace Deque.AxeCore.Commons.Test
     [TestFixture]
     public class AxeSelectorTest
     {
+        #region IEquatable Tests
         [Test]
         public void LogicallyEquivalentSimpleSelectorsShouldBeEqual()
         {
@@ -157,7 +158,9 @@ namespace Deque.AxeCore.Commons.Test
             iframeSelector.Should().NotBe(complexSelector);
             iframeSelector.Should().NotBe(complexSelector.GetHashCode());
         }
+        #endregion
 
+        #region Class doc comment examples
         [Test]
         public void SimpleSelectorBehaviorMatchesClassDocComment()
         {
@@ -178,10 +181,13 @@ namespace Deque.AxeCore.Commons.Test
             var selectorInIframe = new AxeSelector("#child-element", new List<string> { "#parent-iframe-element" });
 
             Assert.That(() => selectorInIframe.Selector, Throws.InvalidOperationException);
+
             selectorInIframe.FrameSelectors.Should().ContainInOrder("#parent-iframe-element", "#child-element");
-            selectorInIframe.FrameShadowSelectors.Should().ContainInOrder(
-                new List<string> { "#parent-iframe-element" },
-                new List<string> { "#child-element" });
+
+            selectorInIframe.FrameShadowSelectors.Should().HaveCount(2);
+            selectorInIframe.FrameShadowSelectors[0].Should().ContainInOrder("#parent-iframe-element");
+            selectorInIframe.FrameShadowSelectors[1].Should().ContainInOrder("#child-element");
+
             selectorInIframe.ToString().Should().Be("[\"#parent-iframe-element\", \"#child-element\"]");
         }
 
@@ -195,11 +201,15 @@ namespace Deque.AxeCore.Commons.Test
             });
 
             Assert.That(() => selectorInShadowDomInIframe.Selector, Throws.InvalidOperationException);
+
             Assert.That(() => selectorInShadowDomInIframe.FrameSelectors, Throws.InvalidOperationException);
-            selectorInShadowDomInIframe.FrameShadowSelectors.Should().ContainInOrder(
-                new List<string> { "#parent-iframe-element" },
-                new List<string> { "#shadow-root-in-iframe", "#child-in-shadow-root" });
-            selectorInShadowDomInIframe.ToString().Should().Be("[\"#parent-iframe-element\", [\"#shadow-root-in-iframe\", \"#child-element\"]]");
+
+            selectorInShadowDomInIframe.FrameShadowSelectors.Should().HaveCount(2);
+            selectorInShadowDomInIframe.FrameShadowSelectors[0].Should().ContainInOrder("#parent-iframe-element");
+            selectorInShadowDomInIframe.FrameShadowSelectors[1].Should().ContainInOrder("#shadow-root-in-iframe", "#child-in-shadow-root");
+
+            selectorInShadowDomInIframe.ToString().Should().Be("[\"#parent-iframe-element\", [\"#shadow-root-in-iframe\", \"#child-in-shadow-root\"]]");
         }
+        #endregion
     }
 }
