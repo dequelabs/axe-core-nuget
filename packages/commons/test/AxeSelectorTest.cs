@@ -211,5 +211,34 @@ namespace Deque.AxeCore.Commons.Test
             selectorInShadowDomInIframe.ToString().Should().Be("[\"#parent-iframe-element\", [\"#shadow-root-in-iframe\", \"#child-in-shadow-root\"]]");
         }
         #endregion
+
+        #region Constructor error handling
+        [Test]
+        public void SimpleConstructorShouldThrowForInvalidInput()
+        {
+            Assert.That(() => new AxeSelector(null), Throws.ArgumentNullException);
+        }
+
+        [Test]
+        public void FrameConstructorShouldThrowForInvalidInput()
+        {
+            Assert.That(() => new AxeSelector(null, new List<string> { "valid frame selector" }), Throws.ArgumentNullException);
+            Assert.That(() => new AxeSelector("valid selector", null), Throws.ArgumentNullException);
+            Assert.That(() => new AxeSelector("valid selector", new List<string>()), Throws.ArgumentException);
+        }
+
+        [Test]
+        public void ShadowFrameSelectorsFactoryMethodShouldThrowForInvalidInput()
+        {
+            Assert.That(() => AxeSelector.FromFrameShadowSelectors(null), Throws.ArgumentNullException);
+            Assert.That(() => AxeSelector.FromFrameShadowSelectors(new List<List<string>>()), Throws.ArgumentException);
+            Assert.That(() => AxeSelector.FromFrameShadowSelectors(new List<List<string>> { new List<string>() }), Throws.ArgumentException);
+            Assert.That(() => AxeSelector.FromFrameShadowSelectors(new List<List<string>> {
+                new List<string> { "#valid-frame" },
+                new List<string>(), // empty, invalid
+                new List<string> { "#valid-child" },
+            }), Throws.ArgumentException);
+        }
+        #endregion
     }
 }

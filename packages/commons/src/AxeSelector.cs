@@ -105,6 +105,11 @@ namespace Deque.AxeCore.Commons
         /// <param name="selector"></param>
         public AxeSelector(string selector)
         {
+            if (selector is null)
+            {
+                throw new ArgumentNullException(nameof(selector));
+            }
+
             FrameShadowSelectors = new List<List<string>> { new List<string> { selector } };
         }
 
@@ -115,6 +120,21 @@ namespace Deque.AxeCore.Commons
         /// <param name="ancestorFrames"></param>
         public AxeSelector(string selector, List<string> ancestorFrames)
         {
+            if (selector is null)
+            {
+                throw new ArgumentNullException(nameof(selector));
+            }
+
+            if (ancestorFrames is null)
+            {
+                throw new ArgumentNullException(nameof(ancestorFrames));
+            }
+
+            if (ancestorFrames.Count == 0)
+            {
+                throw new ArgumentException($"{nameof(ancestorFrames)} must be non-empty");
+            }
+
             FrameShadowSelectors = ancestorFrames.Select(frameSelector => new List<string> { frameSelector }).ToList();
             FrameShadowSelectors.Add(new List<string> { selector });
         }
@@ -131,6 +151,21 @@ namespace Deque.AxeCore.Commons
         // AxeSelector represent multiple independent selectors.
         private AxeSelector(List<List<string>> frameShadowSelectors)
         {
+            if (frameShadowSelectors is null)
+            {
+                throw new ArgumentNullException(nameof(frameShadowSelectors));
+            }
+
+            if (frameShadowSelectors.Count == 0)
+            {
+                throw new ArgumentException($"Argument must be non-empty: ", nameof(frameShadowSelectors));
+            }
+
+            if (frameShadowSelectors.Any(shadowSelectors => shadowSelectors is null || shadowSelectors.Count == 0))
+            {
+                throw new ArgumentException($"Argument elements must all be non-null and non-empty: ", nameof(frameShadowSelectors));
+            }
+
             FrameShadowSelectors = frameShadowSelectors;
         }
 
@@ -200,8 +235,6 @@ namespace Deque.AxeCore.Commons
             // differs from the hash code of the string.
             return 1788502736 ^ this.ToString().GetHashCode();
         }
-
-        // TODO: check on axe behavior around empty frame/shadow lists and match it with ArgumentExceptions in all ctors
 
         // TODO: update selenium package to deal with new type
     }
