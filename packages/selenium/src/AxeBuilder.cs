@@ -29,13 +29,6 @@ namespace Deque.AxeCore.Selenium
         };
 
         /// <summary>
-        /// The run options to be passed to axe. Refer https://github.com/dequelabs/axe-core/blob/develop/doc/API.md#options-parameter
-        /// Cannot not be used with <see cref="WithRules(string[])"/>, <see cref="WithTags(string[])"/> & <see cref="DisableRules(string[])"/>
-        /// </summary>
-        [Obsolete("Use WithOptions / WithTags / WithRules / DisableRules apis")]
-        public string Options { get; set; } = "{}";
-
-        /// <summary>
         /// Initialize an instance of <see cref="AxeBuilder"/>
         /// </summary>
         /// <param name="webDriver">Selenium driver to use</param>
@@ -66,8 +59,6 @@ namespace Deque.AxeCore.Selenium
         {
             ValidateNotNullParameter(runOptions, nameof(runOptions));
 
-            ThrowIfDeprecatedOptionsSet();
-
             this.runOptions = runOptions;
 
             return this;
@@ -82,8 +73,6 @@ namespace Deque.AxeCore.Selenium
         public AxeBuilder WithTags(params string[] tags)
         {
             ValidateParameters(tags, nameof(tags));
-
-            ThrowIfDeprecatedOptionsSet();
 
             runOptions.RunOnly = new RunOnlyOptions
             {
@@ -103,8 +92,6 @@ namespace Deque.AxeCore.Selenium
         {
             ValidateParameters(rules, nameof(rules));
 
-            ThrowIfDeprecatedOptionsSet();
-
             runOptions.RunOnly = new RunOnlyOptions
             {
                 Type = "rule",
@@ -123,8 +110,6 @@ namespace Deque.AxeCore.Selenium
         public AxeBuilder DisableRules(params string[] rules)
         {
             ValidateParameters(rules, nameof(rules));
-
-            ThrowIfDeprecatedOptionsSet();
 
             var rulesMap = new Dictionary<string, RuleOptions>();
             foreach (var rule in rules)
@@ -218,9 +203,7 @@ namespace Deque.AxeCore.Selenium
         {
             _webDriver.Inject(_AxeBuilderOptions.ScriptProvider, runOptions);
 
-#pragma warning disable CS0618 // Intentionally falling back to publicly deprecated property for backcompat
-            string rawOptionsArg = Options == "{}" ? JsonConvert.SerializeObject(runOptions, JsonSerializerSettings) : Options;
-#pragma warning restore CS0618
+            string rawOptionsArg = JsonConvert.SerializeObject(runOptions, JsonSerializerSettings);
 
             string scanJsContent = EmbeddedResourceProvider.ReadEmbeddedFile("scan.js");
             object[] rawArgs = new[] { rawContextArg, rawOptionsArg };
@@ -255,16 +238,6 @@ namespace Deque.AxeCore.Selenium
             if (parameterValue == null)
             {
                 throw new ArgumentNullException(parameterName);
-            }
-        }
-
-        private void ThrowIfDeprecatedOptionsSet()
-        {
-#pragma warning disable CS0618 // Intentionally checking publicly deprecated property for backcompat
-            if (Options != "{}")
-#pragma warning restore CS0618
-            {
-                throw new InvalidOperationException("Deprecated Options api shouldn't be used with the new apis - WithOptions/WithRules/WithTags or DisableRules");
             }
         }
     }
