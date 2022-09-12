@@ -8,6 +8,7 @@ namespace Deque.AxeCore.Commons.Test
     [TestFixture]
     public class AxeSelectorJsonConverterTest
     {
+        #region Read tests
         [Test]
         public void CanReadSimpleSelector() {
             var result = JsonConvert.DeserializeObject<AxeSelector>("\"simple string selector\"");
@@ -41,6 +42,28 @@ namespace Deque.AxeCore.Commons.Test
         }
 
         [Test]
+        [TestCase("null")]
+        [TestCase("0")]
+        [TestCase("{}")]
+        [TestCase("[]")]
+        [TestCase("[[]]")]
+        [TestCase("[[[]]]")]
+        [TestCase("[null]")]
+        [TestCase("[0]")]
+        [TestCase("[{}]")]
+        [TestCase("[\"selector\", null]")]
+        [TestCase("[\"selector\", [0]]")]
+        [TestCase("[\"selector\", [{}]]")]
+        [TestCase("[\"selector\", []]")]
+        [TestCase("[\"selector\", [\"selector\", []]]")]
+        public void ReadThrowsJsonSerializationExceptionForMalformedInput(string malformedInput)
+        {
+            Assert.That(() => JsonConvert.DeserializeObject<AxeSelector>(malformedInput), Throws.InstanceOf(typeof(JsonSerializationException)));
+        }
+        #endregion
+
+        #region Write tests
+        [Test]
         public void CanWriteSimpleSelector()
         {
             var result = JsonConvert.SerializeObject(new AxeSelector("simple string selector"));
@@ -72,7 +95,6 @@ namespace Deque.AxeCore.Commons.Test
             }));
             result.Should().Be("[[\"parent-shadow-root\",\"parent-iframe-in-shadow\"],\"middle-without-shadow\",[\"child-shadow-root\",\"child-in-shadow\"]]");
         }
-
-        // TODO: test error paths
+        #endregion
     }
 }
