@@ -50,13 +50,17 @@ namespace Deque.AxeCore.Commons
         /// and shadow DOM usage, see <see cref="ToString"/>.
         /// </summary>
         /// <exception cref="InvalidOperationException">Thrown if the AxeSelector requires traversing iframes and/or shadow DOMs</exception>
-        public string Selector {
-            get {
-                if (FrameShadowSelectors.Count > 1) {
+        public string Selector
+        {
+            get
+            {
+                if (FrameShadowSelectors.Count > 1)
+                {
                     throw new InvalidOperationException($"AxeSelector {this} represents an element nested within iframe(s); it cannot be represented as a single Selector. Use FrameSelectors or FrameShadowSelectors instead.");
                 }
                 List<string> shadowSelectors = FrameShadowSelectors[0];
-                if (shadowSelectors.Count > 1) {
+                if (shadowSelectors.Count > 1)
+                {
                     throw new InvalidOperationException($"AxeSelector {this} represents an element nested within a shadow DOM; it cannot be represented as a single Selector. Use FrameShadowSelectors instead.");
                 }
                 return shadowSelectors[0];
@@ -68,9 +72,12 @@ namespace Deque.AxeCore.Commons
         /// used as a shortcut to access the selectors for the chain of iframe elements leading up to the final selector.
         /// </summary>
         /// <exception cref="InvalidOperationException">Thrown if the AxeSelector requires traversing shadow DOM(s)</exception>
-        public IEnumerable<string> FrameSelectors {
-            get {
-                if (FrameShadowSelectors.Any(shadowSelectors => shadowSelectors.Count > 1)) {
+        public IEnumerable<string> FrameSelectors
+        {
+            get
+            {
+                if (FrameShadowSelectors.Any(shadowSelectors => shadowSelectors.Count > 1))
+                {
                     throw new InvalidOperationException($"AxeSelector {this} represents an element nested within a shadow DOM; it cannot be represented with only one selector per frame. Use FrameShadowSelectors instead.");
                 }
                 return FrameShadowSelectors.Select(shadowSelectors => shadowSelectors[0]);
@@ -176,9 +183,12 @@ namespace Deque.AxeCore.Commons
         /// <returns>A string representation of the AxeSelector</returns>
         public override string ToString()
         {
-            if (FrameShadowSelectors.Count == 1 && FrameShadowSelectors[0].Count == 1) {
+            if (FrameShadowSelectors.Count == 1 && FrameShadowSelectors[0].Count == 1)
+            {
                 return FrameShadowSelectors[0][0];
-            } else {
+            }
+            else
+            {
                 return $"[{string.Join(", ", FrameShadowSelectors.Select(ShadowSelectorsToString))}]";
             }
         }

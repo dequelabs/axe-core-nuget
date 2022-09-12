@@ -10,7 +10,8 @@ namespace Deque.AxeCore.Commons.Test
     {
         #region Read tests
         [Test]
-        public void CanReadSimpleSelector() {
+        public void CanReadSimpleSelector()
+        {
             var result = JsonConvert.DeserializeObject<AxeSelector>("\"simple string selector\"");
             result.Should().Be(new AxeSelector("simple string selector"));
         }
