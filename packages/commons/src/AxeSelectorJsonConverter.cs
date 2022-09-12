@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,10 +29,20 @@ namespace Deque.AxeCore.Commons
                     return new List<string> { singleSelector };
                 }
 
-                string[] multipleSelectors = rawShadowSelectors as string[];
+                JArray multipleSelectors = rawShadowSelectors as JArray;
                 if (multipleSelectors != null)
                 {
-                    return multipleSelectors.ToList();
+                    return multipleSelectors.Select(token =>
+                    {
+                        try
+                        {
+                            return (string)token;
+                        }
+                        catch (InvalidCastException)
+                        {
+                            throw new JsonSerializationException($"Cannot deserialize AxeSelector: expected array-of-array elements to be strings, but found a non-string token {token}");
+                        }
+                    }).ToList();
                 }
 
                 throw new JsonSerializationException($"Cannot deserialize AxeSelector: expected array elements to be either strings or arrays of strings, but found {rawShadowSelectors}");
