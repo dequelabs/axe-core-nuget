@@ -187,6 +187,9 @@ namespace Deque.AxeCore.Commons
 
             if (Object.ReferenceEquals(this, other)) { return true; }
 
+            // We want deep equality of a List-of-Lists with a corresponding HashCode. ToString() already serializes
+            // to a format suitable for doing that easily and is performant-enough for the purposes of this library,
+            // so we just reuse it rather than dealing with implementing nested EqualityComparators.
             return other.ToString().Equals(this.ToString(), StringComparison.Ordinal);
         }
 
