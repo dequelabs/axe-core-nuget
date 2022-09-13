@@ -44,28 +44,34 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
                 .Analyze();
 
             Assert.That(legacyResults.Violations.Length, Is.EqualTo(runPartialResults.Violations.Length));
-            for (int i = 0; i < legacyResults.Violations.Length; i++) {
+            for (int i = 0; i < legacyResults.Violations.Length; i++)
+            {
                 AssertAxeItemsEqual(legacyResults.Violations[i], runPartialResults.Violations[i], true);
             }
 
             Assert.That(legacyResults.Passes.Length, Is.EqualTo(runPartialResults.Passes.Length + 1));
             int foundBypass = 0;
-            for (int i = 0; i < runPartialResults.Passes.Length; i++) {
-                if (legacyResults.Passes[i].Id == "bypass") {
+            for (int i = 0; i < runPartialResults.Passes.Length; i++)
+            {
+                if (legacyResults.Passes[i].Id == "bypass")
+                {
                     foundBypass = 1;
                 }
                 AssertAxeItemsEqual(legacyResults.Passes[i + foundBypass], runPartialResults.Passes[i]);
             }
             Assert.That(legacyResults.Inapplicable.Length, Is.EqualTo(runPartialResults.Inapplicable.Length - 1));
             foundBypass = 0;
-            for (int i = 0; i < legacyResults.Inapplicable.Length; i++) {
-                if (runPartialResults.Inapplicable[i].Id == "bypass") {
+            for (int i = 0; i < legacyResults.Inapplicable.Length; i++)
+            {
+                if (runPartialResults.Inapplicable[i].Id == "bypass")
+                {
                     foundBypass = 1;
                 }
                 AssertAxeItemsEqual(legacyResults.Inapplicable[i], runPartialResults.Inapplicable[i + foundBypass]);
             }
             Assert.That(legacyResults.Incomplete.Length, Is.EqualTo(runPartialResults.Incomplete.Length));
-            for (int i = 0; i < legacyResults.Incomplete.Length; i++) {
+            for (int i = 0; i < legacyResults.Incomplete.Length; i++)
+            {
                 AssertAxeItemsEqual(legacyResults.Incomplete[i], runPartialResults.Incomplete[i]);
             }
             Assert.That(ToJson(legacyResults.TestEnvironment), Is.EqualTo(ToJson(runPartialResults.TestEnvironment)));
@@ -82,11 +88,13 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             NullValueHandling = NullValueHandling.Include
         };
 
-        private static string ToJson(object obj) {
+        private static string ToJson(object obj)
+        {
             return JsonConvert.SerializeObject(obj, JsonSerializerSettings);
         }
 
-        private static void AssertAxeItemsEqual(AxeResultItem a, AxeResultItem b, bool compareNodes = false) {
+        private static void AssertAxeItemsEqual(AxeResultItem a, AxeResultItem b, bool compareNodes = false)
+        {
             Assert.That(a.Id, Is.EqualTo(b.Id));
             Assert.That(a.Description, Is.EqualTo(b.Description));
             Assert.That(a.Help, Is.EqualTo(b.Help));
@@ -94,7 +102,8 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             Assert.That(a.Impact, Is.EqualTo(b.Impact));
             Assert.That(ToJson(a.Tags.OrderBy(x => x)), Is.EqualTo(ToJson(b.Tags.OrderBy(x => x))));
 
-            if (compareNodes) {
+            if (compareNodes)
+            {
                 Assert.That(a.Nodes.Length, Is.EqualTo(b.Nodes.Length));
             }
         }

@@ -40,7 +40,8 @@ namespace Deque.AxeCore.Playwright
         /// <returns>The AxeResults</returns>
         public static async Task<AxeResults> RunAxe(this IPage page, AxeRunOptions? options = null)
         {
-            if (runLagacy) {
+            if (runLagacy)
+            {
                 return aRunAxeLegacy(page, null, options);
             }
             var partialResults = new List<PartialResult>();
@@ -49,7 +50,7 @@ namespace Deque.AxeCore.Playwright
 
             try
             {
-                var topResultString = (string) ExecuteAsyncScript(
+                var topResultString = (string)ExecuteAsyncScript(
                                                                   AxeScripts.AxeRunPartialCommand,
                                                                   context,
                                                                   runOptions
@@ -64,10 +65,10 @@ namespace Deque.AxeCore.Playwright
 
             frameContexts.ForEach(frameContext =>
                                   {
-                                  partialResults.AddRange(RunPartialRecursive(
-                                                                              frameContext,
-                                                                              runOptions
-                                  ));
+                                      partialResults.AddRange(RunPartialRecursive(
+                                                                                  frameContext,
+                                                                                  runOptions
+                                      ));
                                   });
 
             // isolate finishRun
@@ -86,7 +87,8 @@ namespace Deque.AxeCore.Playwright
                                                     AxeRunContext context,
                                                     AxeRunOptions? options = null)
         {
-            if (runLagacy) {
+            if (runLagacy)
+            {
                 return aRunAxeLegacy(page, context, options);
             }
 
@@ -96,7 +98,7 @@ namespace Deque.AxeCore.Playwright
 
             try
             {
-                var topResultString = (string) ExecuteAsyncScript(
+                var topResultString = (string)ExecuteAsyncScript(
                                                                   page,
                                                                   AxeScripts.AxeRunPartialCommand,
                                                                   context,
@@ -112,11 +114,11 @@ namespace Deque.AxeCore.Playwright
 
             frameContexts.ForEach(frameContext =>
                                   {
-                                  partialResults.AddRange(RunPartialRecursive(
-                                                                              page,
-                                                                              frameContext,
-                                                                              runOptions
-                                  ));
+                                      partialResults.AddRange(RunPartialRecursive(
+                                                                                  page,
+                                                                                  frameContext,
+                                                                                  runOptions
+                                      ));
                                   });
 
             // isolate finishRun
@@ -165,7 +167,7 @@ namespace Deque.AxeCore.Playwright
 
             try
             {
-                var frameResultSring = (string) ExecuteAsyncScript(
+                var frameResultSring = (string)ExecuteAsyncScript(
                                                                    page,
                                                                    AxeScripts.AxeRunPartialCommand,
                                                                    frameContext.Context,
@@ -187,11 +189,11 @@ namespace Deque.AxeCore.Playwright
 
             frameContexts.ForEach(fContext =>
                                   {
-                                  partialResults.AddRange(RunPartialRecursive(
-                                                                              page,
-                                                                              fContext,
-                                                                              runOptions
-                                  ));
+                                      partialResults.AddRange(RunPartialRecursive(
+                                                                                  page,
+                                                                                  fContext,
+                                                                                  runOptions
+                                      ));
                                   });
 
             webDriver.SwitchTo().ParentFrame();
@@ -222,7 +224,7 @@ namespace Deque.AxeCore.Playwright
             ConfigureAxe();
 
             // grab result ...
-            var result = (string) ExecuteAsyncScript(AxeScripts.AxeFinishRunCommand, partialResults, options);
+            var result = (string)ExecuteAsyncScript(AxeScripts.AxeFinishRunCommand, partialResults, options);
 
             // ... close the new window and go back
             webDriver.Close();

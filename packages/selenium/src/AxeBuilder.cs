@@ -79,7 +79,8 @@ namespace Deque.AxeCore.Selenium
         /// </summary>
         /// <param name="legacyMode"></param>
         [Obsolete("Legacy Mode is being removed in the future. Use with caution!")]
-        public AxeBuilder UseLegacyMode(bool legacyMode = false) {
+        public AxeBuilder UseLegacyMode(bool legacyMode = false)
+        {
             this.useLegacyMode = legacyMode;
             return this;
         }
@@ -87,7 +88,8 @@ namespace Deque.AxeCore.Selenium
         /// <summary>
         /// Inject and run axe on the top-level iframe only.
         /// </summary>
-        public AxeBuilder DisableIframeTesting() {
+        public AxeBuilder DisableIframeTesting()
+        {
             this.disableIframeTesting = true;
             return this;
         }
@@ -253,7 +255,7 @@ namespace Deque.AxeCore.Selenium
         {
             ConfigureAxe();
 
-            var runPartialExists = (bool) _webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("runPartialExists.js"));
+            var runPartialExists = (bool)_webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("runPartialExists.js"));
 
 #pragma warning disable CS0618 // Intentionally falling back to publicly deprecated property for backcompat
 #pragma warning restore CS0618
@@ -261,7 +263,9 @@ namespace Deque.AxeCore.Selenium
             if (!runPartialExists || useLegacyMode)
             {
                 resultObject = AnalyzeAxeLegacy(rawContextArg);
-            } else {
+            }
+            else
+            {
                 resultObject = AnalyzeAxeRunPartial(rawContextArg);
             }
 
@@ -298,28 +302,35 @@ namespace Deque.AxeCore.Selenium
 
             var partialResults = new List<AxePartialResult>();
 
-            try {
-                string partialRes = (string) _webDriver.ExecuteAsyncScript(EmbeddedResourceProvider.ReadEmbeddedFile("runPartial.js"), context, options);
+            try
+            {
+                string partialRes = (string)_webDriver.ExecuteAsyncScript(EmbeddedResourceProvider.ReadEmbeddedFile("runPartial.js"), context, options);
                 partialResults.Add(JsonConvert.DeserializeObject<AxePartialResult>(partialRes));
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 if (isTopLevel)
                 {
                     throw ex;
-                } else {
+                }
+                else
+                {
                     partialResults.Add(null);
                     return partialResults;
                 }
             }
 
             // Don't go any deeper if we are just doing top-level iframe
-            if (disableIframeTesting) {
+            if (disableIframeTesting)
+            {
                 return partialResults;
             }
 
             var frameContexts = GetFrameContexts(context);
             foreach (var fContext in frameContexts)
             {
-                try {
+                try
+                {
                     object frameContext = JsonConvert.SerializeObject(fContext.Context, JsonSerializerSettings);
                     object frameSelector = JsonConvert.SerializeObject(fContext.Selector, JsonSerializerSettings);
                     var frame = _webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("shadowSelect.js"), frameSelector);
@@ -327,9 +338,12 @@ namespace Deque.AxeCore.Selenium
 
                     partialResults.AddRange(RunPartialRecursive(options, frameContext, false));
                 }
-                catch (Exception) {
+                catch (Exception)
+                {
                     partialResults.Add(null);
-                } finally {
+                }
+                finally
+                {
                     _webDriver.SwitchTo().ParentFrame();
                 }
             }
@@ -339,7 +353,8 @@ namespace Deque.AxeCore.Selenium
             return partialResults;
         }
 
-        private JObject IsolatedFinishRun(AxePartialResult[] partialResults, object options) {
+        private JObject IsolatedFinishRun(AxePartialResult[] partialResults, object options)
+        {
             // grab reference to current window
             var originalWindowHandle = _webDriver.CurrentWindowHandle;
 
@@ -372,11 +387,13 @@ namespace Deque.AxeCore.Selenium
 
         }
 
-        private JObject AnalyzeAxeLegacy(object rawContextArg) {
+        private JObject AnalyzeAxeLegacy(object rawContextArg)
+        {
             // Skip if value is set to false
             if (runOptions.Iframes != false)
             {
-                foreach (var x in _webDriver.FrameContexts()) {
+                foreach (var x in _webDriver.FrameContexts())
+                {
                     ConfigureAxe();
                 }
             }
@@ -396,7 +413,7 @@ namespace Deque.AxeCore.Selenium
         /// <returns></returns>
         private List<AxeFrameContext> GetFrameContexts(object context)
         {
-            var frameContextsString = (string) _webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("getFrameContexts.js"), context);
+            var frameContextsString = (string)_webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("getFrameContexts.js"), context);
             var frameContexts = JsonConvert.DeserializeObject<List<AxeFrameContext>>(frameContextsString);
             return frameContexts;
         }
@@ -416,7 +433,8 @@ namespace Deque.AxeCore.Selenium
             _webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("branding.js"));
         }
 
-        private string SerializedRunOptions() {
+        private string SerializedRunOptions()
+        {
             return Options == "{}" ? JsonConvert.SerializeObject(runOptions, JsonSerializerSettings) : Options;
         }
 

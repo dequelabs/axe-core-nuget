@@ -16,9 +16,10 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             GoToFixture("index.html");
 
             var rules = new Dictionary<string, RuleOptions>();
-            rules.Add(RULE_TO_TEST, new RuleOptions {
-                        Enabled = true
-                      });
+            rules.Add(RULE_TO_TEST, new RuleOptions
+            {
+                Enabled = true
+            });
 
             var results = new AxeBuilder(driver)
                 .WithOptions(new AxeRunOptions

@@ -28,7 +28,8 @@ namespace Deque.AxeCore.Commons
         /// </summary>
         /// <param name="types">List of tags to use.</param>
         /// <returns>The <c>RunOnly</c> object.</returns>
-        public static RunOnlyOptions Tags(params string[] tags) {
+        public static RunOnlyOptions Tags(params string[] tags)
+        {
             var runOnly = new RunOnlyOptions();
             runOnly.Type = "tags";
             runOnly.Values = new List<string>(tags);
@@ -40,7 +41,8 @@ namespace Deque.AxeCore.Commons
         /// </summary>
         /// <param name="rules">List of ids of rules to use.</param>
         /// <returns>The <c>RunOnly</c> object.</returns>
-        public static RunOnlyOptions Rules(params string[] rules) {
+        public static RunOnlyOptions Rules(params string[] rules)
+        {
             var runOnly = new RunOnlyOptions();
             runOnly.Type = "rules";
             runOnly.Values = new List<string>(rules);

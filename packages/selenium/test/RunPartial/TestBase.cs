@@ -50,8 +50,10 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             driver.Quit();
         }
 
-        protected AxeBuilderOptions CustomSource(string axeSource) {
-            return new AxeBuilderOptions {
+        protected AxeBuilderOptions CustomSource(string axeSource)
+        {
+            return new AxeBuilderOptions
+            {
                 ScriptProvider = new StringAxeScriptProvider(axeSource)
             };
         }
@@ -115,12 +117,14 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
                 }
             });
         }
-        public static IWebDriver NewDriver() {
+        public static IWebDriver NewDriver()
+        {
             EnsureWebdriverPathInitialized(ref ChromeDriverPath, "CHROMEWEBDRIVER", "chromedriver", new ChromeConfig());
             ChromeDriverService chromeService = ChromeDriverService.CreateDefaultService(Path.GetDirectoryName(ChromeDriverPath));
             chromeService.SuppressInitialDiagnosticInformation = true;
             var options = new ChromeOptions();
-            if (Environment.GetEnvironmentVariable("CI") != null) {
+            if (Environment.GetEnvironmentVariable("CI") != null)
+            {
                 options.AddArgument("--no-sandbox");
                 options.AddArgument("--headless");
                 options.AddArgument("--disable-gpu");
@@ -128,27 +132,31 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             return new ChromeDriver(chromeService, options);
         }
 
-        public static string ResourcePath(string filename) {
+        public static string ResourcePath(string filename)
+        {
             // https://stackoverflow.com/questions/27181774/get-resources-folder-path-c-sharp
             string runningPath = System.AppDomain.CurrentDomain.BaseDirectory;
             var p = Path.GetFullPath(Path.Combine(runningPath, @"../../../", "RunPartial", filename));
             return p;
         }
 
-        public static string ResourceUrl(string filename) {
+        public static string ResourceUrl(string filename)
+        {
             var filePath = ResourcePath(filename);
             var u = $"file://{filePath}";
             return u;
         }
 
-        public static string FixturePath(string filename) {
+        public static string FixturePath(string filename)
+        {
             // https://stackoverflow.com/questions/27181774/get-resources-folder-path-c-sharp
             string runningPath = System.AppDomain.CurrentDomain.BaseDirectory;
             var p = Path.GetFullPath(Path.Combine(runningPath, @"../../../../../..", "node_modules", "axe-test-fixtures", "fixtures", filename));
             return p;
         }
 
-        public static string FixtureUrl(string filename) {
+        public static string FixtureUrl(string filename)
+        {
             var filePath = FixturePath(filename);
             var u = $"file://{filePath}";
             return u;
