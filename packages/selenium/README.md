@@ -281,22 +281,6 @@ AxeBuilderOptions axeBuilderOptions = new AxeBuilderOptions
 AxeResult axeResult = new AxeBuilder(webDriver, axeBuilderOptions).Analyze();
 ```
 
-### *Deprecated*: `AxeBuilder.Options`
-
-*This property is deprecated; instead, use `WithOptions`, `WithRules`, `WithTags`, and `DisableRules`*
-
-```csharp
-AxeBuilder axeBuilder = new AxeBuilder(webDriver);
-axeBuilder.Options = "{\"runOnly\": {\"type\": \"tag\", \"values\": [\"wcag2a\"]}, \"restoreScroll\": true}"
-AxeResult axeResult = axeBuilder.Analyze();
-```
-
-Sets a JSON string that will be passed as-is to the axe.run `options` parameter.
-
-See the [axe-core API documentation](https://github.com/dequelabs/axe-core/blob/develop/doc/API.md#options-parameter) for the format for the JSON string.
-
-`Options` is not compatible with `WithRules`, `WithTags`, `DisableRules`, or `WithOptions`
-
 ## Working with AxeResult objects
 
 In most cases, you would run an axe scan from within a test method in a suite of end to end tests, and you would want to use a test assertion to verify that there are no unexpected accessibility violations in a page or component.
