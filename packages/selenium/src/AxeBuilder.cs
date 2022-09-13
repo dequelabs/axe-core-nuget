@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
@@ -21,9 +22,22 @@ namespace Deque.AxeCore.Selenium
         private readonly AxeRunContext runContext = new AxeRunContext();
         private AxeRunOptions runOptions = new AxeRunOptions();
         private string outputFilePath = null;
+        private bool useLegacyMode = false;
+        private bool disableIframeTesting = false;
 
         private static readonly JsonSerializerSettings JsonSerializerSettings = new JsonSerializerSettings
         {
+            Formatting = Formatting.None,
+            NullValueHandling = NullValueHandling.Include
+        };
+
+        private static readonly DefaultContractResolver camelCaseContractResolver = new DefaultContractResolver
+        {
+            NamingStrategy = new CamelCaseNamingStrategy()
+        };
+        private static readonly JsonSerializerSettings JsonSerializerSettingsFinishRun = new JsonSerializerSettings
+        {
+            ContractResolver = camelCaseContractResolver,
             Formatting = Formatting.None,
             NullValueHandling = NullValueHandling.Include
         };
@@ -55,6 +69,27 @@ namespace Deque.AxeCore.Selenium
 
             _webDriver = webDriver;
             _AxeBuilderOptions = options;
+        }
+
+        /// <summary>
+        /// Use frameMessenger with &lt;same_origin_only&lt;.
+        /// This disables use of axe.runPartial() which is called in each frame, and
+        /// axe.finishRun() which is called in a blank page. This uses axe.run() instead,
+        /// but with the restriction that cross-origin frames will not be tested.
+        /// </summary>
+        /// <param name="legacyMode"></param>
+        [Obsolete("Legacy Mode is being removed in the future. Use with caution!")]
+        public AxeBuilder UseLegacyMode(bool legacyMode = false) {
+            this.useLegacyMode = legacyMode;
+            return this;
+        }
+
+        /// <summary>
+        /// Inject and run axe on the top-level iframe only.
+        /// </summary>
+        public AxeBuilder DisableIframeTesting() {
+            this.disableIframeTesting = true;
+            return this;
         }
 
         /// <summary>
@@ -139,12 +174,12 @@ namespace Deque.AxeCore.Selenium
         }
 
         /// <summary>
-        /// Selectors to include in the validation. 
+        /// Selectors to include in the validation.
         /// Note that the selectors array uniquely identifies one element in the page,
-        /// Valid usage: 
+        /// Valid usage:
         ///     axeBuilder.Include("#parent-iframe1", "#element-inside-iframe"); => to select #element-inside-iframe under #parent-iframe1
         ///     axeBuilder.Include("#element-inside-main-frame1");
-        ///     
+        ///
         /// Invalid usage:
         ///      axeBuilder.Include("#element-inside-main-frame1", "#element-inside-main-frame2");
         /// </summary>
@@ -210,34 +245,179 @@ namespace Deque.AxeCore.Selenium
         }
 
         /// <summary>
-        /// Runs axe via scan.js at a specific context, which will be passed as-is to Selenium for scan.js to interpret, and
-        /// parses/handles the scan.js output per the current builder options.
+        /// Runs axe via legacyScan.js at a specific context, which will be passed as-is to Selenium for legacyScan.js to interpret, and
+        /// parses/handles the legacyScan.js output per the current builder options.
         /// </summary>
-        /// <param name="rawContextArg">The value to pass as-is to scan.js to use as the axe.run "context" argument</param>
+        /// <param name="rawContextArg">The value to pass as-is to legacyScan.js to use as the axe.run "context" argument</param>
         private AxeResult AnalyzeRawContext(object rawContextArg)
         {
-            _webDriver.Inject(_AxeBuilderOptions.ScriptProvider, runOptions);
+            ConfigureAxe();
+
+            var runPartialExists = (bool) _webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("runPartialExists.js"));
 
 #pragma warning disable CS0618 // Intentionally falling back to publicly deprecated property for backcompat
-            string rawOptionsArg = Options == "{}" ? JsonConvert.SerializeObject(runOptions, JsonSerializerSettings) : Options;
 #pragma warning restore CS0618
+            JObject resultObject;
+            if (!runPartialExists || useLegacyMode)
+            {
+                resultObject = AnalyzeAxeLegacy(rawContextArg);
+            } else {
+                resultObject = AnalyzeAxeRunPartial(rawContextArg);
+            }
 
-            string scanJsContent = EmbeddedResourceProvider.ReadEmbeddedFile("scan.js");
-            object[] rawArgs = new[] { rawContextArg, rawOptionsArg };
-            var result = ((IJavaScriptExecutor)_webDriver).ExecuteAsyncScript(scanJsContent, rawArgs);
-
-            JObject jObject = JObject.FromObject(result);
-
-            if (outputFilePath != null && jObject.Type == JTokenType.Object)
+            if (outputFilePath != null && resultObject.Type == JTokenType.Object)
             {
                 Encoding utf8NoBOM = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
                 using (var outputFileWriter = new StreamWriter(outputFilePath, append: false, encoding: utf8NoBOM))
                 {
-                    jObject.WriteTo(new JsonTextWriter(outputFileWriter));
+                    resultObject.WriteTo(new JsonTextWriter(outputFileWriter));
                 }
             }
 
-            return new AxeResult(jObject);
+            return new AxeResult(resultObject);
+
+        }
+
+        private JObject AnalyzeAxeRunPartial(object rawContextArg)
+        {
+            string rawOptionsArg = SerializedRunOptions();
+            var partialResults = RunPartialRecursive(rawOptionsArg, rawContextArg, true);
+            return IsolatedFinishRun(partialResults.ToArray(), rawOptionsArg);
+        }
+
+        private List<AxePartialResult> RunPartialRecursive(
+                                                        object options,
+                                                        object context,
+                                                        bool isTopLevel
+                                                        )
+        {
+            if (!isTopLevel)
+            {
+                ConfigureAxe();
+            }
+
+            var partialResults = new List<AxePartialResult>();
+
+            try {
+                string partialRes = (string) _webDriver.ExecuteAsyncScript(EmbeddedResourceProvider.ReadEmbeddedFile("runPartial.js"), context, options);
+                partialResults.Add(JsonConvert.DeserializeObject<AxePartialResult>(partialRes));
+            } catch (Exception ex) {
+                if (isTopLevel)
+                {
+                    throw ex;
+                } else {
+                    partialResults.Add(null);
+                    return partialResults;
+                }
+            }
+
+            // Don't go any deeper if we are just doing top-level iframe
+            if (disableIframeTesting) {
+                return partialResults;
+            }
+
+            var frameContexts = GetFrameContexts(context);
+            foreach (var fContext in frameContexts)
+            {
+                try {
+                    object frameContext = JsonConvert.SerializeObject(fContext.Context, JsonSerializerSettings);
+                    object frameSelector = JsonConvert.SerializeObject(fContext.Selector, JsonSerializerSettings);
+                    var frame = _webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("shadowSelect.js"), frameSelector);
+                    _webDriver.SwitchTo().Frame(frame as IWebElement);
+
+                    partialResults.AddRange(RunPartialRecursive(options, frameContext, false));
+                }
+                catch (Exception) {
+                    partialResults.Add(null);
+                } finally {
+                    _webDriver.SwitchTo().ParentFrame();
+                }
+            }
+
+
+
+            return partialResults;
+        }
+
+        private JObject IsolatedFinishRun(AxePartialResult[] partialResults, object options) {
+            // grab reference to current window
+            var originalWindowHandle = _webDriver.CurrentWindowHandle;
+
+            try
+            {
+                // create an isolated page
+                _webDriver.ExecuteScript("window.open('about:blank', '_blank')");
+                _webDriver.SwitchTo().Window(_webDriver.WindowHandles.Last());
+                _webDriver.Navigate().GoToUrl("about:blank");
+            }
+            catch (Exception e)
+            {
+                throw new Exception(
+                    $"Failed to switch windows. Please make sure you have popup blockers disabled and you are using the correct browser drivers.{Environment.NewLine}Please check out https://axe-devtools-html-docs.deque.com/reference/csharp/error-handling.html",
+                    e
+                );
+            }
+
+            ConfigureAxe();
+
+            var serializedPartials = JsonConvert.SerializeObject(partialResults, JsonSerializerSettingsFinishRun);
+            // grab result ...
+            var result = _webDriver.ExecuteAsyncScript(EmbeddedResourceProvider.ReadEmbeddedFile("finishRun.js"), serializedPartials, options);
+
+            // ... close the new window and go back
+            _webDriver.Close();
+            _webDriver.SwitchTo().Window(originalWindowHandle);
+
+            return JObject.FromObject(result);
+
+        }
+
+        private JObject AnalyzeAxeLegacy(object rawContextArg) {
+            // Skip if value is set to false
+            if (runOptions.Iframes != false)
+            {
+                foreach (var x in _webDriver.FrameContexts()) {
+                    ConfigureAxe();
+                }
+            }
+
+            string rawOptionsArg = SerializedRunOptions();
+            string scanJsContent = EmbeddedResourceProvider.ReadEmbeddedFile("legacyScan.js");
+            object[] rawArgs = new[] { rawContextArg, rawOptionsArg };
+            var result = ((IJavaScriptExecutor)_webDriver).ExecuteAsyncScript(scanJsContent, rawArgs);
+
+            return JObject.FromObject(result);
+        }
+
+        /// <summary>
+        /// Execute `axe.utils.getFrameContexts(context)`
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        private List<AxeFrameContext> GetFrameContexts(object context)
+        {
+            var frameContextsString = (string) _webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("getFrameContexts.js"), context);
+            var frameContexts = JsonConvert.DeserializeObject<List<AxeFrameContext>>(frameContextsString);
+            return frameContexts;
+        }
+
+        /// <summary>
+        /// Injects scripts into the current frame and configures axe
+        /// </summary>
+        private void ConfigureAxe()
+        {
+            object rawOptionsArg = JsonConvert.SerializeObject(runOptions, JsonSerializerSettings);
+            _webDriver.ExecuteScript(_AxeBuilderOptions.ScriptProvider.GetScript());
+            _webDriver.ExecuteScript(
+                useLegacyMode
+                    ? EmbeddedResourceProvider.ReadEmbeddedFile("allowIframeSafe.js")
+                    : EmbeddedResourceProvider.ReadEmbeddedFile("allowIframeUnsafe.js")
+            );
+            _webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("branding.js"));
+        }
+
+        private string SerializedRunOptions() {
+            return Options == "{}" ? JsonConvert.SerializeObject(runOptions, JsonSerializerSettings) : Options;
         }
 
         private static void ValidateParameters(string[] parameterValue, string parameterName)

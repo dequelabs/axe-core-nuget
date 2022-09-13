@@ -150,10 +150,7 @@ namespace Deque.AxeCore.Selenium.Test
             WebDriver.Navigate().GoToUrl(filename);
 
             var axeResult = new AxeBuilder(WebDriver)
-                .WithOptions(new AxeRunOptions
-                {
-                    Iframes = false
-                })
+                .DisableIframeTesting()
                 .Analyze();
 
             var colorContrast = axeResult

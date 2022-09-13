@@ -4,14 +4,10 @@ var context = typeof arguments[0] === 'string' ? JSON.parse(arguments[0]) : argu
 context = context || document;
 
 var options = JSON.parse(arguments[1]);
-
-axe.run(context, options, function (err, res) {
-    {  
-        if (err) {
-            callback({ error: err.message }, res);
-        }
-        else {
-            callback(res);
-        }
-    }
-});
+const thenFunc = (results) => {
+    callback(results);
+};
+const catchFunc = (err) => {
+    callback({ error: err.message }, res);
+}
+axe.run(context, options).then(thenFunc).catch(catchFunc);

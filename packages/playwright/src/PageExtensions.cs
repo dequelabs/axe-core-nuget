@@ -40,7 +40,38 @@ namespace Deque.AxeCore.Playwright
         /// <returns>The AxeResults</returns>
         public static async Task<AxeResults> RunAxe(this IPage page, AxeRunOptions? options = null)
         {
-            return await RunAxeInner(page, null, options);
+            if (runLagacy) {
+                return aRunAxeLegacy(page, null, options);
+            }
+            var partialResults = new List<PartialResult>();
+
+            var frameContexts = GetFrameContexts(context);
+
+            try
+            {
+                var topResultString = (string) ExecuteAsyncScript(
+                                                                  AxeScripts.AxeRunPartialCommand,
+                                                                  context,
+                                                                  runOptions
+                );
+                partialResults.Add(JsonConverter.Deserialize<PartialResult>(topResultString));
+            }
+            catch (Exception e)
+            {
+                Trace.TraceWarning($"Error executing runPartial. Error message: {e.ToString()}");
+                throw e;
+            }
+
+            frameContexts.ForEach(frameContext =>
+                                  {
+                                  partialResults.AddRange(RunPartialRecursive(
+                                                                              frameContext,
+                                                                              runOptions
+                                  ));
+                                  });
+
+            // isolate finishRun
+            return IsolatedFinishRun(partialResults.ToArray(), runOptions);
         }
 
         /// <summary>
@@ -51,14 +82,48 @@ namespace Deque.AxeCore.Playwright
         /// <param name="options">Options for running Axe.</param>
         /// <returns>The AxeResults</returns>
         public static async Task<AxeResults> RunAxe(
-            this IPage page,
-            AxeRunContext context,
-            AxeRunOptions? options = null)
+                                                    this IPage page,
+                                                    AxeRunContext context,
+                                                    AxeRunOptions? options = null)
         {
-            return await RunAxeInner(page, context, options);
+            if (runLagacy) {
+                return aRunAxeLegacy(page, context, options);
+            }
+
+            var partialResults = new List<PartialResult>();
+
+            var frameContexts = GetFrameContexts(page, context);
+
+            try
+            {
+                var topResultString = (string) ExecuteAsyncScript(
+                                                                  page,
+                                                                  AxeScripts.AxeRunPartialCommand,
+                                                                  context,
+                                                                  runOptions
+                );
+                partialResults.Add(JsonConverter.Deserialize<PartialResult>(topResultString));
+            }
+            catch (Exception e)
+            {
+                Trace.TraceWarning($"Error executing runPartial. Error message: {e.ToString()}");
+                throw e;
+            }
+
+            frameContexts.ForEach(frameContext =>
+                                  {
+                                  partialResults.AddRange(RunPartialRecursive(
+                                                                              page,
+                                                                              frameContext,
+                                                                              runOptions
+                                  ));
+                                  });
+
+            // isolate finishRun
+            return IsolatedFinishRun(partialResults.ToArray(), runOptions);
         }
 
-        private static async Task<AxeResults> RunAxeInner(this IPage page, AxeRunContext? context, AxeRunOptions? options)
+        private static async Task<AxeResults> RunAxeLegacy(this IPage page, AxeRunContext? context, AxeRunOptions? options)
         {
             IAxeScriptProvider axeScriptProvider = new BundledAxeScriptProvider();
             IAxeContentEmbedder axeContentEmbedder = new DefaultAxeContentEmbedder(axeScriptProvider);
@@ -69,6 +134,101 @@ namespace Deque.AxeCore.Playwright
             IFileSystem fileSystem = new FileSystem();
 
             return results;
+        }
+
+        private List<PartialResult> RunPartialRecursive(
+                                                        this IPage page,
+                                                        FrameContext frameContext,
+                                                        RunOptions.RunOptions runOptions
+        )
+        {
+            var partialResults = new List<PartialResult>();
+
+            try
+            {
+                // get the proper selector the frame and switch to it
+                var selector = ExecuteScript(page, AxeScripts.AxeShadowSelectCommand, frameContext.Selector);
+                webDriver.SwitchTo().Frame(selector as IWebElement);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceWarning($"Unable to switch to iframe. Error message: {ex.ToString()}");
+                webDriver.SwitchTo().ParentFrame();
+
+                partialResults.Add(null);
+
+                return partialResults;
+            }
+
+            // inject axe and configure it
+            ConfigureAxe();
+
+            try
+            {
+                var frameResultSring = (string) ExecuteAsyncScript(
+                                                                   page,
+                                                                   AxeScripts.AxeRunPartialCommand,
+                                                                   frameContext.Context,
+                                                                   runOptions
+                );
+                partialResults.Add(JsonConverter.Deserialize<PartialResult>(frameResultSring));
+            }
+            catch (Exception e)
+            {
+                Trace.TraceWarning($"Error executing runPartial. Error message: {e.ToString()}");
+                webDriver.SwitchTo().ParentFrame();
+
+                partialResults.Add(null);
+
+                return partialResults;
+            }
+
+            var frameContexts = GetFrameContexts(frameContext.Context);
+
+            frameContexts.ForEach(fContext =>
+                                  {
+                                  partialResults.AddRange(RunPartialRecursive(
+                                                                              page,
+                                                                              fContext,
+                                                                              runOptions
+                                  ));
+                                  });
+
+            webDriver.SwitchTo().ParentFrame();
+
+            return partialResults;
+        }
+
+        private TestResults IsolatedFinishRun(PartialResult[] partialResults, RunOptions.RunOptions options)
+        {
+            // grab reference to current window
+            var originalWindowHandle = webDriver.CurrentWindowHandle;
+
+            try
+            {
+                // create an isolated page
+                ExecuteScript("window.open('about:blank', '_blank')");
+                webDriver.SwitchTo().Window(webDriver.WindowHandles.Last());
+                webDriver.Navigate().GoToUrl("about:blank");
+            }
+            catch (Exception e)
+            {
+                throw new AxeSeleniumException(
+                                               $"Failed to switch windows. Please make sure you have popup blockers disabled and you are using the correct browser drivers.{Environment.NewLine}Please check out https://axe-devtools-html-docs.deque.com/reference/csharp/error-handling.html",
+                                               e
+                );
+            }
+
+            ConfigureAxe();
+
+            // grab result ...
+            var result = (string) ExecuteAsyncScript(AxeScripts.AxeFinishRunCommand, partialResults, options);
+
+            // ... close the new window and go back
+            webDriver.Close();
+            webDriver.SwitchTo().Window(originalWindowHandle);
+
+            return JsonConverter.Deserialize<TestResults>(result);
         }
     }
 }
