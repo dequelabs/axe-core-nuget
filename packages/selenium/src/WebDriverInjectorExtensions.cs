@@ -9,12 +9,6 @@ namespace Deque.AxeCore.Selenium
 {
     internal static class WebDriverInjectorExtensions
     {
-        private static readonly JsonSerializerSettings JsonSerializerSettings = new JsonSerializerSettings
-        {
-            Formatting = Formatting.None,
-            NullValueHandling = NullValueHandling.Include
-        };
-
         /// <summary>
         ///  Yeilds contexts such that every yield will be in a different frame context.
         ///  To be used to take actions in every frame on a page.
