@@ -5,11 +5,4 @@
   "license": "MPL-2.0 AND MIT",
   "repository": "dequelabs/axe-core-nuget",
   "private": true,
-  "scripts": {
-      "serveFixtures": "cd node_modules/axe-test-fixtures/fixtures && http-server -s"
-  },
-  "devDependencies": {
-    "axe-test-fixtures": "github:dequelabs/axe-test-fixtures#v1",
-    "http-server": "^13.1.0"
-  }
 }

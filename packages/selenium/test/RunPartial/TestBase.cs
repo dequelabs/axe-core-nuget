@@ -3,6 +3,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using Deque.AxeCore.Commons;
+using Deque.AxeCore.Commons.Test.Util;
 using Deque.AxeCore.Selenium;
 using NUnit.Framework;
 using OpenQA.Selenium;
@@ -41,6 +42,9 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             dylangConfigPath = FixturePath("dylang-config.json");
 
             driver = NewDriver();
+            string runningPath = System.AppDomain.CurrentDomain.BaseDirectory;
+            var commonsPath = Path.GetFullPath(Path.Combine(runningPath, @"../../../../..", "commons", "test"));
+            TestFixtureServer.Start(commonsPath);
         }
 
         [OneTimeTearDown]
@@ -48,6 +52,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         {
             driver.Close();
             driver.Quit();
+            TestFixtureServer.Stop();
         }
 
         protected AxeBuilderOptions CustomSource(string axeSource)

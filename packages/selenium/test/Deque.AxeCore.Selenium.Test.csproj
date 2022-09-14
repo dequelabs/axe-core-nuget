@@ -50,6 +50,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\commons\test\Deque.AxeCore.Commons.Test.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
       <None Include="../../../node_modules/axe-test-fixtures/fixtures/**" CopyToOutputDirectory="Always" LinkBase="fixtures/" />
   </ItemGroup>
 
