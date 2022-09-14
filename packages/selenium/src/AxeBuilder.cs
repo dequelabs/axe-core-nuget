@@ -23,7 +23,6 @@ namespace Deque.AxeCore.Selenium
         private AxeRunOptions runOptions = new AxeRunOptions();
         private string outputFilePath = null;
         private bool useLegacyMode = false;
-        private bool disableIframeTesting = false;
 
         private static readonly JsonSerializerSettings JsonSerializerSettings = new JsonSerializerSettings
         {
@@ -72,7 +71,7 @@ namespace Deque.AxeCore.Selenium
         }
 
         /// <summary>
-        /// Use frameMessenger with &lt;same_origin_only&lt;.
+        /// Use frameMessenger with &lt;same_origin_only&gt;.
         /// This disables use of axe.runPartial() which is called in each frame, and
         /// axe.finishRun() which is called in a blank page. This uses axe.run() instead,
         /// but with the restriction that cross-origin frames will not be tested.
@@ -82,15 +81,6 @@ namespace Deque.AxeCore.Selenium
         public AxeBuilder UseLegacyMode(bool legacyMode = false)
         {
             this.useLegacyMode = legacyMode;
-            return this;
-        }
-
-        /// <summary>
-        /// Inject and run axe on the top-level iframe only.
-        /// </summary>
-        public AxeBuilder DisableIframeTesting()
-        {
-            this.disableIframeTesting = true;
             return this;
         }
 
@@ -257,8 +247,6 @@ namespace Deque.AxeCore.Selenium
 
             var runPartialExists = (bool)_webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("runPartialExists.js"));
 
-#pragma warning disable CS0618 // Intentionally falling back to publicly deprecated property for backcompat
-#pragma warning restore CS0618
             JObject resultObject;
             if (!runPartialExists || useLegacyMode)
             {
@@ -321,7 +309,7 @@ namespace Deque.AxeCore.Selenium
             }
 
             // Don't go any deeper if we are just doing top-level iframe
-            if (disableIframeTesting)
+            if (runOptions.Iframes == false)
             {
                 return partialResults;
             }
@@ -392,10 +380,7 @@ namespace Deque.AxeCore.Selenium
             // Skip if value is set to false
             if (runOptions.Iframes != false)
             {
-                foreach (var x in _webDriver.FrameContexts())
-                {
-                    ConfigureAxe();
-                }
+                _webDriver.ForEachFrameContext(() => ConfigureAxe());
             }
 
             string rawOptionsArg = SerializedRunOptions();
@@ -423,7 +408,6 @@ namespace Deque.AxeCore.Selenium
         /// </summary>
         private void ConfigureAxe()
         {
-            object rawOptionsArg = JsonConvert.SerializeObject(runOptions, JsonSerializerSettings);
             _webDriver.ExecuteScript(_AxeBuilderOptions.ScriptProvider.GetScript());
             _webDriver.ExecuteScript(
                 useLegacyMode
@@ -435,7 +419,9 @@ namespace Deque.AxeCore.Selenium
 
         private string SerializedRunOptions()
         {
+#pragma warning disable CS0618 // Intentionally falling back to publicly deprecated property for backcompat
             return Options == "{}" ? JsonConvert.SerializeObject(runOptions, JsonSerializerSettings) : Options;
+#pragma warning restore CS0618
         }
 
         private static void ValidateParameters(string[] parameterValue, string parameterName)

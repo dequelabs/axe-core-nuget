@@ -20,17 +20,14 @@ namespace Deque.AxeCore.Selenium
         ///  To be used to take actions in every frame on a page.
         /// </summary>
         /// <param name="driver">An initialized WebDriver</param>
-        internal static IEnumerable<int> FrameContexts(this IWebDriver driver)
+        internal static void ForEachFrameContext(this IWebDriver driver, Action callback)
         {
             IList<IWebElement> parents = new List<IWebElement>();
-            foreach (var x in FrameContexts(driver, parents))
-            {
-                yield return x;
-            }
+            ForEachFrameContext(driver, parents, callback);
 
             driver.SwitchTo().DefaultContent();
         }
-        private static IEnumerable<int> FrameContexts(this IWebDriver driver, IList<IWebElement> parents)
+        private static void ForEachFrameContext(this IWebDriver driver, IList<IWebElement> parents, Action callback)
         {
             IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
             IList<IWebElement> frames = driver.FindElements(By.TagName("iframe"));
@@ -48,15 +45,11 @@ namespace Deque.AxeCore.Selenium
                 }
 
                 driver.SwitchTo().Frame(frame);
-                yield return 0;
+                callback();
 
                 IList<IWebElement> localParents = parents.ToList();
                 localParents.Add(frame);
-
-                foreach (var x in FrameContexts(driver, localParents))
-                {
-                    yield return x;
-                }
+                ForEachFrameContext(driver, localParents, callback);
             }
         }
 

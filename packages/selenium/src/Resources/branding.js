@@ -1,7 +1,4 @@
 const brandingConfig = {
-  branding: {
-    application: 'axe-core-selenium-nuget',
-    brand: 'axe-core'
-  }
+  branding: 'axe-core-selenium-nuget'
 };
 axe.configure(brandingConfig);
