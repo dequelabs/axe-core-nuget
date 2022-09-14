@@ -277,7 +277,7 @@ namespace Deque.AxeCore.Selenium
             return IsolatedFinishRun(partialResults.ToArray(), rawOptionsArg);
         }
 
-        private List<AxePartialResult> RunPartialRecursive(
+        private List<object> RunPartialRecursive(
                                                         object options,
                                                         object context,
                                                         bool isTopLevel
@@ -288,12 +288,14 @@ namespace Deque.AxeCore.Selenium
                 ConfigureAxe();
             }
 
-            var partialResults = new List<AxePartialResult>();
+            var partialResults = new List<object>();
 
             try
             {
                 string partialRes = (string)_webDriver.ExecuteAsyncScript(EmbeddedResourceProvider.ReadEmbeddedFile("runPartial.js"), context, options);
-                partialResults.Add(JsonConvert.DeserializeObject<AxePartialResult>(partialRes));
+                // Important to deserialize because we want to reserialize as an
+                // array of object, not an array of strings.
+                partialResults.Add(JsonConvert.DeserializeObject<object>(partialRes));
             }
             catch (Exception ex)
             {
@@ -341,7 +343,7 @@ namespace Deque.AxeCore.Selenium
             return partialResults;
         }
 
-        private JObject IsolatedFinishRun(AxePartialResult[] partialResults, object options)
+        private JObject IsolatedFinishRun(object[] partialResults, object options)
         {
             // grab reference to current window
             var originalWindowHandle = _webDriver.CurrentWindowHandle;
