@@ -14,7 +14,7 @@ namespace Deque.AxeCore.Commons.Test.Util
                 WorkingDirectory = pathToCommonsTest,
                 UseShellExecute = false,
                 RedirectStandardInput = true,
-                FileName = "cmd"
+                FileName = "cmd.exe"
             };
             serverProc = Process.Start(startInfo);
 
