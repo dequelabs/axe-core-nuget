@@ -406,9 +406,7 @@ namespace Deque.AxeCore.Selenium
 
         private string SerializedRunOptions()
         {
-#pragma warning disable CS0618 // Intentionally falling back to publicly deprecated property for backcompat
-            return Options == "{}" ? JsonConvert.SerializeObject(runOptions, JsonSerializerSettings) : Options;
-#pragma warning restore CS0618
+            return JsonConvert.SerializeObject(runOptions, JsonSerializerSettings);
         }
 
         private static void ValidateParameters(string[] parameterValue, string parameterName)
