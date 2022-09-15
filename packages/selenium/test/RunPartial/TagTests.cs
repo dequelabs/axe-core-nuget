@@ -28,7 +28,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             rules.AddRange(results.Incomplete);
             rules.AddRange(results.Violations);
 
-            Assert.IsTrue(rules.Any(x => x.Tags.Contains(TAG_TO_TEST)));
+            Assert.IsTrue(rules.All(x => x.Tags.Contains(TAG_TO_TEST)));
         }
 
         [Test]
