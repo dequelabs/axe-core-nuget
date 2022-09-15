@@ -53,6 +53,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
                 AssertAxeItemsEqual(legacyResults.Violations[i], runPartialResults.Violations[i], true);
             }
 
+            // 'bypass' gets marked as 'incomplete' instead of 'passes' for runPartial.
             Assert.That(legacyResults.Passes.Length, Is.EqualTo(runPartialResults.Passes.Length + 1));
             int foundBypass = 0;
             for (int i = 0; i < runPartialResults.Passes.Length; i++)
