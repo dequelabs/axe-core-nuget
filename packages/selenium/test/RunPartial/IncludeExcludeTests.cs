@@ -8,39 +8,34 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
     {
         [Test]
         [TestCase("Chrome")]
-        public void ShouldNotThrowWithIncludeExclude(string browser)
-        {
-            InitDriver(browser);
-            GoToResource("context.html");
-
-            var axe = new AxeBuilder(WebDriver)
-                .Include(".include")
-                .Exclude(".exclude");
-            Assert.DoesNotThrow(() => axe.Analyze());
-        }
-
-        [Test]
-        [TestCase("Chrome")]
-        public void ShouldNotThrowWithInclude(string browser)
+        public void ShouldHonorInclude(string browser)
         {
             InitDriver(browser);
             GoToResource("context.html");
 
             var axe = new AxeBuilder(WebDriver)
                 .Include(".include");
-            Assert.DoesNotThrow(() => axe.Analyze());
+            var includeRes = axe.Analyze();
+
+            var axe2 = new AxeBuilder(WebDriver);
+            var normalRes = axe2.Analyze();
+            Assert.That(includeRes.Violations.Length, Is.LessThan(normalRes.Violations.Length));
         }
 
         [Test]
         [TestCase("Chrome")]
-        public void ShouldNotThrowWithExclude(string browser)
+        public void ShouldHonorExclude(string browser)
         {
             InitDriver(browser);
             GoToResource("context.html");
 
             var axe = new AxeBuilder(WebDriver)
                 .Exclude(".exclude");
-            Assert.DoesNotThrow(() => axe.Analyze());
+            var excludeRes = axe.Analyze();
+
+            var axe2 = new AxeBuilder(WebDriver);
+            var normalRes = axe2.Analyze();
+            Assert.That(excludeRes.Violations.Length, Is.LessThan(normalRes.Violations.Length));
         }
     }
 }
