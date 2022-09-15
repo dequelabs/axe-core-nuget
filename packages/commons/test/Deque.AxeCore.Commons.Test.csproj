@@ -41,4 +41,8 @@
     <!-- Copying this file to support incremental builds -->
     <Copy SourceFiles="package-lock.json" DestinationFolder="node_modules" />
   </Target>
+
+  <ItemGroup>
+    <None Include="Resources/sampleFile.txt" />
+  </ItemGroup>
 </Project>

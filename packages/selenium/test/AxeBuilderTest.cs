@@ -161,52 +161,6 @@ namespace Deque.AxeCore.Selenium.Test
             jsExecutorMock.VerifyAll();
         }
 
-
-        [Test]
-        public void ShouldPassRunOptionsIfDeprecatedOptionsSet()
-        {
-            var expectedOptions = "deprecated run options";
-
-            SetupVerifiableAxeInjectionCall();
-            SetupVerifiableScanCall(null, expectedOptions);
-
-            var builder = new AxeBuilder(webDriverMock.Object, stubAxeBuilderOptions);
-#pragma warning disable CS0618
-            builder.Options = expectedOptions;
-#pragma warning restore CS0618
-
-            var result = builder.Analyze();
-
-            VerifyAxeResult(result);
-
-            webDriverMock.VerifyAll();
-            targetLocatorMock.VerifyAll();
-            jsExecutorMock.VerifyAll();
-        }
-
-        [Test]
-        public void ShouldPassRunOptionsIfDeprecatedOptionsSetWithContextElement()
-        {
-            var expectedOptions = "deprecated run options";
-            var expectedContext = new Mock<IWebElement>();
-
-            SetupVerifiableAxeInjectionCall();
-            SetupVerifiableScanElementCall(expectedContext.Object, expectedOptions);
-
-            var builder = new AxeBuilder(webDriverMock.Object, stubAxeBuilderOptions);
-#pragma warning disable CS0618
-            builder.Options = expectedOptions;
-#pragma warning restore CS0618
-
-            var result = builder.Analyze(expectedContext.Object);
-
-            VerifyAxeResult(result);
-
-            webDriverMock.VerifyAll();
-            targetLocatorMock.VerifyAll();
-            jsExecutorMock.VerifyAll();
-        }
-
         [Test]
         public void ShouldPassRuleConfig()
         {
@@ -330,22 +284,6 @@ namespace Deque.AxeCore.Selenium.Test
             VerifyExceptionThrown<ArgumentException>(() => builder.WithTags(values));
             VerifyExceptionThrown<ArgumentException>(() => builder.Include(values));
             VerifyExceptionThrown<ArgumentException>(() => builder.Exclude(values));
-        }
-
-        [Test]
-        public void ShouldThrowIfDeprecatedOptionsIsUsedWithNewOptionsApis()
-        {
-            SetupVerifiableAxeInjectionCall();
-
-            var builder = new AxeBuilder(webDriverMock.Object, stubAxeBuilderOptions);
-#pragma warning disable CS0618
-            builder.Options = "{xpath:true}";
-#pragma warning restore CS0618
-
-            VerifyExceptionThrown<InvalidOperationException>(() => builder.WithRules("rule-1"));
-            VerifyExceptionThrown<InvalidOperationException>(() => builder.DisableRules("rule-1"));
-            VerifyExceptionThrown<InvalidOperationException>(() => builder.WithTags("tag1"));
-            VerifyExceptionThrown<InvalidOperationException>(() => builder.WithOptions(new AxeRunOptions() { Iframes = true }));
         }
 
         private void VerifyExceptionThrown<T>(Action action) where T : Exception
