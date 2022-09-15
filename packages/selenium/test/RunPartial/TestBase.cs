@@ -71,36 +71,6 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             WebDriver.Navigate().GoToUrl(url);
         }
 
-        protected void AssertHasViolations(AxeResult results, params string[] rules)
-        {
-            var violations = results.Violations;
-            foreach (var violation in violations)
-            {
-                Console.WriteLine($">> {violation.Id}");
-            }
-
-            Assert.That(violations.Length, Is.EqualTo(rules.Length));
-
-            foreach (var rule in rules)
-            {
-                var found = false;
-                foreach (var vio in violations)
-                {
-                    if (vio.Id == rule)
-                    {
-                        found = true;
-                        break;
-                    }
-                }
-
-                if (!found)
-                {
-                    Console.Error.WriteLine($"Expected '{rule}' violation but could not find.");
-                    Assert.IsTrue(found);
-                }
-            }
-        }
-
         public static IWebDriver NewDriver()
         {
             EnsureWebdriverPathInitialized(ref ChromeDriverPath, "CHROMEWEBDRIVER", "chromedriver", new ChromeConfig());
