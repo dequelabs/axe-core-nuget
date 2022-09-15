@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace Deque.AxeCore.Commons.Test.Util
 {
@@ -34,4 +35,3 @@ namespace Deque.AxeCore.Commons.Test.Util
         }
     }
 }
-
