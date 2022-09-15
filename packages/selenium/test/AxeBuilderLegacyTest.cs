@@ -374,6 +374,12 @@ namespace Deque.AxeCore.Selenium.Test
                 .Returns(false);
             jsExecutorMock
                 .Setup(js => js.ExecuteScript(LegacyTestAxeScriptProvider.stubAxeScript)).Verifiable();
+            webDriverMock
+                .Setup(d => d.FindElements(It.IsAny<By>()))
+                .Returns(new List<IWebElement>().AsReadOnly());
+            webDriverMock
+                .Setup(d => d.SwitchTo())
+                .Returns(targetLocatorMock.Object);
         }
 
         private void SetupVerifiableScanCall(string serializedContext, string serialzedOptions)
