@@ -56,14 +56,14 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
                 ScriptProvider = new StringAxeScriptProvider(axeSource)
             };
         }
-        protected void GoToResource(string url)
+        protected void GoToResource(string resourceFilename)
         {
-            WebDriver.Navigate().GoToUrl(ResourceUrl(url));
+            WebDriver.Navigate().GoToUrl(ResourceUrl(resourceFilename));
         }
 
-        protected void GoToFixture(string url)
+        protected void GoToFixture(string resourceFilename)
         {
-            WebDriver.Navigate().GoToUrl(FixtureUrl(url));
+            WebDriver.Navigate().GoToUrl(FixtureUrl(resourceFilename));
         }
 
         protected void GoToUrl(string url)
