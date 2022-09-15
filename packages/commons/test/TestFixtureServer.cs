@@ -8,13 +8,18 @@ namespace Deque.AxeCore.Commons.Test.Util
         private TestFixtureServer() { }
         public static void Start(string pathToCommonsTest)
         {
+            string cmdName;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                cmdName = "cmd";
+            } else {
+                cmdName = "sh";
+            }
             ProcessStartInfo startInfo = new ProcessStartInfo
             {
-                WindowStyle = ProcessWindowStyle.Normal,
                 WorkingDirectory = pathToCommonsTest,
                 UseShellExecute = false,
                 RedirectStandardInput = true,
-                FileName = "cmd.exe"
+                FileName = cmdName
             };
             serverProc = Process.Start(startInfo);
 
