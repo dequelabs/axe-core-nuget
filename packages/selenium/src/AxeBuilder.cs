@@ -396,11 +396,6 @@ namespace Deque.AxeCore.Selenium
         private void ConfigureAxe()
         {
             _webDriver.ExecuteScript(_AxeBuilderOptions.ScriptProvider.GetScript());
-            _webDriver.ExecuteScript(
-                useLegacyMode
-                    ? EmbeddedResourceProvider.ReadEmbeddedFile("allowIframeSafe.js")
-                    : EmbeddedResourceProvider.ReadEmbeddedFile("allowIframeUnsafe.js")
-            );
             _webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("branding.js"));
         }
 
