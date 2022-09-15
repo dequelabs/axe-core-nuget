@@ -9,9 +9,12 @@ namespace Deque.AxeCore.Commons.Test.Util
         public static void Start(string pathToCommonsTest)
         {
             string cmdName;
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
                 cmdName = "cmd";
-            } else {
+            }
+            else
+            {
                 cmdName = "sh";
             }
             ProcessStartInfo startInfo = new ProcessStartInfo
