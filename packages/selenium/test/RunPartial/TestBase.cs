@@ -33,7 +33,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             axeSource = new BundledAxeScriptProvider().GetScript();
 
             axeCrashScript = File.ReadAllText(
-                Path.Combine(TestContext.CurrentContext.TestDirectory, "fixtures/axe-crasher.js")
+                Path.Combine(TestFileRoot, "fixtures", "axe-crasher.js")
             );
 
             dylangConfigPath = FixturePath("dylang-config.json");
