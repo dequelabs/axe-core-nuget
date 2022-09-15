@@ -44,7 +44,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         }
 
         [OneTimeTearDown]
-        public void TearDown()
+        public void OneTimeTearDown()
         {
             TestFixtureServer.Stop();
         }
