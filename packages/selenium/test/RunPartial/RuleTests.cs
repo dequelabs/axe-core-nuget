@@ -12,11 +12,13 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         protected const string RULE_TO_TEST = "region";
 
         [Test]
-        public void ShouldDisableGivenRules()
+        [TestCase("Chrome")]
+        public void ShouldDisableGivenRules(string browser)
         {
+            InitDriver(browser);
             GoToFixture("index.html");
 
-            var res = new AxeBuilder(driver)
+            var res = new AxeBuilder(WebDriver)
                 .DisableRules(RULE_TO_TEST)
                 .Analyze();
 
@@ -30,11 +32,13 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         }
 
         [Test]
-        public void ShouldRunOnlyGivenRules()
+        [TestCase("Chrome")]
+        public void ShouldRunOnlyGivenRules(string browser)
         {
+            InitDriver(browser);
             GoToFixture("index.html");
 
-            var res = new AxeBuilder(driver)
+            var res = new AxeBuilder(WebDriver)
                 .WithRules(RULE_TO_TEST)
                 .Analyze();
 
@@ -48,11 +52,13 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         }
 
         [Test]
-        public void ShouldAllowWithRulesMultipleTimes()
+        [TestCase("Chrome")]
+        public void ShouldAllowWithRulesMultipleTimes(string browser)
         {
+            InitDriver(browser);
             Assert.DoesNotThrow(() =>
             {
-                new AxeBuilder(driver)
+                new AxeBuilder(WebDriver)
                     .WithRules(RULE_TO_TEST)
                     .WithRules("label");
             });

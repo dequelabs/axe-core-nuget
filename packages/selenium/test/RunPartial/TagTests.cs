@@ -12,11 +12,13 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         protected const string TAG_TO_TEST = "best-practice";
 
         [Test]
-        public void ShouldOnlyRunRulesWithGivenTag()
+        [TestCase("Chrome")]
+        public void ShouldOnlyRunRulesWithGivenTag(string browser)
         {
+            InitDriver(browser);
             GoToFixture("index.html");
 
-            var results = new AxeBuilder(driver)
+            var results = new AxeBuilder(WebDriver)
                 .WithTags(TAG_TO_TEST)
                 .Analyze();
 
@@ -30,11 +32,13 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         }
 
         [Test]
-        public void ShouldAllowWithTagsMultipleTimes()
+        [TestCase("Chrome")]
+        public void ShouldAllowWithTagsMultipleTimes(string browser)
         {
+            InitDriver(browser);
             Assert.DoesNotThrow(() =>
             {
-                new AxeBuilder(driver)
+                new AxeBuilder(WebDriver)
                     .WithTags(TAG_TO_TEST)
                     .WithTags("wcag2a");
             });

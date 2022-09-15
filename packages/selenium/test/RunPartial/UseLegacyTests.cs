@@ -7,11 +7,13 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
     public class UseLegacyTests : TestBase
     {
         [Test]
-        public void ShouldRunLegacyAxe()
+        [TestCase("Chrome")]
+        public void ShouldRunLegacyAxe(string browser)
         {
+            InitDriver(browser);
             GoToFixture("index.html");
 
-            var results = new AxeBuilder(driver, CustomSource($"{axeSource}{axeRunPartialThrows}"))
+            var results = new AxeBuilder(WebDriver, CustomSource($"{axeSource}{axeRunPartialThrows}"))
                 .UseLegacyMode(true)
                 .Analyze();
 
@@ -20,11 +22,13 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         }
 
         [Test]
-        public void ShouldNotTestCrossOriginFrames()
+        [TestCase("Chrome")]
+        public void ShouldNotTestCrossOriginFrames(string browser)
         {
+            InitDriver(browser);
             GoToUrl("http://localhost:8080/cross-origin.html");
 
-            var results = new AxeBuilder(driver, CustomSource($"{axeSource}{axeRunPartialThrows}"))
+            var results = new AxeBuilder(WebDriver, CustomSource($"{axeSource}{axeRunPartialThrows}"))
                 .UseLegacyMode(true)
                 .WithRules("frame-tested")
                 .Analyze();
@@ -34,11 +38,13 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         }
 
         [Test]
-        public void ShouldBeDisabledAgain()
+        [TestCase("Chrome")]
+        public void ShouldBeDisabledAgain(string browser)
         {
+            InitDriver(browser);
             GoToUrl("http://localhost:8080/cross-origin.html");
 
-            var results = new AxeBuilder(driver)
+            var results = new AxeBuilder(WebDriver)
                 .UseLegacyMode(true)
                 .WithRules("frame-tested")
                 .UseLegacyMode(false)

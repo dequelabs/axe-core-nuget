@@ -11,8 +11,10 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         protected const string RULE_TO_TEST = "region";
 
         [Test]
-        public void ShouldPassOptionsToAxeCore()
+        [TestCase("Chrome")]
+        public void ShouldPassOptionsToAxeCore(string browser)
         {
+            InitDriver(browser);
             GoToFixture("index.html");
 
             var rules = new Dictionary<string, RuleOptions>();
@@ -21,7 +23,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
                 Enabled = true
             });
 
-            var results = new AxeBuilder(driver)
+            var results = new AxeBuilder(WebDriver)
                 .WithOptions(new AxeRunOptions
                 {
                     Rules = rules
@@ -38,11 +40,13 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         }
 
         [Test]
-        public void ShouldOnlyRunSpecifiedRule()
+        [TestCase("Chrome")]
+        public void ShouldOnlyRunSpecifiedRule(string browser)
         {
+            InitDriver(browser);
             GoToFixture("index.html");
 
-            var results = new AxeBuilder(driver)
+            var results = new AxeBuilder(WebDriver)
                 .DisableRules(RULE_TO_TEST)
                 .Analyze();
 

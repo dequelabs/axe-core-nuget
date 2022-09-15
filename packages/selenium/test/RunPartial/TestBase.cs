@@ -18,11 +18,8 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
     [TestFixture]
     [NonParallelizable]
     [Category("RunPartial")]
-    public abstract class TestBase
+    public abstract class TestBase : Deque.AxeCore.Selenium.Test.IntegrationTestBase
     {
-        private static string ChromeDriverPath = null;
-        protected IWebDriver driver { get; set; }
-
         protected string axeSource { get; set; } = null;
         protected string axeCrashScript { get; set; } = null;
         protected string dylangConfigPath { get; set; } = null;
@@ -41,7 +38,6 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
 
             dylangConfigPath = FixturePath("dylang-config.json");
 
-            driver = NewDriver();
             string runningPath = System.AppDomain.CurrentDomain.BaseDirectory;
             var commonsPath = Path.GetFullPath(Path.Combine(runningPath, @"../../../../..", "commons", "test"));
             TestFixtureServer.Start(commonsPath);
@@ -50,8 +46,6 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         [OneTimeTearDown]
         public void TearDown()
         {
-            driver.Close();
-            driver.Quit();
             TestFixtureServer.Stop();
         }
 
@@ -64,17 +58,17 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         }
         protected void GoToResource(string url)
         {
-            driver.Navigate().GoToUrl(ResourceUrl(url));
+            WebDriver.Navigate().GoToUrl(ResourceUrl(url));
         }
 
         protected void GoToFixture(string url)
         {
-            driver.Navigate().GoToUrl(FixtureUrl(url));
+            WebDriver.Navigate().GoToUrl(FixtureUrl(url));
         }
 
         protected void GoToUrl(string url)
         {
-            driver.Navigate().GoToUrl(url);
+            WebDriver.Navigate().GoToUrl(url);
         }
 
         protected void AssertHasViolations(AxeResult results, params string[] rules)
@@ -107,21 +101,6 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             }
         }
 
-        private static void EnsureWebdriverPathInitialized(ref string driverPath, string dirEnvVar, string binaryName, IDriverConfig driverManagerConfig)
-        {
-            LazyInitializer.EnsureInitialized(ref driverPath, () =>
-            {
-                var dirFromEnv = Environment.GetEnvironmentVariable(dirEnvVar);
-                if (dirFromEnv != null)
-                {
-                    return $"{dirFromEnv}/${binaryName}";
-                }
-                else
-                {
-                    return new DriverManager().SetUpDriver(driverManagerConfig);
-                }
-            });
-        }
         public static IWebDriver NewDriver()
         {
             EnsureWebdriverPathInitialized(ref ChromeDriverPath, "CHROMEWEBDRIVER", "chromedriver", new ChromeConfig());

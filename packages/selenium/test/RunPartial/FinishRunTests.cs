@@ -21,26 +21,30 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         }
 
         [Test]
-        public void ShouldIsolateCallToFinishRun()
+        [TestCase("Chrome")]
+        public void ShouldIsolateCallToFinishRun(string browser)
         {
+            InitDriver(browser);
             GoToFixture("isolated-finish.html");
-            var axe = new AxeBuilder(driver);
+            var axe = new AxeBuilder(WebDriver);
             Assert.DoesNotThrow(() => axe.Analyze());
         }
 
         [Test]
-        public void ShouldHaveSameResultsAsLegacy()
+        [TestCase("Chrome")]
+        public void ShouldHaveSameResultsAsLegacy(string browser)
         {
+            InitDriver(browser);
             GoToFixture("nested-iframes.html");
 
-            var legacyResults = new AxeBuilder(driver, CustomSource($"{axeSource}{axeForceLegacy}"))
+            var legacyResults = new AxeBuilder(WebDriver, CustomSource($"{axeSource}{axeForceLegacy}"))
                 .Analyze();
 
             Assert.That(legacyResults.TestEngineName, Is.EqualTo("axe-legacy"));
 
 
             GoToFixture("nested-iframes.html");
-            var runPartialResults = new AxeBuilder(driver)
+            var runPartialResults = new AxeBuilder(WebDriver)
                 .Analyze();
 
             Assert.That(legacyResults.Violations.Length, Is.EqualTo(runPartialResults.Violations.Length));

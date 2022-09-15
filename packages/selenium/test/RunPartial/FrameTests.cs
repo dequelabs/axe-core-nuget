@@ -9,11 +9,13 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
     public class FrameTests : TestBase
     {
         [Test]
-        public void ShouldAnalyzeNestedIFrames()
+        [TestCase("Chrome")]
+        public void ShouldAnalyzeNestedIFrames(string browser)
         {
+            InitDriver(browser);
             GoToFixture("nested-iframes.html");
 
-            var res = new AxeBuilder(driver)
+            var res = new AxeBuilder(WebDriver)
                 .WithOptions(new AxeRunOptions
                 {
                     RunOnly = RunOnlyOptions.Rules("label")
@@ -28,11 +30,13 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         }
 
         [Test]
-        public void ShouldAnalyzeNestedFramesets()
+        [TestCase("Chrome")]
+        public void ShouldAnalyzeNestedFramesets(string browser)
         {
+            InitDriver(browser);
             GoToFixture("nested-frameset.html");
 
-            var res = new AxeBuilder(driver)
+            var res = new AxeBuilder(WebDriver)
                 .WithOptions(new AxeRunOptions
                 {
                     RunOnly = RunOnlyOptions.Rules("label")
@@ -47,11 +51,13 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         }
 
         [Test]
-        public void ShouldAnalyzeShadowDOMFrames()
+        [TestCase("Chrome")]
+        public void ShouldAnalyzeShadowDOMFrames(string browser)
         {
+            InitDriver(browser);
             GoToFixture("shadow-frames.html");
 
-            var res = new AxeBuilder(driver)
+            var res = new AxeBuilder(WebDriver)
                 .WithOptions(new AxeRunOptions
                 {
                     RunOnly = RunOnlyOptions.Rules("label")
@@ -66,11 +72,13 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         }
 
         [Test]
-        public void ShouldReportErroringFrames()
+        [TestCase("Chrome")]
+        public void ShouldReportErroringFrames(string browser)
         {
+            InitDriver(browser);
             GoToFixture("crash-parent.html");
 
-            var res = new AxeBuilder(driver, CustomSource($"{axeSource}{axeCrashScript}"))
+            var res = new AxeBuilder(WebDriver, CustomSource($"{axeSource}{axeCrashScript}"))
                 .WithOptions(new AxeRunOptions
                 {
                     RunOnly = RunOnlyOptions.Rules("label", "frame-tested")

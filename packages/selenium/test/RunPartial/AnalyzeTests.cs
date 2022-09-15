@@ -8,11 +8,13 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
     public class AnalyzeTests : TestBase
     {
         [Test]
-        public void ShouldReturnResults()
+        [TestCase("Chrome")]
+        public void ShouldReturnResults(string browser)
         {
+            InitDriver(browser);
             GoToFixture("index.html");
 
-            var res = new AxeBuilder(driver).Analyze();
+            var res = new AxeBuilder(WebDriver).Analyze();
             Assert.IsNotNull(res);
             Assert.IsNotNull(res.Inapplicable);
             Assert.IsNotNull(res.Incomplete);
@@ -21,38 +23,46 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         }
 
         [Test]
-        public void ShouldThrowIfTopFrameErrors()
+        [TestCase("Chrome")]
+        public void ShouldThrowIfTopFrameErrors(string browser)
         {
+            InitDriver(browser);
             GoToFixture("crash.html");
 
-            var axe = new AxeBuilder(driver, CustomSource($"{axeSource}{Environment.NewLine}{axeCrashScript}"));
+            var axe = new AxeBuilder(WebDriver, CustomSource($"{axeSource}{Environment.NewLine}{axeCrashScript}"));
             Assert.Throws<OpenQA.Selenium.JavaScriptException>(() => axe.Analyze());
         }
 
         [Test]
-        public void ShouldThrowWhenInjectingProblematicSource()
+        [TestCase("Chrome")]
+        public void ShouldThrowWhenInjectingProblematicSource(string browser)
         {
+            InitDriver(browser);
             GoToFixture("crash.html");
 
-            var axe = new AxeBuilder(driver, CustomSource($"{axeSource}{Environment.NewLine}; throw new Error('Boom!')"));
+            var axe = new AxeBuilder(WebDriver, CustomSource($"{axeSource}{Environment.NewLine}; throw new Error('Boom!')"));
             Assert.Throws<OpenQA.Selenium.JavaScriptException>(() => axe.Analyze());
         }
 
         [Test]
-        public void ShouldThrowWhenSetupFails()
+        [TestCase("Chrome")]
+        public void ShouldThrowWhenSetupFails(string browser)
         {
+            InitDriver(browser);
             GoToFixture("crash.html");
 
-            var axe = new AxeBuilder(driver, CustomSource($"{axeSource}{Environment.NewLine}; window.axe.utils = {{}}"));
+            var axe = new AxeBuilder(WebDriver, CustomSource($"{axeSource}{Environment.NewLine}; window.axe.utils = {{}}"));
             Assert.Throws<OpenQA.Selenium.JavaScriptException>(() => axe.Analyze());
         }
 
         [Test]
-        public void ShouldReturnCorrectMetadata()
+        [TestCase("Chrome")]
+        public void ShouldReturnCorrectMetadata(string browser)
         {
+            InitDriver(browser);
             GoToFixture("index.html");
 
-            var res = new AxeBuilder(driver)
+            var res = new AxeBuilder(WebDriver)
                 .Analyze();
 
             Assert.IsNotNull(res);
