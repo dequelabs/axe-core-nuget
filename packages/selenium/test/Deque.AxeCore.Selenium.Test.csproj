@@ -54,7 +54,7 @@
   </ItemGroup>
 
   <ItemGroup>
-      <None Include="../../../node_modules/axe-test-fixtures/fixtures/**" CopyToOutputDirectory="Always" LinkBase="fixtures/" />
+	  <None Include="../../commons/test/node_modules/axe-test-fixtures/fixtures/**" CopyToOutputDirectory="Always" LinkBase="fixtures/" />
   </ItemGroup>
 
 
