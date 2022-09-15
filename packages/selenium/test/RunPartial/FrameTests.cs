@@ -26,7 +26,6 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             Assert.IsNotNull(violation);
             Assert.That(violation.Id, Is.EqualTo("label"));
             Assert.That(violation.Nodes.Length, Is.EqualTo(4));
-            // todo: check for frame ids
         }
 
         [Test]
@@ -47,7 +46,6 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             Assert.IsNotNull(violation);
             Assert.That(violation.Id, Is.EqualTo("label"));
             Assert.That(violation.Nodes.Length, Is.EqualTo(4));
-            // todo: check for frame ids
         }
 
         [Test]
@@ -68,7 +66,6 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             Assert.IsNotNull(violation);
             Assert.That(violation.Id, Is.EqualTo("label"));
             Assert.That(violation.Nodes.Length, Is.EqualTo(3));
-            // todo: check for frame ids
         }
 
         [Test]
@@ -90,11 +87,9 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             Assert.IsNotNull(violation);
             Assert.That(violation.Id, Is.EqualTo("label"));
             Assert.That(violation.Nodes.Length, Is.EqualTo(2));
-            // todo: check for frame ids
             Assert.IsNotNull(incomplete);
             Assert.That(incomplete.Id, Is.EqualTo("frame-tested"));
             Assert.That(violation.Nodes.Length, Is.EqualTo(2));
-            // todo: check for frame ids
         }
     }
 }
