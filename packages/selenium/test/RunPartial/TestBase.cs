@@ -39,7 +39,6 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             dylangConfigPath = FixturePath("dylang-config.json");
 
             var commonsPath = System.IO.Path.GetFullPath(System.IO.Path.Combine(TestFileRoot, @"../../../../..", "commons", "test"));
-            System.Console.WriteLine("commonsPath = " + commonsPath);
             TestFixtureServer.Start(commonsPath);
         }
 
