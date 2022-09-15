@@ -22,9 +22,12 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
     {
         protected string axeSource { get; set; } = null;
         private string _axeCrashScript = null;
-        protected string axeCrashScript {
-            get {
-                if (_axeCrashScript == null) {
+        protected string axeCrashScript
+        {
+            get
+            {
+                if (_axeCrashScript == null)
+                {
                     _axeCrashScript = File.ReadAllText(
                         Path.Combine(TestFileRoot, "fixtures", "axe-crasher.js")
                     );
