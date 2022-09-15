@@ -21,7 +21,17 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
     public abstract class TestBase : Deque.AxeCore.Selenium.Test.IntegrationTestBase
     {
         protected string axeSource { get; set; } = null;
-        protected string axeCrashScript { get; set; } = null;
+        private string _axeCrashScript = null;
+        protected string axeCrashScript {
+            get {
+                if (_axeCrashScript == null) {
+                    _axeCrashScript = File.ReadAllText(
+                        Path.Combine(TestFileRoot, "fixtures", "axe-crasher.js")
+                    );
+                }
+                return _axeCrashScript;
+            }
+        }
         protected string dylangConfigPath { get; set; } = null;
         protected string axeRunPartialThrows { get; set; } =
             ";axe.runPartial = () => { throw new Error(\"No runPartial\")}";
@@ -29,12 +39,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            var assembly = typeof(TestBase).GetTypeInfo().Assembly;
             axeSource = new BundledAxeScriptProvider().GetScript();
-
-            axeCrashScript = File.ReadAllText(
-                Path.Combine(TestFileRoot, "fixtures", "axe-crasher.js")
-            );
 
             dylangConfigPath = FixturePath("dylang-config.json");
 
