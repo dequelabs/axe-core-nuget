@@ -38,8 +38,8 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
 
             dylangConfigPath = FixturePath("dylang-config.json");
 
-            string runningPath = System.AppDomain.CurrentDomain.BaseDirectory;
-            var commonsPath = Path.GetFullPath(Path.Combine(runningPath, @"../../../../..", "commons", "test"));
+            var commonsPath = System.IO.Path.GetFullPath(System.IO.Path.Combine(TestFileRoot, @"../../../../..", "commons", "test"));
+            System.Console.WriteLine("commonsPath = " + commonsPath);
             TestFixtureServer.Start(commonsPath);
         }
 
@@ -88,9 +88,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
 
         public static string ResourcePath(string filename)
         {
-            // https://stackoverflow.com/questions/27181774/get-resources-folder-path-c-sharp
-            string runningPath = System.AppDomain.CurrentDomain.BaseDirectory;
-            var p = Path.GetFullPath(Path.Combine(runningPath, @"../../../", "RunPartial", filename));
+            var p = Path.GetFullPath(Path.Combine(TestFileRoot, @"../../..", "RunPartial", filename));
             return p;
         }
 
@@ -103,9 +101,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
 
         public static string FixturePath(string filename)
         {
-            // https://stackoverflow.com/questions/27181774/get-resources-folder-path-c-sharp
-            string runningPath = System.AppDomain.CurrentDomain.BaseDirectory;
-            var p = Path.GetFullPath(Path.Combine(runningPath, @"../../../../../..", "node_modules", "axe-test-fixtures", "fixtures", filename));
+            var p = Path.GetFullPath(Path.Combine(TestFileRoot, "fixtures", filename));
             return p;
         }
 
