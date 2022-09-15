@@ -12,6 +12,7 @@ namespace Deque.AxeCore.Commons.Test.Util
             {
                 WindowStyle = ProcessWindowStyle.Normal,
                 WorkingDirectory = pathToCommonsTest,
+                UseShellExecute = false,
                 RedirectStandardInput = true,
                 FileName = "cmd"
             };
