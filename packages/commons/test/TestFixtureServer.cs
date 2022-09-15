@@ -8,7 +8,8 @@ namespace Deque.AxeCore.Commons.Test.Util
         private TestFixtureServer() { }
         public static void Start(string pathToCommonsTest)
         {
-            ProcessStartInfo startInfo = new ProcessStartInfo {
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
                 WindowStyle = ProcessWindowStyle.Normal,
                 WorkingDirectory = pathToCommonsTest,
                 RedirectStandardInput = true,
