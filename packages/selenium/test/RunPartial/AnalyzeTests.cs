@@ -77,7 +77,6 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             Assert.IsNotNull(res.TestRunner);
             Assert.IsNotEmpty(res.TestRunner.Name);
             Assert.IsNotNull(res.ToolOptions);
-            // todo: strongly type ToolOptions to test `reporter`
         }
     }
 }
