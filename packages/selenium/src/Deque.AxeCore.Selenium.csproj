@@ -43,6 +43,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\legacyScan.js" />
     <EmbeddedResource Include="Resources\branding.js" />
+    <EmbeddedResource Include="Resources\allowIframeUnsafe.js" />
     <EmbeddedResource Include="Resources\runPartialExists.js" />
     <EmbeddedResource Include="Resources\getFrameContexts.js" />
     <EmbeddedResource Include="Resources\shadowSelect.js" />

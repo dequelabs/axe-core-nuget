@@ -12,6 +12,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
 
         [Test]
         [TestCase("Chrome")]
+        [TestCase("Firefox")]
         public void ShouldPassOptionsToAxeCore(string browser)
         {
             InitDriver(browser);
@@ -41,6 +42,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
 
         [Test]
         [TestCase("Chrome")]
+        [TestCase("Firefox")]
         public void ShouldOnlyRunSpecifiedRule(string browser)
         {
             InitDriver(browser);

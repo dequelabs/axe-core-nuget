@@ -8,6 +8,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
     {
         [Test]
         [TestCase("Chrome")]
+        [TestCase("Firefox")]
         public void ShouldHonorInclude(string browser)
         {
             InitDriver(browser);
@@ -24,6 +25,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
 
         [Test]
         [TestCase("Chrome")]
+        [TestCase("Firefox")]
         public void ShouldHonorExclude(string browser)
         {
             InitDriver(browser);

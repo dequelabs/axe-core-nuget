@@ -13,6 +13,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
 
         [Test]
         [TestCase("Chrome")]
+        [TestCase("Firefox")]
         public void ShouldOnlyRunRulesWithGivenTag(string browser)
         {
             InitDriver(browser);
@@ -33,6 +34,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
 
         [Test]
         [TestCase("Chrome")]
+        [TestCase("Firefox")]
         public void ShouldAllowWithTagsMultipleTimes(string browser)
         {
             InitDriver(browser);

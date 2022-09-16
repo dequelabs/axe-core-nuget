@@ -13,6 +13,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
 
         [Test]
         [TestCase("Chrome")]
+        [TestCase("Firefox")]
         public void ShouldDisableGivenRules(string browser)
         {
             InitDriver(browser);
@@ -33,6 +34,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
 
         [Test]
         [TestCase("Chrome")]
+        [TestCase("Firefox")]
         public void ShouldRunOnlyGivenRules(string browser)
         {
             InitDriver(browser);
@@ -53,6 +55,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
 
         [Test]
         [TestCase("Chrome")]
+        [TestCase("Firefox")]
         public void ShouldAllowWithRulesMultipleTimes(string browser)
         {
             InitDriver(browser);

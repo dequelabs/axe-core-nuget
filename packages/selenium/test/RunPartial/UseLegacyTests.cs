@@ -8,6 +8,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
     {
         [Test]
         [TestCase("Chrome")]
+        [TestCase("Firefox")]
         public void ShouldRunLegacyAxe(string browser)
         {
             InitDriver(browser);
@@ -25,24 +26,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
 
         [Test]
         [TestCase("Chrome")]
-        public void ShouldNotTestCrossOriginFrames(string browser)
-        {
-            InitDriver(browser);
-            GoToUrl("http://localhost:8080/cross-origin.html");
-
-#pragma warning disable CS0618
-            var results = new AxeBuilder(WebDriver, CustomSource($"{axeSource}{axeRunPartialThrows}"))
-                .UseLegacyMode(true)
-                .WithRules("frame-tested")
-                .Analyze();
-#pragma warning restore CS0618
-
-            var frameTested = results.Incomplete.FirstOrDefault(x => x.Id == "frame-tested");
-            Assert.IsNotNull(frameTested);
-        }
-
-        [Test]
-        [TestCase("Chrome")]
+        [TestCase("Firefox")]
         public void ShouldBeDisabledAgain(string browser)
         {
             InitDriver(browser);

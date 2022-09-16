@@ -8,6 +8,6 @@ const thenFunc = (results) => {
     callback(results);
 };
 const catchFunc = (err) => {
-    callback({ error: err.message }, res);
+    callback({ error: err.message });
 }
 axe.run(context, options).then(thenFunc).catch(catchFunc);

@@ -22,6 +22,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
 
         [Test]
         [TestCase("Chrome")]
+        [TestCase("Firefox")]
         public void ShouldIsolateCallToFinishRun(string browser)
         {
             InitDriver(browser);
@@ -32,6 +33,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
 
         [Test]
         [TestCase("Chrome")]
+        [TestCase("Firefox")]
         public void ShouldHaveSameResultsAsLegacy(string browser)
         {
             InitDriver(browser);

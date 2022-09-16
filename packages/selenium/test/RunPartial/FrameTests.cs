@@ -10,6 +10,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
     {
         [Test]
         [TestCase("Chrome")]
+        [TestCase("Firefox")]
         public void ShouldAnalyzeNestedIFrames(string browser)
         {
             InitDriver(browser);
@@ -27,6 +28,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
 
         [Test]
         [TestCase("Chrome")]
+        [TestCase("Firefox")]
         public void ShouldAnalyzeNestedFramesets(string browser)
         {
             InitDriver(browser);
@@ -44,6 +46,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
 
         [Test]
         [TestCase("Chrome")]
+        [TestCase("Firefox")]
         public void ShouldAnalyzeShadowDOMFrames(string browser)
         {
             InitDriver(browser);
@@ -61,6 +64,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
 
         [Test]
         [TestCase("Chrome")]
+        [TestCase("Firefox")]
         public void ShouldReportErroringFrames(string browser)
         {
             InitDriver(browser);

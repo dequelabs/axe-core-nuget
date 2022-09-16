@@ -16,7 +16,6 @@ using WebDriverManager.DriverConfigs.Impl;
 namespace Deque.AxeCore.Selenium.Test.RunPartial
 {
     [TestFixture]
-    [NonParallelizable]
     [Category("RunPartial")]
     public abstract class TestBase : Deque.AxeCore.Selenium.Test.IntegrationTestBase
     {

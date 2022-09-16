@@ -9,6 +9,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
     {
         [Test]
         [TestCase("Chrome")]
+        [TestCase("Firefox")]
         public void ShouldReturnResults(string browser)
         {
             InitDriver(browser);
@@ -24,6 +25,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
 
         [Test]
         [TestCase("Chrome")]
+        [TestCase("Firefox")]
         public void ShouldThrowIfTopFrameErrors(string browser)
         {
             InitDriver(browser);
@@ -35,6 +37,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
 
         [Test]
         [TestCase("Chrome")]
+        [TestCase("Firefox")]
         public void ShouldThrowWhenInjectingProblematicSource(string browser)
         {
             InitDriver(browser);
@@ -46,6 +49,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
 
         [Test]
         [TestCase("Chrome")]
+        [TestCase("Firefox")]
         public void ShouldThrowWhenSetupFails(string browser)
         {
             InitDriver(browser);
@@ -57,6 +61,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
 
         [Test]
         [TestCase("Chrome")]
+        [TestCase("Firefox")]
         public void ShouldReturnCorrectMetadata(string browser)
         {
             InitDriver(browser);

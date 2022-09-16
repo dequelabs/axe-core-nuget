@@ -54,7 +54,6 @@ namespace Deque.AxeCore.Selenium.Test
             {
                 //arrange / act /assert
                 var axeBuilder = new AxeBuilder(null, stubAxeBuilderOptions);
-                axeBuilder.Should().NotBeNull();
             });
         }
 
