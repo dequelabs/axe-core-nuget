@@ -1,7 +1,7 @@
 {
   "description": "This file is used to download npm dependencies for this project",
   "repository": {},
-  "license": "MIT",
+  "license": "MPL-2.0 AND MIT",
   "private": true,
   "scripts": {
       "serveFixtures": "cd node_modules/axe-test-fixtures/fixtures && http-server -s"
