@@ -16,10 +16,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             GoToFixture("nested-iframes.html");
 
             var res = new AxeBuilder(WebDriver)
-                .WithOptions(new AxeRunOptions
-                {
-                    RunOnly = RunOnlyOptions.Rules("label")
-                })
+                .WithRules("label")
                 .Analyze();
 
             var violation = res.Violations.FirstOrDefault();
@@ -36,10 +33,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             GoToFixture("nested-frameset.html");
 
             var res = new AxeBuilder(WebDriver)
-                .WithOptions(new AxeRunOptions
-                {
-                    RunOnly = RunOnlyOptions.Rules("label")
-                })
+                .WithRules("label")
                 .Analyze();
 
             var violation = res.Violations.FirstOrDefault();
@@ -56,10 +50,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             GoToFixture("shadow-frames.html");
 
             var res = new AxeBuilder(WebDriver)
-                .WithOptions(new AxeRunOptions
-                {
-                    RunOnly = RunOnlyOptions.Rules("label")
-                })
+                .WithRules("label")
                 .Analyze();
 
             var violation = res.Violations.FirstOrDefault();
@@ -76,10 +67,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             GoToFixture("crash-parent.html");
 
             var res = new AxeBuilder(WebDriver, CustomSource($"{axeSource}{axeCrashScript}"))
-                .WithOptions(new AxeRunOptions
-                {
-                    RunOnly = RunOnlyOptions.Rules("label", "frame-tested")
-                })
+                .WithRules("label", "frame-tested")
                 .Analyze();
 
             var violation = res.Violations.FirstOrDefault();
