@@ -16,7 +16,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         public void SetUpForceLegacy()
         {
             axeForceLegacy = File.ReadAllText(
-                Path.Combine(TestContext.CurrentContext.TestDirectory, "fixtures/axe-force-legacy.js")
+                FixturePath("axe-force-legacy.js")
             );
         }
 
