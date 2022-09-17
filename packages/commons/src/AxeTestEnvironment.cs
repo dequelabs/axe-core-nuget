@@ -6,5 +6,7 @@ namespace Deque.AxeCore.Commons
         public int WindowWidth { get; set; }
         public int WindowHeight { get; set; }
         public string OrientationType { get; set; }
+
+        public int? OrientationAngle { get; }
     }
 }

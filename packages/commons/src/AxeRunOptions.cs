@@ -86,6 +86,12 @@ namespace Deque.AxeCore.Commons
         public bool? XPath { get; set; }
 
         /// <summary>
+        /// Returns CSS selectors for elements with all the elements' ancestors
+        /// </summary>
+        [JsonProperty("ancestry")]
+        public bool? Ancestry { get; set; }
+
+        /// <summary>
         /// Use absolute paths when creating element selectors
         /// </summary>
         [JsonProperty("absolutePaths")]

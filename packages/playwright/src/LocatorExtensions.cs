@@ -19,7 +19,7 @@ namespace Deque.AxeCore.Playwright
         /// <param name="locator">The Playwright Locator</param>
         /// <param name="options">Options for running Axe.</param>
         /// <returns>The AxeResults</returns>
-        public static async Task<AxeResults> RunAxe(this ILocator locator, AxeRunOptions? options = null)
+        public static async Task<AxeResult> RunAxe(this ILocator locator, AxeRunOptions? options = null)
         {
             IAxeScriptProvider axeScriptProvider = new BundledAxeScriptProvider();
             IAxeContentEmbedder axeContentEmbedder = new DefaultAxeContentEmbedder(axeScriptProvider);
