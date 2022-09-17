@@ -86,13 +86,13 @@ namespace Deque.AxeCore.Playwright.Test
         {
             await NavigateToPage("basic.html");
 
-            var expectedOptions = new AxeRunOptions()
+            AxeRunOptions expectedOptions = new AxeRunOptions()
             {
-                RunOnly = new RunOnlyOptions
+                RunOnly = new RunOnlyOptions()
                 {
                     Type = "tag",
-                    Values = { "wcag2a" }
-                },
+                    Values = new List<string>(){ "wcag2a" }
+                }
             };
 
             AxeResult axeResults = await Page!.RunAxe(expectedOptions);
@@ -106,13 +106,13 @@ namespace Deque.AxeCore.Playwright.Test
         {
             await NavigateToPage("basic.html");
 
-            var expectedOptions = new AxeRunOptions()
+            AxeRunOptions expectedOptions = new AxeRunOptions()
             {
-                RunOnly = new RunOnlyOptions
+                RunOnly = new RunOnlyOptions()
                 {
                     Type = "rule",
-                    Values = { "color-contrast" }
-                },
+                    Values = new List<string>(){ "color-contrast" }
+                }
             };
 
             AxeResult axeResults = await Page!.RunAxe(expectedOptions);
@@ -132,7 +132,7 @@ namespace Deque.AxeCore.Playwright.Test
                 { ruleId, new RuleOptions() { Enabled = false } }
             };
 
-            var expectedOptions = new AxeRunOptions()
+            AxeRunOptions expectedOptions = new AxeRunOptions()
             {
                 Rules = rules
             };
@@ -158,7 +158,7 @@ namespace Deque.AxeCore.Playwright.Test
                ResultType.Passes
             };
 
-            var expectedOptions = new AxeRunOptions()
+            AxeRunOptions expectedOptions = new AxeRunOptions()
             {
                 ResultTypes = resultGroups
             };
@@ -189,7 +189,7 @@ namespace Deque.AxeCore.Playwright.Test
         {
             await NavigateToPage("basic.html");
 
-            var expectedOptions = new AxeRunOptions()
+            AxeRunOptions expectedOptions = new AxeRunOptions()
             {
                 Ancestry = true
             };
@@ -205,7 +205,7 @@ namespace Deque.AxeCore.Playwright.Test
         {
             await NavigateToPage("basic.html");
 
-            var expectedOptions = new AxeRunOptions()
+            AxeRunOptions expectedOptions = new AxeRunOptions()
             {
                 XPath = true
             };
@@ -256,13 +256,13 @@ namespace Deque.AxeCore.Playwright.Test
             const string tag = "ACT";
             await NavigateToPage("selector.html");
 
-            var expectedOptions = new AxeRunOptions()
+            AxeRunOptions expectedOptions = new AxeRunOptions()
             {
-                RunOnly = new RunOnlyOptions
+                RunOnly = new RunOnlyOptions()
                 {
                     Type = "tag",
-                    Values = { tag }
-                },
+                    Values = new List<string>(){ tag }
+                }
             };
 
             AxeResult axeResults = await Page!.Locator("button").RunAxe(expectedOptions);
