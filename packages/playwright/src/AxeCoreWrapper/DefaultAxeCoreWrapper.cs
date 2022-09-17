@@ -84,20 +84,13 @@ namespace Deque.AxeCore.Playwright.AxeCoreWrapper
 
         private static AxeResult DeserializeResult(object jsonObject)
         {
-            // Temporary solution for handling jsonelements with metadata properties which cause exceptions in some circumstances.
-            // string jsonString = JsonSerializer.Serialize(jsonObject, s_jsonOptions);
-            // TResult results = JsonSerializer.Deserialize<TResult>(jsonString, s_jsonOptions);
-            string result = JsonConvert.SerializeObject(jsonObject);
-            var results = JsonConvert.DeserializeObject(result);
-            
-            if (results is null)
+            if (jsonObject is null)
             {
                 throw new Exception();
             }
 
-            JObject jObject = JObject.FromObject(results);
+            JObject jObject = JObject.FromObject(jsonObject);
 
-            // return results;
             return new AxeResult(jObject);
         }
 
