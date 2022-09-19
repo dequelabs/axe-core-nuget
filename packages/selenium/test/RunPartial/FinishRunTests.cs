@@ -1,8 +1,6 @@
-using System;
 using System.Linq;
 using System.IO;
 using Deque.AxeCore.Commons;
-using Deque.AxeCore.Selenium;
 using NUnit.Framework;
 using Newtonsoft.Json;
 

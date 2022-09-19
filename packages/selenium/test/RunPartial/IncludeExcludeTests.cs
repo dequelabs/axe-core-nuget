@@ -1,5 +1,3 @@
-using System;
-using Deque.AxeCore.Selenium;
 using NUnit.Framework;
 
 namespace Deque.AxeCore.Selenium.Test.RunPartial

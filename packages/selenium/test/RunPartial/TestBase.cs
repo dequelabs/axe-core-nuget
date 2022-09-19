@@ -1,17 +1,7 @@
-using System;
 using System.IO;
-using System.Reflection;
-using System.Text;
 using Deque.AxeCore.Commons;
 using Deque.AxeCore.Commons.Test.Util;
-using Deque.AxeCore.Selenium;
 using NUnit.Framework;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
-using System.Threading;
-using WebDriverManager;
-using WebDriverManager.DriverConfigs;
-using WebDriverManager.DriverConfigs.Impl;
 
 namespace Deque.AxeCore.Selenium.Test.RunPartial
 {
@@ -75,21 +65,6 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         protected void GoToUrl(string url)
         {
             WebDriver.Navigate().GoToUrl(url);
-        }
-
-        public static IWebDriver NewDriver()
-        {
-            EnsureWebdriverPathInitialized(ref ChromeDriverPath, "CHROMEWEBDRIVER", "chromedriver", new ChromeConfig());
-            ChromeDriverService chromeService = ChromeDriverService.CreateDefaultService(Path.GetDirectoryName(ChromeDriverPath));
-            chromeService.SuppressInitialDiagnosticInformation = true;
-            var options = new ChromeOptions();
-            if (Environment.GetEnvironmentVariable("CI") != null)
-            {
-                options.AddArgument("--no-sandbox");
-                options.AddArgument("--headless");
-                options.AddArgument("--disable-gpu");
-            }
-            return new ChromeDriver(chromeService, options);
         }
 
         public static string ResourcePath(string filename)

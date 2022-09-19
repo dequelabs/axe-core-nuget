@@ -1,4 +1,3 @@
-using FluentAssertions;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -7,14 +6,11 @@ using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Concurrent;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using System.Threading;
 using WebDriverManager;
 using WebDriverManager.DriverConfigs;
 using WebDriverManager.DriverConfigs.Impl;
-using Deque.AxeCore.Commons;
 
 // Setup parallelization
 [assembly: Parallelizable(ParallelScope.All)]
