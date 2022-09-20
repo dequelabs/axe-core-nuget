@@ -227,13 +227,13 @@ namespace Deque.AxeCore.Playwright.Test
 
             Assert.That(axeResults.Violations, Has.Length.EqualTo(1));
             AxeResultItem ariaViolation = axeResults.Violations.First();
-            var targets = ariaViolation.Nodes!.First().Target!.ToString();
+            var targets = ariaViolation.Nodes!.First().Target;
 
             Assert.Multiple(() =>
             {
                 Assert.That(ariaViolation.Id, Is.EqualTo(expectedViolationId));
                 Assert.That(targets, Is.Not.Null.Or.Empty);
-                Assert.That(targets, Contains.Substring(expectedViolationTarget));
+                Assert.That(targets.Any(target => target.ToString().Contains(expectedViolationTarget)));
             });
         }
 
