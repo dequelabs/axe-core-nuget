@@ -5,7 +5,6 @@ using NUnit.Framework;
 
 namespace Deque.AxeCore.Selenium.Test.RunPartial
 {
-    [Category("LT")]
     public class UseLegacyTests : TestBase
     {
         [Test]
