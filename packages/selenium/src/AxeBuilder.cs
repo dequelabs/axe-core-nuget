@@ -398,7 +398,7 @@ namespace Deque.AxeCore.Selenium
             _webDriver.ExecuteScript(_AxeBuilderOptions.ScriptProvider.GetScript());
             var runPartialExists = (bool)_webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("runPartialExists.js"));
 
-            if (!runPartialExists || useLegacyMode)
+            if (!runPartialExists && !useLegacyMode)
             {
                 _webDriver.ExecuteScript(
                     EmbeddedResourceProvider.ReadEmbeddedFile("allowIframeUnsafe.js")
