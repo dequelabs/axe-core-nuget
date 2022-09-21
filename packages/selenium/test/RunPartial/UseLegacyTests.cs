@@ -1,8 +1,11 @@
+using System;
+using OpenQA.Selenium;
 using System.Linq;
 using NUnit.Framework;
 
 namespace Deque.AxeCore.Selenium.Test.RunPartial
 {
+    [Category("LT")]
     public class UseLegacyTests : TestBase
     {
         [Test]
@@ -26,6 +29,63 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         [Test]
         [TestCase("Chrome")]
         [TestCase("Firefox")]
+        public void ShouldNotSetAOWhenRunPartialAndNotLegacy(string browser)
+        {
+            InitDriver(browser);
+            GoToFixture("index.html");
+            new AxeBuilder(WebDriver).Analyze();
+            var allowedOrigins = AllowedOrigins();
+            Assert.That(allowedOrigins, Is.EqualTo(ExpectedAllowedOrigins(browser)));
+        }
+
+        [Test]
+        [TestCase("Chrome")]
+        [TestCase("Firefox")]
+        public void ShouldNotSetAOWhenRunPartialAndLegacy(string browser)
+        {
+            InitDriver(browser);
+            GoToFixture("index.html");
+#pragma warning disable CS0618
+            new AxeBuilder(WebDriver)
+                .UseLegacyMode(true)
+                .Analyze();
+#pragma warning restore CS0618
+            var allowedOrigins = AllowedOrigins();
+            Assert.That(allowedOrigins, Is.EqualTo(ExpectedAllowedOrigins(browser)));
+        }
+
+        [Test]
+        [TestCase("Chrome")]
+        [TestCase("Firefox")]
+        public void ShouldNotSetAOWhenLegacySourceAndLegacyMode(string browser)
+        {
+            InitDriver(browser);
+            GoToFixture("index.html");
+#pragma warning disable CS0618
+            new AxeBuilder(WebDriver, CustomSource($"{axeSource}{axeForceLegacy}"))
+                .UseLegacyMode(true)
+                .Analyze();
+#pragma warning restore CS0618
+            var allowedOrigins = AllowedOrigins();
+            Assert.That(allowedOrigins, Is.EqualTo(ExpectedAllowedOrigins(browser)));
+        }
+
+        [Test]
+        [TestCase("Chrome")]
+        [TestCase("Firefox")]
+        public void ShouldSetAOWhenLegacySourceAndNotLegacyMode(string browser)
+        {
+            InitDriver(browser);
+            GoToFixture("index.html");
+            new AxeBuilder(WebDriver, CustomSource($"{axeSource}{axeForceLegacy}"))
+                .Analyze();
+            var allowedOrigins = AllowedOrigins();
+            Assert.That(allowedOrigins, Is.EqualTo("*"));
+        }
+
+        [Test]
+        [TestCase("Chrome")]
+        [TestCase("Firefox")]
         public void ShouldBeDisabledAgain(string browser)
         {
             InitDriver(browser);
@@ -42,5 +102,25 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             var frameTested = results.Incomplete.FirstOrDefault(x => x.Id == "frame-tested");
             Assert.IsNull(frameTested);
         }
+
+        private string AllowedOrigins()
+        {
+            return (string)((IJavaScriptExecutor) WebDriver).ExecuteScript("return axe._audit.allowedOrigins[0]");
+        }
+
+        private string ExpectedAllowedOrigins(string browser)
+        {
+            switch (browser.ToUpper())
+            {
+                case "CHROME":
+                    return "null";
+
+                case "FIREFOX":
+                    return "file://";
+
+                default:
+                    throw new ArgumentException($"Remote browser type '{browser}' is not supported");
+        }
+
     }
 }

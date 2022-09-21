@@ -24,6 +24,20 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
                 return _axeCrashScript;
             }
         }
+        private string _axeForceLegacy = null;
+        protected string axeForceLegacy
+        {
+            get
+            {
+                if (_axeForceLegacy == null)
+                {
+                    _axeForceLegacy = File.ReadAllText(
+                        Path.Combine(TestFileRoot, "fixtures", "axe-force-legacy.js")
+                    );
+                }
+                return _axeForceLegacy;
+            }
+        }
         protected string dylangConfigPath { get; set; } = null;
         protected string axeRunPartialThrows { get; set; } =
             ";axe.runPartial = () => { throw new Error(\"No runPartial\")}";

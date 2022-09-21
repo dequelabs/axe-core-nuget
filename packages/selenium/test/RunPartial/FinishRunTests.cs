@@ -8,16 +8,6 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
 {
     public class FinishRunTests : TestBase
     {
-        protected string axeForceLegacy { get; set; } = null;
-
-        [OneTimeSetUp]
-        public void SetUpForceLegacy()
-        {
-            axeForceLegacy = File.ReadAllText(
-                FixturePath("axe-force-legacy.js")
-            );
-        }
-
         [Test]
         [TestCase("Chrome")]
         [TestCase("Firefox")]
