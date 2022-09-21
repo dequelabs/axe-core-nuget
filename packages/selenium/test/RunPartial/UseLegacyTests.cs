@@ -104,7 +104,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
 
         private string AllowedOrigins()
         {
-            return (string)((IJavaScriptExecutor) WebDriver).ExecuteScript("return axe._audit.allowedOrigins[0]");
+            return (string)((IJavaScriptExecutor)WebDriver).ExecuteScript("return axe._audit.allowedOrigins[0]");
         }
 
         private string ExpectedAllowedOrigins(string browser)
