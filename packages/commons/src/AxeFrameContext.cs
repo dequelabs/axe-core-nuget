@@ -23,6 +23,6 @@ namespace Deque.AxeCore.Commons
         /// </summary>
         /// <value></value>
         [JsonProperty("frameContext")]
-        public AxeRunContext Context { get; set; }
+        public object Context { get; set; }
     }
 }

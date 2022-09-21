@@ -43,26 +43,15 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
                 AssertAxeItemsEqual(legacyResults.Violations[i], runPartialResults.Violations[i], true);
             }
 
-            // 'bypass' gets marked as 'incomplete' instead of 'passes' for runPartial.
-            Assert.That(legacyResults.Passes.Length, Is.EqualTo(runPartialResults.Passes.Length + 1));
-            int foundBypass = 0;
+            Assert.That(legacyResults.Passes.Length, Is.EqualTo(runPartialResults.Passes.Length));
             for (int i = 0; i < runPartialResults.Passes.Length; i++)
             {
-                if (legacyResults.Passes[i].Id == "bypass")
-                {
-                    foundBypass = 1;
-                }
-                AssertAxeItemsEqual(legacyResults.Passes[i + foundBypass], runPartialResults.Passes[i]);
+                AssertAxeItemsEqual(legacyResults.Passes[i], runPartialResults.Passes[i]);
             }
-            Assert.That(legacyResults.Inapplicable.Length, Is.EqualTo(runPartialResults.Inapplicable.Length - 1));
-            foundBypass = 0;
+            Assert.That(legacyResults.Inapplicable.Length, Is.EqualTo(runPartialResults.Inapplicable.Length));
             for (int i = 0; i < legacyResults.Inapplicable.Length; i++)
             {
-                if (runPartialResults.Inapplicable[i].Id == "bypass")
-                {
-                    foundBypass = 1;
-                }
-                AssertAxeItemsEqual(legacyResults.Inapplicable[i], runPartialResults.Inapplicable[i + foundBypass]);
+                AssertAxeItemsEqual(legacyResults.Inapplicable[i], runPartialResults.Inapplicable[i]);
             }
             Assert.That(legacyResults.Incomplete.Length, Is.EqualTo(runPartialResults.Incomplete.Length));
             for (int i = 0; i < legacyResults.Incomplete.Length; i++)
