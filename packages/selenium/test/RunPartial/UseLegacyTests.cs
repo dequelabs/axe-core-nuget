@@ -113,13 +113,14 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             switch (browser.ToUpper())
             {
                 case "CHROME":
-                    return "null";
+                    return "file://";
 
                 case "FIREFOX":
-                    return "file://";
+                    return "null";
 
                 default:
                     throw new ArgumentException($"Remote browser type '{browser}' is not supported");
+            }
         }
 
     }
