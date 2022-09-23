@@ -16,7 +16,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             GoToFixture("index.html");
 
 #pragma warning disable CS0618
-            var results = new AxeBuilder(WebDriver, CustomSource($"{axeSource}{axeRunPartialThrows}"))
+            var results = new AxeBuilder(WebDriver, CustomSource(axeCoreLegacy))
                 .UseLegacyMode(true)
                 .Analyze();
 #pragma warning restore CS0618
