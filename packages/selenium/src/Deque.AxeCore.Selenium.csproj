@@ -33,7 +33,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Selenium.WebDriver" Version="4.4.0" />
 
-    
+
   </ItemGroup>
 
   <ItemGroup>
@@ -41,7 +41,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\scan.js" />
+    <EmbeddedResource Include="Resources\legacyScan.js" />
+    <EmbeddedResource Include="Resources\branding.js" />
+    <EmbeddedResource Include="Resources\allowIframeUnsafe.js" />
+    <EmbeddedResource Include="Resources\runPartialExists.js" />
+    <EmbeddedResource Include="Resources\getFrameContexts.js" />
+    <EmbeddedResource Include="Resources\shadowSelect.js" />
+    <EmbeddedResource Include="Resources\runPartial.js" />
+    <EmbeddedResource Include="Resources\finishRun.js" />
   </ItemGroup>
-  
+
 </Project>
