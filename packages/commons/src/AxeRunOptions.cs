@@ -23,6 +23,32 @@ namespace Deque.AxeCore.Commons
         [JsonProperty("values")]
         public List<string> Values { get; set; }
 
+        /// <summary>
+        /// Construct a limiter for rules based on tags.
+        /// </summary>
+        /// <param name="types">List of tags to use.</param>
+        /// <returns>The <c>RunOnly</c> object.</returns>
+        public static RunOnlyOptions Tags(params string[] tags)
+        {
+            var runOnly = new RunOnlyOptions();
+            runOnly.Type = "tags";
+            runOnly.Values = new List<string>(tags);
+            return runOnly;
+        }
+
+        /// <summary>
+        /// Construct a limiter for rules based on ids.
+        /// </summary>
+        /// <param name="rules">List of ids of rules to use.</param>
+        /// <returns>The <c>RunOnly</c> object.</returns>
+        public static RunOnlyOptions Rules(params string[] rules)
+        {
+            var runOnly = new RunOnlyOptions();
+            runOnly.Type = "rules";
+            runOnly.Values = new List<string>(rules);
+            return runOnly;
+        }
+
     }
 
     /// <summary>
@@ -71,9 +97,9 @@ namespace Deque.AxeCore.Commons
         public Dictionary<string, RuleOptions> Rules { get; set; }
 
         /// <summary>
-        /// Limit which result types are processed and aggregated. An approach you can take to reducing the time is use the resultTypes option. 
-        /// For eg, when set to [ResultTypes.Violations], scan results will only have the full details of the violations array and 
-        /// will only have one instance of each of the inapplicable, incomplete and pass arrays for each rule that has at least one of those entries. 
+        /// Limit which result types are processed and aggregated. An approach you can take to reducing the time is use the resultTypes option.
+        /// For eg, when set to [ResultTypes.Violations], scan results will only have the full details of the violations array and
+        /// will only have one instance of each of the inapplicable, incomplete and pass arrays for each rule that has at least one of those entries.
         /// This will reduce the amount of computation that axe-core does for the unique selectors.
         /// </summary>
         [JsonProperty("resultTypes")]

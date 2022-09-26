@@ -1,4 +1,5 @@
 using Deque.AxeCore.Commons;
+using Newtonsoft.Json;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
@@ -9,37 +10,18 @@ namespace Deque.AxeCore.Selenium
     internal static class WebDriverInjectorExtensions
     {
         /// <summary>
-        /// Injects Axe script into frames.
-        /// </summary>
-        /// <param name="driver">WebDriver instance to inject into</param>
-        /// <param name="scriptProvider">Provider that get the aXe script to inject.</param>
-        /// <param name="runOptions">Axe run options</param>
-        internal static void Inject(this IWebDriver driver, IAxeScriptProvider scriptProvider, AxeRunOptions runOptions)
-        {
-            if (scriptProvider == null)
-                throw new ArgumentNullException(nameof(scriptProvider));
-
-            string script = scriptProvider.GetScript();
-            IList<IWebElement> parents = new List<IWebElement>();
-            IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
-
-            // Skip if value is set to false
-            if (runOptions.Iframes != false)
-            {
-                InjectIntoFrames(driver, script, parents);
-            }
-
-            driver.SwitchTo().DefaultContent();
-            js.ExecuteScript(script);
-        }
-
-        /// <summary>
-        ///  Recursively find frames and inject a script into them.
+        ///  Yeilds contexts such that every yield will be in a different frame context.
+        ///  To be used to take actions in every frame on a page.
         /// </summary>
         /// <param name="driver">An initialized WebDriver</param>
-        /// <param name="script">Script to inject</param>
-        /// <param name="parents">A list of all toplevel frames</param>
-        private static void InjectIntoFrames(IWebDriver driver, string script, IList<IWebElement> parents)
+        internal static void ForEachFrameContext(this IWebDriver driver, Action callback)
+        {
+            IList<IWebElement> parents = new List<IWebElement>();
+            ForEachFrameContext(driver, parents, callback);
+
+            driver.SwitchTo().DefaultContent();
+        }
+        private static void ForEachFrameContext(this IWebDriver driver, IList<IWebElement> parents, Action callback)
         {
             IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
             IList<IWebElement> frames = driver.FindElements(By.TagName("iframe"));
@@ -57,13 +39,24 @@ namespace Deque.AxeCore.Selenium
                 }
 
                 driver.SwitchTo().Frame(frame);
-                js.ExecuteScript(script);
+                callback();
 
                 IList<IWebElement> localParents = parents.ToList();
                 localParents.Add(frame);
-
-                InjectIntoFrames(driver, script, localParents);
+                ForEachFrameContext(driver, localParents, callback);
             }
+        }
+
+        internal static object ExecuteScript(this IWebDriver driver, string script, params object[] args)
+        {
+            IJavaScriptExecutor jsExecutor = (IJavaScriptExecutor)driver;
+            return jsExecutor.ExecuteScript(script, args);
+        }
+
+        internal static object ExecuteAsyncScript(this IWebDriver driver, string script, params object[] args)
+        {
+            IJavaScriptExecutor jsExecutor = (IJavaScriptExecutor)driver;
+            return jsExecutor.ExecuteAsyncScript(script, args);
         }
     }
 }

@@ -49,6 +49,15 @@
     <ProjectReference Include="..\src\Deque.AxeCore.Selenium.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\commons\test\Deque.AxeCore.Commons.Test.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+	  <None Include="../../commons/test/node_modules/axe-test-fixtures/fixtures/**" CopyToOutputDirectory="Always" LinkBase="fixtures/" />
+  </ItemGroup>
+
+
   <PropertyGroup>
     <VSTestResultsDirectory>TestResults/$(TargetFramework)</VSTestResultsDirectory>
 	</PropertyGroup>

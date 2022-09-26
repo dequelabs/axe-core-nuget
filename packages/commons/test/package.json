@@ -1,0 +1,13 @@
+{
+  "description": "This file is used to download npm dependencies for this project",
+  "repository": {},
+  "license": "MPL-2.0 AND MIT",
+  "private": true,
+  "scripts": {
+      "serveFixtures": "cd node_modules/axe-test-fixtures/fixtures && http-server -s"
+  },
+  "dependencies": {
+    "axe-test-fixtures": "github:dequelabs/axe-test-fixtures#v1",
+    "http-server": "^13.1.0"
+  }
+}
