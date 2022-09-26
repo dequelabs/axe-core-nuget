@@ -1,5 +1,6 @@
 #nullable enable
 
+using Deque.AxeCore.Commons;
 using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -24,9 +25,9 @@ namespace Deque.AxeCore.Playwright
 
         public override void Write(Utf8JsonWriter writer, AxeRunContext value, JsonSerializerOptions options)
         {
-            if (value is AxeRunSerialContext serialContext)
+            if (value is AxeRunContext context)
             {
-                writer.WriteRawValue(JsonSerializer.Serialize(serialContext, s_jsonOptions));
+                writer.WriteRawValue(JsonSerializer.Serialize(context, s_jsonOptions));
             }
             else
             {

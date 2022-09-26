@@ -91,7 +91,7 @@ namespace Deque.AxeCore.Playwright.Test
                 RunOnly = new RunOnlyOptions()
                 {
                     Type = "tag",
-                    Values = new List<string>(){ "wcag2a" }
+                    Values = new List<string>() { "wcag2a" }
                 }
             };
 
@@ -111,7 +111,7 @@ namespace Deque.AxeCore.Playwright.Test
                 RunOnly = new RunOnlyOptions()
                 {
                     Type = "rule",
-                    Values = new List<string>(){ "color-contrast" }
+                    Values = new List<string>() { "color-contrast" }
                 }
             };
 
@@ -261,7 +261,7 @@ namespace Deque.AxeCore.Playwright.Test
                 RunOnly = new RunOnlyOptions()
                 {
                     Type = "tag",
-                    Values = new List<string>(){ tag }
+                    Values = new List<string>() { tag }
                 }
             };
 
@@ -286,7 +286,11 @@ namespace Deque.AxeCore.Playwright.Test
         static object[] RunAxe_WithContext_Cases = {
             new object[]
             {
-                new AxeRunSerialContext("#id-example"),
+                new AxeRunContext()
+                {
+                    Include = new List<string[]> { new string[] { "#id-example" } },
+                    Exclude = null
+                },
                 new HashSet<string>()
                 {
                     "#id-example"
@@ -295,7 +299,11 @@ namespace Deque.AxeCore.Playwright.Test
             },
             new object[]
             {
-                new AxeRunSerialContext("a"),
+                new AxeRunContext()
+                {
+                    Include = new List<string[]> { new string[] { "a" } },
+                    Exclude = null
+                },
                 new HashSet<string>()
                 {
                     "a[aria-label=\"Accessibility Label\"]",
@@ -305,7 +313,11 @@ namespace Deque.AxeCore.Playwright.Test
             },
             new object[]
             {
-                new AxeRunSerialContext(null, "#id-example"),
+                new AxeRunContext()
+                {
+                    Include = null,
+                    Exclude = new List<string[]> { new string[] { "#id-example" } }
+                },
                 new HashSet<string>()
                 {
                     "#id-example"
@@ -314,7 +326,11 @@ namespace Deque.AxeCore.Playwright.Test
             },
             new object[]
             {
-                new AxeRunSerialContext(null, "a"),
+                new AxeRunContext()
+                {
+                    Include = null,
+                    Exclude = new List<string[]> { new string[] { "a" } }
+                },
                 new HashSet<string>()
                 {
                     "a[aria-label=\"Accessibility Label\"]",
