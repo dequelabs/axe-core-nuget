@@ -227,7 +227,7 @@ namespace Deque.AxeCore.Playwright.Test
 
             Assert.That(axeResults.Violations, Has.Length.EqualTo(1));
             AxeResultItem ariaViolation = axeResults.Violations.First();
-            var targets = ariaViolation.Nodes!.First().Target;
+            List<AxeResultTarget> targets = ariaViolation.Nodes!.First().Target;
 
             Assert.Multiple(() =>
             {

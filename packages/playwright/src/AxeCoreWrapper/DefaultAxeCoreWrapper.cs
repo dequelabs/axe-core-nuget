@@ -60,7 +60,6 @@ namespace Deque.AxeCore.Playwright.AxeCoreWrapper
         {
             await m_axeContentEmbedder.EmbedAxeCoreIntoPage(locator.Page, options?.Iframes);
 
-            // string? paramString = JsonSerializer.Serialize(options, s_jsonOptions);
             string paramString = JsonConvert.SerializeObject(options);
             string runParamTemplate = options != null ? "JSON.parse(runOptions)" : string.Empty;
 
@@ -70,7 +69,6 @@ namespace Deque.AxeCore.Playwright.AxeCoreWrapper
 
         private static async Task<AxeResult> EvaluateAxeRun(IPage page, AxeRunContext? context = null, object? param = null)
         {
-            // string? paramString = JsonSerializer.Serialize(param, s_jsonOptions);
             string? paramString = JsonConvert.SerializeObject(param);
 
             string runParamTemplate = param != null ? "JSON.parse(runOptions)" : string.Empty;
