@@ -58,7 +58,7 @@ namespace Deque.AxeCore.Commons.Test
             var options = new AxeRunOptions()
             {
                 AbsolutePaths = true,
-                FrameWaitTimeInMilliseconds = 10,
+                FrameWaitTime = 10,
                 Iframes = true,
                 RestoreScroll = true,
             };

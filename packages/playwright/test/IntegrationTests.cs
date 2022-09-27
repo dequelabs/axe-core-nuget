@@ -173,16 +173,16 @@ namespace Deque.AxeCore.Playwright.Test
             });
         }
 
-        // [Test]
-        // public async Task RunAxe_WithRunOptions_SelectorsFalse_ProducesResultsWithoutTargets()
-        // {
-        //     await NavigateToPage("basic.html");
+        [Test]
+        public async Task RunAxe_WithRunOptions_SelectorsFalse_ProducesResultsWithoutTargets()
+        {
+            await NavigateToPage("basic.html");
 
-        //     AxeResult axeResults = await Page!.RunAxe(new AxeRunOptions(selectors: false));
+            AxeResult axeResults = await Page!.RunAxe(new AxeRunOptions() { Selectors = false });
 
-        //     var violationsWithTargets = axeResults.Violations.Where(violation => violation.Nodes!.Any(node => node.Target.Any()));
-        //     Assert.That(violationsWithTargets, Is.Empty);
-        // }
+            var violationsWithTargets = axeResults.Violations.Where(violation => violation.Nodes!.Any(node => node.Target != null && node.Target.Any()));
+            Assert.That(violationsWithTargets, Is.Empty);
+        }
 
         [Test]
         public async Task RunAxe_WithRunOptions_AncestryTrue_ProducesResultsWithAncestry()
