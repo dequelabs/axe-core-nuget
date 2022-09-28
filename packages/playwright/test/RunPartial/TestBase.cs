@@ -58,7 +58,6 @@ namespace Deque.AxeCore.Playwright.Test.RunPartial
                 return _axeCoreLegacy;
             }
         }
-        protected string dylangConfigPath { get; set; } = null;
         protected string axeRunPartialThrows { get; set; } =
             ";axe.runPartial = () => { throw new Error(\"No runPartial\")}";
 
@@ -71,8 +70,6 @@ namespace Deque.AxeCore.Playwright.Test.RunPartial
         public async Task OneTimeSetup()
         {
             axeSource = new BundledAxeScriptProvider().GetScript();
-
-            dylangConfigPath = FixturePath("dylang-config.json");
 
             var commonsPath = System.IO.Path.GetFullPath(System.IO.Path.Combine(TestFileRoot, @"../../../../..", "commons", "test"));
             await testServer.StartAsync();
