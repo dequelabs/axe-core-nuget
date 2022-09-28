@@ -1,6 +1,6 @@
 () => {
     const brandingConfig = {
-        branding: 'axe-core-selenium-nuget'
+        branding: 'axe-core-playwright-nuget'
     };
     axe.configure(brandingConfig);
 }
