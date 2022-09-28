@@ -231,6 +231,7 @@ namespace Deque.AxeCore.Playwright.AxeCoreWrapper
                     }
                     else
                     {
+                        Console.WriteLine("Frame Handle is null!!!!");
                         partialResults.Add(null);
                     }
                 }
