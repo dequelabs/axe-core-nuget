@@ -20,7 +20,7 @@ namespace Deque.AxeCore.Playwright.AxeContent
         }
 
         /// <inheritdoc />
-        public async Task EmbedAxeCoreIntoPage(IPage page, bool? embedIntoIFrames = true, bool setAllowOrigin = true)
+        public async Task EmbedAxeCoreIntoPage(IPage page, bool? embedIntoIFrames = true, bool setAllowOrigin = false)
         {
             string axeCoreScriptContent = m_axeScriptProvider.GetScript();
 
