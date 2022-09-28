@@ -106,6 +106,18 @@ namespace Deque.AxeCore.Commons
         public HashSet<ResultType> ResultTypes { get; set; }
 
         /// <summary>
+        /// Return CSS selector for elements, optimised for readability
+        /// </summary>
+        [JsonProperty("selectors")]
+        public bool? Selectors { get; set; }
+
+        /// <summary>
+        /// Return CSS selector for elements, with all the element's ancestors
+        /// </summary>
+        [JsonProperty("ancestry")]
+        public bool? Ancestry { get; set; }
+
+        /// <summary>
         /// Returns xpath selectors for elements
         /// </summary>
         [JsonProperty("xpath")]
@@ -133,6 +145,12 @@ namespace Deque.AxeCore.Commons
         /// How long (in milliseconds) axe waits for a response from embedded frames before timing out
         /// </summary>
         [JsonProperty("frameWaitTime")]
-        public int? FrameWaitTimeInMilliseconds { get; set; }
+        public int? FrameWaitTime { get; set; }
+
+        /// <summary>
+        /// Time before axe-core considers a frame unresponsive
+        /// </summary>
+        [JsonProperty("pingWaitTime")]
+        public int? PingWaitTime { get; set; }
     }
 }
