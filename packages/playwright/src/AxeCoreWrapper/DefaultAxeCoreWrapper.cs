@@ -5,10 +5,9 @@ using Deque.AxeCore.Playwright.AxeContent;
 using Microsoft.Playwright;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Deque.AxeCore.Playwright.AxeCoreWrapper
@@ -16,20 +15,18 @@ namespace Deque.AxeCore.Playwright.AxeCoreWrapper
     /// <inheritdoc/>
     internal class DefaultAxeCoreWrapper : IAxeCoreWrapper
     {
-        private static readonly JsonSerializerOptions s_jsonOptions = new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            Converters =
-            {
-                new JsonStringEnumConverter(JsonNamingPolicy.CamelCase),
-                new RunContextJsonConverter()
-            },
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-            ReferenceHandler = ReferenceHandler.IgnoreCycles
-        };
 
         private readonly IAxeContentEmbedder m_axeContentEmbedder;
+        private static readonly DefaultContractResolver camelCaseContractResolver = new DefaultContractResolver
+        {
+            NamingStrategy = new CamelCaseNamingStrategy()
+        };
+        private static readonly JsonSerializerSettings JsonSerializerSettingsFinishRun = new JsonSerializerSettings
+        {
+            ContractResolver = camelCaseContractResolver,
+            Formatting = Formatting.None,
+            NullValueHandling = NullValueHandling.Include
+        };
 
         public DefaultAxeCoreWrapper(IAxeContentEmbedder axeContentEmbedder)
         {
@@ -48,9 +45,8 @@ namespace Deque.AxeCore.Playwright.AxeCoreWrapper
         /// <inheritdoc/>
         public async Task<AxeResult> Run(IPage page, AxeRunContext? context = null, AxeRunOptions? options = null)
         {
-            await m_axeContentEmbedder.EmbedAxeCoreIntoPage(page, options?.Iframes).ConfigureAwait(false);
-
-            AxeResult axeResult = await EvaluateAxeRun(page, context, options).ConfigureAwait(false);
+            var rawContextArg = JsonConvert.SerializeObject(context);
+            AxeResult axeResult = await RunInner(page.MainFrame, rawContextArg, options);
 
             return axeResult;
         }
@@ -58,9 +54,30 @@ namespace Deque.AxeCore.Playwright.AxeCoreWrapper
         /// <inheritdoc/>
         public async Task<AxeResult> RunOnLocator(ILocator locator, AxeRunOptions? options = null)
         {
+            var frame = await (await locator.ElementHandleAsync()).OwnerFrameAsync();
+            if (frame == null)
+            {
+                throw new Exception("Could not locate frame associated with locator");
+            }
+            return await RunInner(frame, await locator.ElementHandleAsync(), options);
+        }
+
+        /// <inheritdoc/>
+        public async Task<AxeResult> RunLegacy(IPage page, AxeRunContext? context = null, AxeRunOptions? options = null)
+        {
+            await m_axeContentEmbedder.EmbedAxeCoreIntoPage(page, options?.Iframes);
+
+            AxeResult axeResult = await EvaluateAxeRun(page, context, options).ConfigureAwait(false);
+
+            return axeResult;
+        }
+
+        /// <inheritdoc/>
+        public async Task<AxeResult> RunLegacyOnLocator(ILocator locator, AxeRunOptions? options = null)
+        {
             await m_axeContentEmbedder.EmbedAxeCoreIntoPage(locator.Page, options?.Iframes).ConfigureAwait(false);
 
-            string paramString = JsonConvert.SerializeObject(options);
+            string? paramString = JsonConvert.SerializeObject(options);
             string runParamTemplate = options != null ? "JSON.parse(runOptions)" : string.Empty;
 
             object jsonObject = await locator.EvaluateAsync<object>($"(node, runOptions) => window.axe.run(node, {runParamTemplate})", paramString).ConfigureAwait(false);
@@ -103,6 +120,179 @@ namespace Deque.AxeCore.Playwright.AxeCoreWrapper
             }
 
             return results;
+        }
+
+        /// <summary>
+        /// Runs axe via legacyScan.js at a specific context, which will be passed as-is to Selenium for legacyScan.js to interpret, and
+        /// parses/handles the legacyScan.js output per the current builder options.
+        /// </summary>
+        /// <param name="rawContextArg">The value to pass as-is to legacyScan.js to use as the axe.run "context" argument</param>
+        private async Task<AxeResult> RunInner(IFrame frame, object rawContextArg, AxeRunOptions? runOptions)
+        {
+            await ConfigureAxe(frame);
+
+
+            if (runOptions == null)
+            {
+                runOptions = new AxeRunOptions
+                {
+                    Iframes = true
+                };
+            }
+
+            var runPartialExists = await RunPartialExists(frame);
+
+            if (!runPartialExists)
+            {
+                await m_axeContentEmbedder.EmbedAxeCoreIntoPage(frame.Page, runOptions.Iframes, true);
+                return await EvaluateAxeRun(frame.Page, null, runOptions);
+            }
+            else
+            {
+                return await AnalyzeAxeRunPartial(frame, rawContextArg, runOptions);
+            }
+
+
+        }
+
+        private async Task<AxeResult> AnalyzeAxeRunPartial(IFrame frame, object rawContextArg, AxeRunOptions runOptions)
+        {
+            string rawOptionsArg = JsonConvert.SerializeObject(runOptions);
+            var partialResults = await RunPartialRecursive(frame, rawOptionsArg, rawContextArg, true, !runOptions.Iframes.HasValue || runOptions.Iframes.Value);
+            return await IsolatedFinishRun(frame, partialResults.ToArray(), rawOptionsArg);
+        }
+
+        private async Task<List<object?>> RunPartialRecursive(
+                                                        IFrame frame,
+                                                        object options,
+                                                        object context,
+                                                        bool isTopLevel,
+                                                        bool iframes
+                                                        )
+        {
+            if (!isTopLevel)
+            {
+                await ConfigureAxe(frame);
+            }
+
+            var partialResults = new List<object?>();
+
+            try
+            {
+                string partialRes = await frame.EvaluateAsync<string>(EmbeddedResourceProvider.ReadEmbeddedFile("runPartial.js"), new[] { context, options });
+                // Important to deserialize because we want to reserialize as an
+                // array of object, not an array of strings.
+                partialResults.Add(JsonConvert.DeserializeObject<object>(partialRes));
+            }
+            catch (Exception ex)
+            {
+                if (isTopLevel)
+                {
+                    throw ex;
+                }
+                else
+                {
+                    partialResults.Add(null);
+                    return partialResults;
+                }
+            }
+
+            // Don't go any deeper if we are just doing top-level iframe
+            if (!iframes)
+            {
+                return partialResults;
+            }
+
+            var frameContexts = await GetFrameContexts(frame, context);
+            foreach (var fContext in frameContexts)
+            {
+                try
+                {
+                    object frameContext = JsonConvert.SerializeObject(fContext.Context);
+                    string frameSelector = JsonConvert.SerializeObject(fContext.Selector);
+                    var frameHandle = await frame.EvaluateHandleAsync(EmbeddedResourceProvider.ReadEmbeddedFile("shadowSelect.js"), frameSelector);
+                    if (frameHandle != null)
+                    {
+                        var childFrameElement = frameHandle.AsElement();
+                        if (childFrameElement == null)
+                        {
+                            partialResults.Add(null);
+                            continue;
+                        }
+
+                        var childFrame = await childFrameElement.ContentFrameAsync();
+                        if (childFrame == null)
+                        {
+                            partialResults.Add(null);
+                            continue;
+                        }
+
+                        partialResults.AddRange(await RunPartialRecursive(childFrame, options, frameContext, false, iframes));
+                    }
+                    else
+                    {
+                        Console.WriteLine("Frame Handle is null!!!!");
+                        partialResults.Add(null);
+                    }
+                }
+                catch (Exception)
+                {
+                    partialResults.Add(null);
+                }
+            }
+
+            return partialResults;
+        }
+
+        private async Task<AxeResult> IsolatedFinishRun(IFrame frame, object?[] partialResults, object options)
+        {
+            var browser = frame.Page.Context.Browser;
+            if (browser == null)
+            {
+                throw new Exception("Could not locate browser associated with page");
+            }
+            var blankPage = await browser.NewPageAsync();
+            try
+            {
+                await ConfigureAxe(blankPage.MainFrame);
+                var serializedPartials = JsonConvert.SerializeObject(partialResults, JsonSerializerSettingsFinishRun);
+                var result = await blankPage.EvaluateAsync<object>(EmbeddedResourceProvider.ReadEmbeddedFile("finishRun.js"), new[] { serializedPartials, options });
+                return DeserializeResult(result);
+            }
+            finally
+            {
+                await blankPage.CloseAsync();
+            }
+        }
+
+        /// <summary>
+        /// Execute `axe.utils.getFrameContexts(context)`
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        private async Task<List<AxeFrameContext>> GetFrameContexts(IFrame frame, object context)
+        {
+            var frameContextsString = await frame.EvaluateAsync<string>(EmbeddedResourceProvider.ReadEmbeddedFile("getFrameContexts.js"), context);
+            var frameContexts = JsonConvert.DeserializeObject<List<AxeFrameContext>>(frameContextsString);
+            if (frameContexts == null)
+            {
+                return new List<AxeFrameContext>();
+            }
+            return frameContexts;
+        }
+
+        /// <summary>
+        /// Injects scripts into the current frame and configures axe
+        /// </summary>
+        private async Task ConfigureAxe(IFrame frame)
+        {
+            await m_axeContentEmbedder.EmbedAxeCoreIntoFrame(frame);
+            await frame.EvaluateAsync(EmbeddedResourceProvider.ReadEmbeddedFile("branding.js"));
+        }
+
+        private Task<bool> RunPartialExists(IFrame frame)
+        {
+            return frame.EvaluateAsync<bool>(EmbeddedResourceProvider.ReadEmbeddedFile("runPartialExists.js"));
         }
     }
 }

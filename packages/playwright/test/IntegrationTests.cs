@@ -19,7 +19,7 @@ namespace Deque.AxeCore.Playwright.Test
 
         public IntegrationTests()
         {
-            m_testServer = new();
+            m_testServer = new("TestFiles");
         }
 
         [OneTimeSetUp]
@@ -224,7 +224,6 @@ namespace Deque.AxeCore.Playwright.Test
             await NavigateToPage("with-frame.html");
 
             AxeResult axeResults = await Page!.RunAxe();
-
             Assert.That(axeResults.Violations, Has.Length.EqualTo(1));
             AxeResultItem ariaViolation = axeResults.Violations.First();
             AxeSelector target = ariaViolation.Nodes!.First().Target;
