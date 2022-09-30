@@ -3,6 +3,9 @@ using System;
 
 namespace Deque.AxeCore.Commons
 {
+    /// <summary>
+    /// Axe results object
+    /// </summary>
     public class AxeResult
     {
         /// <summary>
@@ -47,6 +50,9 @@ namespace Deque.AxeCore.Commons
         /// </summary>
         public string Url { get; private set; }
 
+        /// <summary>
+        /// The Error that was found on the application that ran the audit.
+        /// </summary>
         public string Error { get; private set; }
 
         /// <summary>
@@ -59,6 +65,9 @@ namespace Deque.AxeCore.Commons
         /// </summary>
         public string TestEngineVersion { get; private set; }
 
+        /// <summary>
+        /// The tool options used for the configuration of the data format used by axe.
+        /// </summary>
         public object ToolOptions { get; private set; }
 
         public AxeResult(JObject result)

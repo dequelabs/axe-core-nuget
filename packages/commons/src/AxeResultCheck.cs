@@ -1,5 +1,8 @@
 namespace Deque.AxeCore.Commons
 {
+    /// <summary>
+    /// Axe result check
+    /// </summary>
     public class AxeResultCheck
     {
         /// <summary>
