@@ -11,12 +11,12 @@ namespace Deque.AxeCore.Commons
         public string UserAgent { get; set; }
 
         /// <summary>
-        /// Window Width.
+        /// Window Width in pixels.
         /// </summary>
         public int WindowWidth { get; set; }
 
         /// <summary>
-        /// Window Height.
+        /// Window Height in pixels.
         /// </summary>
         public int WindowHeight { get; set; }
 
@@ -26,7 +26,7 @@ namespace Deque.AxeCore.Commons
         public string OrientationType { get; set; }
 
         /// <summary>
-        /// Orientation Angle.
+        /// Orientation Angle in degrees.
         /// </summary>
         public double? OrientationAngle { get; set; }
     }
