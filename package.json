@@ -4,5 +4,5 @@
   "version": "4.4.0",
   "license": "MPL-2.0 AND MIT",
   "repository": "dequelabs/axe-core-nuget",
-  "private": true
+  "private": true,
 }

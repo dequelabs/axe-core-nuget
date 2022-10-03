@@ -1,5 +1,6 @@
 #nullable enable
 
+using Deque.AxeCore.Commons;
 using Microsoft.Playwright;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -19,11 +20,11 @@ namespace Deque.AxeCore.Playwright.AxeCoreWrapper
         /// <summary>
         /// Calls the Run/Analyze method of Axe Core.
         /// </summary>
-        public Task<AxeResults> Run(IPage page, AxeRunContext? context = null, AxeRunOptions? options = null);
+        public Task<AxeResult> Run(IPage page, AxeRunContext? context = null, AxeRunOptions? options = null);
 
         /// <summary>
         /// Runs Axe on a Playwright Locator
         /// </summary>
-        public Task<AxeResults> RunOnLocator(ILocator locator, AxeRunOptions? options = null);
+        public Task<AxeResult> RunOnLocator(ILocator locator, AxeRunOptions? options = null);
     }
 }

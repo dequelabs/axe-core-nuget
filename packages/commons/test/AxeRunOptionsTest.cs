@@ -57,12 +57,15 @@ namespace Deque.AxeCore.Commons.Test
         {
             var options = new AxeRunOptions()
             {
+                Selectors = true,
+                Ancestry = true,
                 AbsolutePaths = true,
-                FrameWaitTimeInMilliseconds = 10,
+                FrameWaitTime = 10,
                 Iframes = true,
                 RestoreScroll = true,
+                PingWaitTime = 100,
             };
-            var expectedObject = "{\"absolutePaths\":true,\"iframes\":true,\"restoreScroll\":true,\"frameWaitTime\":10}";
+            var expectedObject = "{\"selectors\":true,\"ancestry\":true,\"absolutePaths\":true,\"iframes\":true,\"restoreScroll\":true,\"frameWaitTime\":10,\"pingWaitTime\":100}";
 
             var serializedObject = JsonConvert.SerializeObject(options, serializerSettings);
 

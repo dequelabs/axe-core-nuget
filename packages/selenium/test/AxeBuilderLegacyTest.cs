@@ -10,7 +10,7 @@ using Deque.AxeCore.Commons;
 
 namespace Deque.AxeCore.Selenium.Test
 {
-    public class TestAxeScriptProvider : IAxeScriptProvider
+    public class LegacyTestAxeScriptProvider : IAxeScriptProvider
     {
         public static string stubAxeScript = "stub axe script";
         public string GetScript()
@@ -21,12 +21,11 @@ namespace Deque.AxeCore.Selenium.Test
 
     [TestFixture]
     [NonParallelizable]
-    public class AxeBuilderTest
+    public class LegacyAxeBuilderTest
     {
         private static Mock<IWebDriver> webDriverMock = new Mock<IWebDriver>();
         private static Mock<IJavaScriptExecutor> jsExecutorMock = webDriverMock.As<IJavaScriptExecutor>();
         private static Mock<ITargetLocator> targetLocatorMock = new Mock<ITargetLocator>();
-        private static Mock<INavigation> navigationMock = new Mock<INavigation>();
         private static readonly JsonSerializerSettings JsonSerializerSettings = new JsonSerializerSettings
         {
             Formatting = Formatting.None,
@@ -35,10 +34,10 @@ namespace Deque.AxeCore.Selenium.Test
 
         private static readonly AxeBuilderOptions stubAxeBuilderOptions = new AxeBuilderOptions
         {
-            ScriptProvider = new TestAxeScriptProvider()
+            ScriptProvider = new LegacyTestAxeScriptProvider()
         };
 
-        private static readonly object testAxeResult = new
+        private readonly object testAxeResult = new
         {
             violations = new object[] { },
             passes = new object[] { },
@@ -49,18 +48,17 @@ namespace Deque.AxeCore.Selenium.Test
         };
 
         [Test]
-        public void ThrowWhenDriverIsNull()
+        public void LegacyThrowWhenDriverIsNull()
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
                 //arrange / act /assert
                 var axeBuilder = new AxeBuilder(null, stubAxeBuilderOptions);
-                axeBuilder.Should().NotBeNull();
             });
         }
 
         [Test]
-        public void ThrowWhenOptionsAreNull()
+        public void LegacyThrowWhenOptionsAreNull()
         {
             //arrange
             var driver = new Mock<IWebDriver>();
@@ -74,7 +72,7 @@ namespace Deque.AxeCore.Selenium.Test
         }
 
         [Test]
-        public void ShouldHandleIfOptionsAndContextNotSet()
+        public void LegacyShouldHandleIfOptionsAndContextNotSet()
         {
 
             SetupVerifiableAxeInjectionCall();
@@ -92,11 +90,11 @@ namespace Deque.AxeCore.Selenium.Test
         }
 
         [Test]
-        public void ShouldPassContextIfIncludeSet()
+        public void LegacyShouldPassContextIfIncludeSet()
         {
             var expectedContext = SerializeObject(new AxeRunContext()
             {
-                Include = new List<AxeSelector> { new AxeSelector("#div1") }
+                Include = new List<string[]>(new string[][] { new string[] { "#div1" } })
             });
 
             SetupVerifiableAxeInjectionCall();
@@ -114,14 +112,14 @@ namespace Deque.AxeCore.Selenium.Test
         }
 
         [Test]
-        public void ShouldPassContextIfIncludeAndExcludeSet()
+        public void LegacyShouldPassContextIfIncludeAndExcludeSet()
         {
             var includeSelector = "#div1";
             var excludeSelector = "#div2";
             var expectedContext = SerializeObject(new AxeRunContext()
             {
-                Include = new List<AxeSelector> { new AxeSelector(includeSelector) },
-                Exclude = new List<AxeSelector> { new AxeSelector(excludeSelector) },
+                Include = new List<string[]>(new string[][] { new string[] { includeSelector } }),
+                Exclude = new List<string[]>(new string[][] { new string[] { excludeSelector } })
             });
 
             SetupVerifiableAxeInjectionCall();
@@ -140,11 +138,11 @@ namespace Deque.AxeCore.Selenium.Test
 
 
         [Test]
-        public void ShouldPassContextIfExcludeSet()
+        public void LegacyShouldPassContextIfExcludeSet()
         {
             var expectedContext = SerializeObject(new AxeRunContext()
             {
-                Exclude = new List<AxeSelector> { new AxeSelector("#div1") }
+                Exclude = new List<string[]>(new string[][] { new string[] { "#div1" } })
             });
 
             SetupVerifiableAxeInjectionCall();
@@ -162,7 +160,7 @@ namespace Deque.AxeCore.Selenium.Test
         }
 
         [Test]
-        public void ShouldPassRuleConfig()
+        public void LegacyShouldPassRuleConfig()
         {
             var expectedRules = new List<string> { "rule1", "rule2" };
 
@@ -198,7 +196,7 @@ namespace Deque.AxeCore.Selenium.Test
         }
 
         [Test]
-        public void ShouldPassRunOptionsWithTagConfig()
+        public void LegacyShouldPassRunOptionsWithTagConfig()
         {
             var expectedTags = new List<string> { "tag1", "tag2" };
 
@@ -227,7 +225,7 @@ namespace Deque.AxeCore.Selenium.Test
         }
 
         [Test]
-        public void ShouldPassRunOptions()
+        public void LegacyShouldPassRunOptions()
         {
             var runOptions = new AxeRunOptions()
             {
@@ -253,7 +251,7 @@ namespace Deque.AxeCore.Selenium.Test
         }
 
         [Test]
-        public void ShouldThrowIfNullParameterPassed()
+        public void LegacyShouldThrowIfNullParameterPassed()
         {
             SetupVerifiableAxeInjectionCall();
 
@@ -265,15 +263,13 @@ namespace Deque.AxeCore.Selenium.Test
             VerifyExceptionThrown<ArgumentNullException>(() => builder.WithRules(null));
             VerifyExceptionThrown<ArgumentNullException>(() => builder.DisableRules(null));
             VerifyExceptionThrown<ArgumentNullException>(() => builder.WithTags(null));
-            VerifyExceptionThrown<ArgumentNullException>(() => builder.Include((string)null));
-            VerifyExceptionThrown<ArgumentNullException>(() => builder.Include((AxeSelector)null));
-            VerifyExceptionThrown<ArgumentNullException>(() => builder.Exclude((string)null));
-            VerifyExceptionThrown<ArgumentNullException>(() => builder.Exclude((AxeSelector)null));
+            VerifyExceptionThrown<ArgumentNullException>(() => builder.Include(null));
+            VerifyExceptionThrown<ArgumentNullException>(() => builder.Exclude(null));
             VerifyExceptionThrown<ArgumentNullException>(() => builder.WithOptions(null));
         }
 
         [Test]
-        public void ShouldThrowIfEmptyParameterPassed()
+        public void LegacyShouldThrowIfEmptyParameterPassed()
         {
             var values = new string[] { "val1", "" };
 
@@ -284,6 +280,8 @@ namespace Deque.AxeCore.Selenium.Test
             VerifyExceptionThrown<ArgumentException>(() => builder.WithRules(values));
             VerifyExceptionThrown<ArgumentException>(() => builder.DisableRules(values));
             VerifyExceptionThrown<ArgumentException>(() => builder.WithTags(values));
+            VerifyExceptionThrown<ArgumentException>(() => builder.Include(values));
+            VerifyExceptionThrown<ArgumentException>(() => builder.Exclude(values));
         }
 
         private void VerifyExceptionThrown<T>(Action action) where T : Exception
@@ -307,47 +305,34 @@ namespace Deque.AxeCore.Selenium.Test
 
         private static void SetupVerifiableAxeInjectionCall()
         {
-            webDriverMock
-                .Setup(d => d.WindowHandles)
-                .Returns(new ReadOnlyCollection<string>(new List<string>() { "some window id" }));
-            webDriverMock
-                .Setup(d => d.Navigate())
-                .Returns(navigationMock.Object);
-
+            // Pretend we do not support axe.runPartial so that old code path is used
             jsExecutorMock
                 .Setup(js => js.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("runPartialExists.js")))
-                .Returns(true);
+                .Returns(false);
             jsExecutorMock
-                .Setup(js => js.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("getFrameContexts.js"), It.IsAny<object>()))
-                .Returns("[]");
-
-            jsExecutorMock.Setup(js => js.ExecuteAsyncScript(
-                EmbeddedResourceProvider.ReadEmbeddedFile("finishRun.js"),
-                It.IsAny<string>(),
-                It.IsAny<string>())).Returns(testAxeResult);
-            webDriverMock.Setup(d => d.SwitchTo()).Returns(targetLocatorMock.Object);
+                .Setup(js => js.ExecuteScript(LegacyTestAxeScriptProvider.stubAxeScript)).Verifiable();
+            webDriverMock
+                .Setup(d => d.FindElements(It.IsAny<By>()))
+                .Returns(new List<IWebElement>().AsReadOnly());
+            webDriverMock
+                .Setup(d => d.SwitchTo())
+                .Returns(targetLocatorMock.Object);
         }
 
         private void SetupVerifiableScanCall(string serializedContext, string serialzedOptions)
         {
-            jsExecutorMock
-                .Setup(js => js.ExecuteAsyncScript(EmbeddedResourceProvider.ReadEmbeddedFile("runPartial.js"),
+            jsExecutorMock.Setup(js => js.ExecuteAsyncScript(
+                EmbeddedResourceProvider.ReadEmbeddedFile("legacyScan.js"),
                 It.Is<string>(context => context == serializedContext),
-                It.Is<string>(options => options == serialzedOptions))
-                )
-                .Returns("{}")
-                .Verifiable();
+                It.Is<string>(options => options == serialzedOptions))).Returns(testAxeResult).Verifiable();
         }
 
         private void SetupVerifiableScanElementCall(IWebElement elementContext, string serialzedOptions)
         {
-            jsExecutorMock
-                .Setup(js => js.ExecuteAsyncScript(EmbeddedResourceProvider.ReadEmbeddedFile("runPartial.js"),
+            jsExecutorMock.Setup(js => js.ExecuteAsyncScript(
+                EmbeddedResourceProvider.ReadEmbeddedFile("legacyScan.js"),
                 elementContext,
-                It.Is<string>(options => options == serialzedOptions))
-                )
-                .Returns("{}")
-                .Verifiable();
+                It.Is<string>(options => options == serialzedOptions))).Returns(testAxeResult).Verifiable();
         }
 
         private string SerializeObject<T>(T obj)

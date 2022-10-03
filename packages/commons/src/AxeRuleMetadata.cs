@@ -1,14 +1,12 @@
-#nullable enable
-
 using System;
 using System.Collections.Generic;
 
-namespace Deque.AxeCore.Playwright
+namespace Deque.AxeCore.Commons
 {
     /// <summary>
     /// Axe Rule Metadata
     /// </summary>
-    public sealed class AxeRuleMetadata
+    public class AxeRuleMetadata
     {
         /// <summary>
         /// The Rule Id e.g. "color-contrast"
