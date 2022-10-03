@@ -1,7 +1,7 @@
 namespace Deque.AxeCore.Commons
 {
     /// <summary>
-    /// Axe results object item
+    /// Represents the results from one specific axe rule across all the nodes from an axe scan.
     /// </summary>
     public class AxeResultItem
     {
@@ -36,7 +36,7 @@ namespace Deque.AxeCore.Commons
         public string[] Tags { get; set; }
 
         /// <summary>
-        /// List of all elements the Rule tested.
+        /// List of all elements the Rule evaluated to the same result for.
         /// </summary>
         public AxeResultNode[] Nodes { get; set; }
     }

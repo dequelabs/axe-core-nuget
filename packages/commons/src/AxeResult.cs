@@ -4,7 +4,7 @@ using System;
 namespace Deque.AxeCore.Commons
 {
     /// <summary>
-    /// Axe results object
+    /// Represents the complete results of an axe scan, including results from all rules and nodes included in the scan.
     /// </summary>
     public class AxeResult
     {

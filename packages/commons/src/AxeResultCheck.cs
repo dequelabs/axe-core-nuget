@@ -1,7 +1,7 @@
 namespace Deque.AxeCore.Commons
 {
     /// <summary>
-    /// Axe result check
+    /// Represents the results from one specific axe check on one specific node. The results of an axe rule may be based on the results of multiple checks.
     /// </summary>
     public class AxeResultCheck
     {
