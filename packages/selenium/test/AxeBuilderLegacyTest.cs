@@ -142,7 +142,7 @@ namespace Deque.AxeCore.Selenium.Test
         {
             var expectedContext = SerializeObject(new AxeRunContext()
             {
-                Include = new List<AxeSelector> { new AxeSelector("#div1") },
+                Exclude = new List<AxeSelector> { new AxeSelector("#div1") },
             });
 
             SetupVerifiableAxeInjectionCall();
