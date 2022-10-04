@@ -233,7 +233,7 @@ namespace Deque.AxeCore.Playwright.Test
             {
                 Assert.That(ariaViolation.Id, Is.EqualTo(expectedViolationId));
                 Assert.That(target, Is.Not.Null.Or.Empty);
-                Assert.That(target, Is.EqualTo(expectedViolationTarget));;
+                Assert.That(target, Is.EqualTo(expectedViolationTarget));
             });
         }
 
@@ -278,7 +278,7 @@ namespace Deque.AxeCore.Playwright.Test
             AxeResult axeResults = await Page!.RunAxe(axeRunContext);
 
             Assert.That(axeResults.Passes.All(pass =>
-                 pass.Nodes!.All(node => 
+                 pass.Nodes!.All(node =>
                     includedInTargets == targets.Contains(node.Target.ToString()))));
         }
 
