@@ -1,5 +1,8 @@
 namespace Deque.AxeCore.Commons
 {
+    /// <summary>
+    /// A tested rule element.
+    /// </summary>
     public class AxeResultNode
     {
         /// <summary>
@@ -20,10 +23,30 @@ namespace Deque.AxeCore.Commons
         /// the page. Includes all the element's ancestors, usually more verbose than <see cref="Target"/>.
         /// </summary>
         public AxeSelector Ancestry { get; set; }
+
+        /// <summary>
+        /// Snippet of HTML of the Element.
+        /// </summary>
         public string Html { get; set; }
+
+        /// <summary>
+        /// How serious the violation is.
+        /// </summary>
         public string Impact { get; set; }
+
+        /// <summary>
+        /// List of checks that were made where at least one must have passed.
+        /// </summary>
         public AxeResultCheck[] Any { get; set; }
+
+        /// <summary>
+        /// List of checks that were made where all must have passed.
+        /// </summary>
         public AxeResultCheck[] All { get; set; }
+
+        /// <summary>
+        /// List of checks that were made where all must have not passed.
+        /// </summary>
         public AxeResultCheck[] None { get; set; }
     }
 }
