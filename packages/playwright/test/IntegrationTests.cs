@@ -180,7 +180,7 @@ namespace Deque.AxeCore.Playwright.Test
 
             AxeResult axeResults = await Page!.RunAxe(new AxeRunOptions() { Selectors = false });
 
-            var violationsWithTargets = axeResults.Violations.Where(violation => violation.Nodes!.Any(node => node.Target != null && node.Target.Any()));
+            var violationsWithTargets = axeResults.Violations.Where(violation => violation.Nodes!.Any(node => node.Target != null));
             Assert.That(violationsWithTargets, Is.Empty);
         }
 
@@ -196,7 +196,7 @@ namespace Deque.AxeCore.Playwright.Test
 
             AxeResult axeResults = await Page!.RunAxe(expectedOptions);
 
-            var violationsWithoutAncestry = axeResults.Violations.Where(violation => violation.Nodes!.Any(node => node.Ancestry == null || !node.Ancestry.Any()));
+            var violationsWithoutAncestry = axeResults.Violations.Where(violation => violation.Nodes!.Any(node => node.Ancestry == null));
             Assert.That(violationsWithoutAncestry, Is.Empty);
         }
 
@@ -211,7 +211,7 @@ namespace Deque.AxeCore.Playwright.Test
             };
 
             AxeResult axeResults = await Page!.RunAxe(expectedOptions);
-            var violationsWithoutXPath = axeResults.Violations.Where(violation => violation.Nodes!.Any(node => node.XPath == null || !node.XPath.Any()));
+            var violationsWithoutXPath = axeResults.Violations.Where(violation => violation.Nodes!.Any(node => node.XPath == null));
             Assert.That(violationsWithoutXPath, Is.Empty);
         }
 
@@ -219,7 +219,7 @@ namespace Deque.AxeCore.Playwright.Test
         public async Task RunAxe_NestedIframes_FindsNestedViolationsByDefault()
         {
             const string expectedViolationId = "aria-roles";
-            const string expectedViolationTarget = "#div-fail";
+            AxeSelector expectedViolationTarget = new AxeSelector("#div-fail", new List<string> { "iframe", "#frame-fail" });
 
             await NavigateToPage("with-frame.html");
 
@@ -227,13 +227,13 @@ namespace Deque.AxeCore.Playwright.Test
 
             Assert.That(axeResults.Violations, Has.Length.EqualTo(1));
             AxeResultItem ariaViolation = axeResults.Violations.First();
-            List<AxeResultTarget> targets = ariaViolation.Nodes!.First().Target;
+            AxeSelector target = ariaViolation.Nodes!.First().Target;
 
             Assert.Multiple(() =>
             {
                 Assert.That(ariaViolation.Id, Is.EqualTo(expectedViolationId));
-                Assert.That(targets, Is.Not.Null.Or.Empty);
-                Assert.That(targets.Any(target => target.ToString().Contains(expectedViolationTarget)));
+                Assert.That(target, Is.Not.Null.Or.Empty);
+                Assert.That(target, Is.EqualTo(expectedViolationTarget));;
             });
         }
 
@@ -277,10 +277,9 @@ namespace Deque.AxeCore.Playwright.Test
 
             AxeResult axeResults = await Page!.RunAxe(axeRunContext);
 
-            Assert.That(axeResults.Passes
-                .All(pass => pass.Nodes!
-                .All(node => node.Target!
-                .Any(target => includedInTargets == targets.Contains(target.ToString())))));
+            Assert.That(axeResults.Passes.All(pass =>
+                 pass.Nodes!.All(node => 
+                    includedInTargets == targets.Contains(node.Target.ToString()))));
         }
 
         static object[] RunAxe_WithContext_Cases = {
@@ -288,7 +287,7 @@ namespace Deque.AxeCore.Playwright.Test
             {
                 new AxeRunContext()
                 {
-                    Include = new List<string[]> { new string[] { "#id-example" } },
+                    Include = new List<AxeSelector> { new AxeSelector("#id-example") },
                     Exclude = null
                 },
                 new HashSet<string>()
@@ -301,7 +300,7 @@ namespace Deque.AxeCore.Playwright.Test
             {
                 new AxeRunContext()
                 {
-                    Include = new List<string[]> { new string[] { "a" } },
+                    Include = new List<AxeSelector> { new AxeSelector("a") },
                     Exclude = null
                 },
                 new HashSet<string>()
@@ -316,7 +315,7 @@ namespace Deque.AxeCore.Playwright.Test
                 new AxeRunContext()
                 {
                     Include = null,
-                    Exclude = new List<string[]> { new string[] { "#id-example" } }
+                    Exclude = new List<AxeSelector> { new AxeSelector("#id-example") },
                 },
                 new HashSet<string>()
                 {
@@ -329,7 +328,7 @@ namespace Deque.AxeCore.Playwright.Test
                 new AxeRunContext()
                 {
                     Include = null,
-                    Exclude = new List<string[]> { new string[] { "a" } }
+                    Exclude = new List<AxeSelector> { new AxeSelector("a") },
                 },
                 new HashSet<string>()
                 {
