@@ -13,11 +13,11 @@ namespace Deque.AxeCore.Commons.Test
         {
             var context = new AxeRunContext()
             {
-                Include = new List<string[]> { new string[] { "#if1", "#idiv1" } },
-                Exclude = new List<string[]> { new string[] { "#ef1", "#ediv1" } }
+                Include = new List<AxeSelector> { new AxeSelector("#included") },
+                Exclude = new List<AxeSelector> { new AxeSelector("#excluded") },
             };
 
-            var expectedContent = "{\"include\":[[\"#if1\",\"#idiv1\"]],\"exclude\":[[\"#ef1\",\"#ediv1\"]]}";
+            var expectedContent = "{\"include\":[\"#included\"],\"exclude\":[\"#excluded\"]}";
 
             JsonConvert.SerializeObject(context).Should().Be(expectedContent);
         }

@@ -96,7 +96,7 @@ namespace Deque.AxeCore.Selenium.Test
         {
             var expectedContext = SerializeObject(new AxeRunContext()
             {
-                Include = new List<string[]>(new string[][] { new string[] { "#div1" } })
+                Include = new List<AxeSelector> { new AxeSelector("#div1") }
             });
 
             SetupVerifiableAxeInjectionCall();
@@ -120,8 +120,8 @@ namespace Deque.AxeCore.Selenium.Test
             var excludeSelector = "#div2";
             var expectedContext = SerializeObject(new AxeRunContext()
             {
-                Include = new List<string[]>(new string[][] { new string[] { includeSelector } }),
-                Exclude = new List<string[]>(new string[][] { new string[] { excludeSelector } })
+                Include = new List<AxeSelector> { new AxeSelector(includeSelector) },
+                Exclude = new List<AxeSelector> { new AxeSelector(excludeSelector) },
             });
 
             SetupVerifiableAxeInjectionCall();
@@ -144,7 +144,7 @@ namespace Deque.AxeCore.Selenium.Test
         {
             var expectedContext = SerializeObject(new AxeRunContext()
             {
-                Exclude = new List<string[]>(new string[][] { new string[] { "#div1" } })
+                Exclude = new List<AxeSelector> { new AxeSelector("#div1") }
             });
 
             SetupVerifiableAxeInjectionCall();
@@ -265,8 +265,10 @@ namespace Deque.AxeCore.Selenium.Test
             VerifyExceptionThrown<ArgumentNullException>(() => builder.WithRules(null));
             VerifyExceptionThrown<ArgumentNullException>(() => builder.DisableRules(null));
             VerifyExceptionThrown<ArgumentNullException>(() => builder.WithTags(null));
-            VerifyExceptionThrown<ArgumentNullException>(() => builder.Include(null));
-            VerifyExceptionThrown<ArgumentNullException>(() => builder.Exclude(null));
+            VerifyExceptionThrown<ArgumentNullException>(() => builder.Include((string)null));
+            VerifyExceptionThrown<ArgumentNullException>(() => builder.Include((AxeSelector)null));
+            VerifyExceptionThrown<ArgumentNullException>(() => builder.Exclude((string)null));
+            VerifyExceptionThrown<ArgumentNullException>(() => builder.Exclude((AxeSelector)null));
             VerifyExceptionThrown<ArgumentNullException>(() => builder.WithOptions(null));
         }
 
@@ -282,8 +284,6 @@ namespace Deque.AxeCore.Selenium.Test
             VerifyExceptionThrown<ArgumentException>(() => builder.WithRules(values));
             VerifyExceptionThrown<ArgumentException>(() => builder.DisableRules(values));
             VerifyExceptionThrown<ArgumentException>(() => builder.WithTags(values));
-            VerifyExceptionThrown<ArgumentException>(() => builder.Include(values));
-            VerifyExceptionThrown<ArgumentException>(() => builder.Exclude(values));
         }
 
         private void VerifyExceptionThrown<T>(Action action) where T : Exception

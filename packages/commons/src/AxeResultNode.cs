@@ -1,6 +1,3 @@
-using Newtonsoft.Json;
-using System.Collections.Generic;
-
 namespace Deque.AxeCore.Commons
 {
     /// <summary>
@@ -9,20 +6,23 @@ namespace Deque.AxeCore.Commons
     public class AxeResultNode
     {
         /// <summary>
-        /// Target identifier of this result node.
+        /// Represents a CSS selector (or, for elements inside iframes/shadow DOMs, a chain of CSS selectors) which uniquely
+        /// identifies the node in question on the page.
         /// </summary>
-        [JsonProperty("target", ItemConverterType = typeof(AxeResultTargetConverter), NullValueHandling = NullValueHandling.Ignore)]
-        public List<AxeResultTarget> Target { get; set; }
+        public AxeSelector Target { get; set; }
 
         /// <summary>
-        /// Xpath selectors for elements
+        /// Only present if the XPath flag was passed in <see cref="AxeRunOptions"/>. This <see cref="AxeSelector"/> is built up
+        /// of XPath selectors rather than CSS selectors, but otherwise follows the same structure as a typical AxeSelector.
         /// </summary>
-        public List<string> XPath { get; set; }
+        public AxeSelector XPath { get; set; }
 
         /// <summary>
-        /// Elements ancestry.
+        /// Only present if the Ancestry flag was passed in <see cref="AxeRunOptions"/>. Represents a CSS selector (or, for
+        /// elements inside iframes/shadow DOMs, a chain of CSS selectors) which uniquely identifies the node in question on
+        /// the page. Includes all the element's ancestors, usually more verbose than <see cref="Target"/>.
         /// </summary>
-        public List<string> Ancestry { get; set; }
+        public AxeSelector Ancestry { get; set; }
 
         /// <summary>
         /// Snippet of HTML of the Element.

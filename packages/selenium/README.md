@@ -72,7 +72,7 @@ Runs an axe accessibility scan scoped using all previously chained options to th
 
 Not compatible with `AxeBuilder.Include` or `AxeBuilder.Exclude`; the element passed to `Analyze` will take precedence and the `Include`/`Exclude` calls will be ignored.
 
-### `AxeBuilder.Include(params string[] cssSelectorPath)`
+### `AxeBuilder.Include(string cssSelector)`
 
 ```csharp
 AxeResult axeResult = new AxeBuilder(webDriver)
@@ -95,27 +95,41 @@ AxeResult axeResult = new AxeBuilder(webDriver)
 
 `Include` is not compatible with `Analyze(IWebElement)` - the `Analyze` argument will take precedence and `Include` will be ignored.
 
-If you pass multiple CSS selectors to a single invocation of `Include`, this will be interpreted as being a path through different `<iframe>`s on the page under test, **not** as multiple elements:
+This overload of `Include` only supports CSS selectors which refer to elements which are in the topmost frame of the page and not contained within a shadow DOM. To specify a selector in an iframe or a shadow DOM, see the overload that accepts an `AxeSelector`.
+
+### `AxeBuilder.Include(AxeSelector axeSelector)`
 
 ```csharp
-// This is correct
 AxeResult axeResult = new AxeBuilder(webDriver)
-    .Include("#id-of-iframe", "#id-of-child-element-inside-iframe")
-    .Analyze();
-
-// This is wrong!
-AxeResult axeResult = new AxeBuilder(webDriver)
-    .Include("#first-element", "#second-element")
-    .Analyze();
-
-// If you want to include multiple elements, use multiple .Include() calls instead
-AxeResult axeResult = new AxeBuilder(webDriver)
-    .Include("#first-element")
-    .Include("#second-element")
+    .Include(new AxeSelector("#element-inside-iframe", new List<string> { "#containing-iframe-element" }))
     .Analyze();
 ```
 
-### `AxeBuilder.Exclude(params string[] cssSelectorPath)`
+Scopes future `Analyze()` calls to include *only* the element(s) matching the given `AxeSelector`.
+
+`Include` may be chained multiple times to include multiple selectors in a scan.
+
+`Include` may be combined with `Exclude` to scan a tree of elements but omit some children of that tree. For example:
+
+```csharp
+AxeResult axeResult = new AxeBuilder(webDriver)
+    .Include(new AxeSelector("#element-inside-iframe", new List<string> { "#containing-iframe-element" }))
+    .Exclude(new AxeSelector("#element-inside-iframe div.child-class-with-known-issues", new List<string> { "#containing-iframe-element" }))
+    .Analyze();
+```
+
+This overload of `Include` supports complex AxeSelectors which specify elements inside iframes and/or shadow DOMs:
+
+```csharp
+AxeSelector elementInNestedIframes = new AxeSelector("#element-in-nested-iframe", new List<string> { "#topmost-iframe", "#nested-iframe" });
+AxeSelector elementInShadowDom = AxeSelector.FromFrameShadowSelectors(new List<IList<string>> { new List<string> { "#shadow-root-in-topmost-frame", "#element-in-shadow-dom" }});
+AxeSelector elementInComplexFrameShadowLayout = AxeSelector.FromFrameShadowSelectors(new List<IList<string>> {
+    new List<string> { "#shadow-root-in-topmost-frame", "#nested-shadow-root", "#iframe-in-nested-shadow-dom" },
+    new List<string> { "#shadow-root-in-iframe", "#deeply-nested-target-element" }
+});
+```
+
+### `AxeBuilder.Exclude(string cssSelector)`
 
 ```csharp
 AxeResult axeResult = new AxeBuilder(webDriver)
@@ -138,24 +152,40 @@ AxeResult axeResult = new AxeBuilder(webDriver)
 
 `Exclude` is not compatible with `Analyze(IWebElement)` - the `Analyze` argument will take precedence and `Exclude` will be ignored.
 
-If you pass multiple CSS selectors to a single invocation of `Exclude`, this will be interpreted as being a path through different `<iframe>`s on the page under test, **not** as multiple elements:
+This overload of `Include` only supports CSS selectors which refer to elements which are in the topmost frame of the page and not contained within a shadow DOM. To specify a selector in an iframe or a shadow DOM, see the overload that accepts an `AxeSelector`.
+
+### `AxeBuilder.Exclude(AxeSelector axeSelector)`
 
 ```csharp
-// This is correct
 AxeResult axeResult = new AxeBuilder(webDriver)
-    .Exclude("#id-of-iframe", "#id-of-child-element-inside-iframe")
+    .Exclude(new AxeSelector("#element-inside-iframe-with-known-issues", new List<string> { "#containing-iframe-element" }))
     .Analyze();
+```
 
-// This is wrong!
-AxeResult axeResult = new AxeBuilder(webDriver)
-    .Exclude("#first-element", "#second-element")
-    .Analyze();
+Scopes future `Analyze()` calls to exclude the element(s) matching the given CSS selector.
 
-// If you want to exclude multiple elements, use multiple .Exclude() calls instead
+`Exclude` may be chained multiple times to exclude multiple selectors in a scan.
+
+`Exclude` may be combined with `Include` to scan a tree of elements but omit some children of that tree. For example:
+
+```csharp
 AxeResult axeResult = new AxeBuilder(webDriver)
-    .Exclude("#first-element")
-    .Exclude("#second-element")
+    .Include(new AxeSelector("#element-inside-iframe", new List<string> { "#containing-iframe-element" }))
+    .Exclude(new AxeSelector("#element-inside-iframe div.child-class-with-known-issues", new List<string> { "#containing-iframe-element" }))
     .Analyze();
+```
+
+`Exclude` is not compatible with `Analyze(IWebElement)` - the `Analyze` argument will take precedence and `Exclude` will be ignored.
+
+This overload of `Exclude` supports complex AxeSelectors which specify elements inside iframes and/or shadow DOMs:
+
+```csharp
+AxeSelector elementInNestedIframes = new AxeSelector("#element-in-nested-iframe", new List<string> { "#topmost-iframe", "#nested-iframe" });
+AxeSelector elementInShadowDom = AxeSelector.FromFrameShadowSelectors(new List<IList<string>> { new List<string> { "#shadow-root-in-topmost-frame", "#element-in-shadow-dom" }});
+AxeSelector elementInComplexFrameShadowLayout = AxeSelector.FromFrameShadowSelectors(new List<IList<string>> {
+    new List<string> { "#shadow-root-in-topmost-frame", "#nested-shadow-root", "#iframe-in-nested-shadow-dom" },
+    new List<string> { "#shadow-root-in-iframe", "#deeply-nested-target-element" }
+});
 ```
 
 ### `AxeBuilder.WithRules(params string[] axeRuleIds)`

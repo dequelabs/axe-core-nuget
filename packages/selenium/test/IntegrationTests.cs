@@ -44,7 +44,7 @@ namespace Deque.AxeCore.Selenium.Test
             results.Violations.FirstOrDefault(v => v.Id == "color-contrast").Should().BeNull();
             results.Violations.FirstOrDefault(v => !v.Tags.Contains("wcag2a") && !v.Tags.Contains("wcag2aa")).Should().BeNull();
             results.Violations.Should().HaveCount(2);
-            results.Violations.First().Nodes.First().XPath.Should().NotBeNullOrEmpty();
+            results.Violations.First().Nodes.First().XPath.Should().NotBeNull();
 
             File.GetLastWriteTime(outputFile).Should().BeOnOrAfter(timeBeforeScan);
         }
@@ -79,14 +79,10 @@ namespace Deque.AxeCore.Selenium.Test
             colorContrast.Should().NotBeNull();
             colorContrast.Nodes.Should().HaveCount(3); // including 1 from the top-level frame and 2 from the iframe
 
-            var shadowDomIframeTargetNode = colorContrast
+            colorContrast
                 .Nodes
-                .Where(x => x.Target.Any(node => node.Selectors.Any()))
-                .Select(x => x.Target.Last())
-                .First();
-
-            shadowDomIframeTargetNode.Should().NotBeNull();
-            shadowDomIframeTargetNode.Selectors.Should().HaveCount(2);
+                .Select(node => node.Target.ToString())
+                .Should().ContainInOrder("p", "[\"iframe\", \"p\"]", "[\"iframe\", [\"#container\", \"p\"]]");
         }
 
         [Test]

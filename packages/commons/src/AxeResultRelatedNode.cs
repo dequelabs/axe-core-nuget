@@ -1,6 +1,3 @@
-using Newtonsoft.Json;
-using System.Collections.Generic;
-
 namespace Deque.AxeCore.Commons
 {
     /// <summary>
@@ -14,9 +11,9 @@ namespace Deque.AxeCore.Commons
         public string Html { get; set; }
 
         /// <summary>
-        /// List of selectors for the related node.
+        /// Represents a CSS selector (or, for elements inside iframes/shadow DOMs, a chain of CSS selectors) which uniquely
+        /// identifies the related node in question on the page.
         /// </summary>
-        [JsonProperty("target", ItemConverterType = typeof(AxeResultTargetConverter), NullValueHandling = NullValueHandling.Ignore)]
-        public List<AxeResultTarget> Target { get; set; }
+        public AxeSelector Target { get; set; }
     }
 }
