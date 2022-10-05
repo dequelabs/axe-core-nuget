@@ -11,7 +11,7 @@ namespace Deque.AxeCore.Commons
     public class AxeRunContext
     {
         /// <summary>
-        /// List of <cref see="AxeSelector"/>s to include in the scan. 
+        /// List of <cref see="AxeSelector"/>s to include in the scan.
         /// If not specified it includes the entire document by default.
         /// </summary>
         [JsonProperty("include")]
