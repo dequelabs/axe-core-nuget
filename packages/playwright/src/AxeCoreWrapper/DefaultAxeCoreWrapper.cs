@@ -65,9 +65,10 @@ namespace Deque.AxeCore.Playwright.AxeCoreWrapper
         /// <inheritdoc/>
         public async Task<AxeResult> RunLegacy(IPage page, AxeRunContext? context = null, AxeRunOptions? options = null)
         {
+            var rawContextArg = JsonConvert.SerializeObject(context);
             await m_axeContentEmbedder.EmbedAxeCoreIntoPage(page, options?.Iframes);
 
-            AxeResult axeResult = await EvaluateAxeRun(page, context, options);
+            AxeResult axeResult = await EvaluateAxeRun(page, rawContextArg, options);
 
             return axeResult;
         }
@@ -84,13 +85,13 @@ namespace Deque.AxeCore.Playwright.AxeCoreWrapper
             return DeserializeResult(jsonObject);
         }
 
-        private static async Task<AxeResult> EvaluateAxeRun(IPage page, AxeRunContext? context = null, object? param = null)
+        private static async Task<AxeResult> EvaluateAxeRun(IPage page, string? context = null, object? param = null)
         {
             string? paramString = JsonConvert.SerializeObject(param);
 
             string runParamTemplate = param != null ? "JSON.parse(runOptions)" : string.Empty;
 
-            string? contextParam = context is null ? string.Empty : ($"JSON.parse(\'{JsonConvert.SerializeObject(context)}\'),");
+            string? contextParam = context is null ? string.Empty : ($"JSON.parse(\'{context}\'),");
 
             object jsonObject = await page.EvaluateAsync<object>($"(runOptions) => window.axe.run({contextParam}{runParamTemplate})", paramString);
 
@@ -122,11 +123,6 @@ namespace Deque.AxeCore.Playwright.AxeCoreWrapper
             return results;
         }
 
-        /// <summary>
-        /// Runs axe via legacyScan.js at a specific context, which will be passed as-is to Selenium for legacyScan.js to interpret, and
-        /// parses/handles the legacyScan.js output per the current builder options.
-        /// </summary>
-        /// <param name="rawContextArg">The value to pass as-is to legacyScan.js to use as the axe.run "context" argument</param>
         private async Task<AxeResult> RunInner(IFrame frame, object rawContextArg, AxeRunOptions? runOptions)
         {
             await ConfigureAxe(frame);
@@ -144,8 +140,20 @@ namespace Deque.AxeCore.Playwright.AxeCoreWrapper
 
             if (!runPartialExists)
             {
-                await m_axeContentEmbedder.EmbedAxeCoreIntoPage(frame.Page, runOptions.Iframes, true);
-                return await EvaluateAxeRun(frame.Page, null, runOptions);
+                if (rawContextArg is ILocator)
+                {
+                    return await RunLegacyOnLocator((ILocator) rawContextArg, runOptions);
+                }
+                else if (rawContextArg is string)
+                {
+
+                    await m_axeContentEmbedder.EmbedAxeCoreIntoPage(frame.Page, runOptions.Iframes, true);
+                    return await EvaluateAxeRun(frame.Page, (string) rawContextArg, runOptions);
+                }
+                else
+                {
+                    throw new ArgumentException("Context arg is of invalid type");
+                }
             }
             else
             {
@@ -179,7 +187,7 @@ namespace Deque.AxeCore.Playwright.AxeCoreWrapper
 
             try
             {
-                string partialRes = await frame.EvaluateAsync<string>(EmbeddedResourceProvider.ReadEmbeddedFile("runPartial.js"), new[] { context, options });
+                string partialRes = await frame.EvaluateAsync<string>(await EmbeddedResourceProvider.ReadEmbeddedFileAsync("runPartial.js"), new[] { context, options });
                 // Important to deserialize because we want to reserialize as an
                 // array of object, not an array of strings.
                 partialResults.Add(JsonConvert.DeserializeObject<object>(partialRes));
@@ -188,7 +196,7 @@ namespace Deque.AxeCore.Playwright.AxeCoreWrapper
             {
                 if (isTopLevel)
                 {
-                    throw ex;
+                    throw;
                 }
                 else
                 {
@@ -210,7 +218,7 @@ namespace Deque.AxeCore.Playwright.AxeCoreWrapper
                 {
                     object frameContext = JsonConvert.SerializeObject(fContext.Context);
                     string frameSelector = JsonConvert.SerializeObject(fContext.Selector);
-                    var frameHandle = await frame.EvaluateHandleAsync(EmbeddedResourceProvider.ReadEmbeddedFile("shadowSelect.js"), frameSelector);
+                    var frameHandle = await frame.EvaluateHandleAsync(await EmbeddedResourceProvider.ReadEmbeddedFileAsync("shadowSelect.js"), frameSelector);
                     if (frameHandle != null)
                     {
                         var childFrameElement = frameHandle.AsElement();
@@ -256,7 +264,7 @@ namespace Deque.AxeCore.Playwright.AxeCoreWrapper
             {
                 await ConfigureAxe(blankPage.MainFrame);
                 var serializedPartials = JsonConvert.SerializeObject(partialResults, JsonSerializerSettingsFinishRun);
-                var result = await blankPage.EvaluateAsync<object>(EmbeddedResourceProvider.ReadEmbeddedFile("finishRun.js"), new[] { serializedPartials, options });
+                var result = await blankPage.EvaluateAsync<object>(await EmbeddedResourceProvider.ReadEmbeddedFileAsync("finishRun.js"), new[] { serializedPartials, options });
                 return DeserializeResult(result);
             }
             finally
@@ -272,7 +280,7 @@ namespace Deque.AxeCore.Playwright.AxeCoreWrapper
         /// <returns></returns>
         private async Task<List<AxeFrameContext>> GetFrameContexts(IFrame frame, object context)
         {
-            var frameContextsString = await frame.EvaluateAsync<string>(EmbeddedResourceProvider.ReadEmbeddedFile("getFrameContexts.js"), context);
+            var frameContextsString = await frame.EvaluateAsync<string>(await EmbeddedResourceProvider.ReadEmbeddedFileAsync("getFrameContexts.js"), context);
             var frameContexts = JsonConvert.DeserializeObject<List<AxeFrameContext>>(frameContextsString);
             if (frameContexts == null)
             {
@@ -287,12 +295,12 @@ namespace Deque.AxeCore.Playwright.AxeCoreWrapper
         private async Task ConfigureAxe(IFrame frame)
         {
             await m_axeContentEmbedder.EmbedAxeCoreIntoFrame(frame);
-            await frame.EvaluateAsync(EmbeddedResourceProvider.ReadEmbeddedFile("branding.js"));
+            await frame.EvaluateAsync(await EmbeddedResourceProvider.ReadEmbeddedFileAsync("branding.js"));
         }
 
-        private Task<bool> RunPartialExists(IFrame frame)
+        private async Task<bool> RunPartialExists(IFrame frame)
         {
-            return frame.EvaluateAsync<bool>(EmbeddedResourceProvider.ReadEmbeddedFile("runPartialExists.js"));
+            return await frame.EvaluateAsync<bool>(await EmbeddedResourceProvider.ReadEmbeddedFileAsync("runPartialExists.js"));
         }
     }
 }

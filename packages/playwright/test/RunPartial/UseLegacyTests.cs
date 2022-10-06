@@ -1,3 +1,5 @@
+using Microsoft.Playwright;
+using System;
 using System.Threading.Tasks;
 using System.Linq;
 using NUnit.Framework;
@@ -5,7 +7,6 @@ using NUnit.Framework;
 namespace Deque.AxeCore.Playwright.Test.RunPartial
 {
 
-    [Category("RP")]
     public class UseLegacyTests : TestBase
     {
         [Test]
@@ -14,11 +15,53 @@ namespace Deque.AxeCore.Playwright.Test.RunPartial
             await GoToFixture("index.html");
 
 #pragma warning disable CS0618
-            var results = await RunLegacyWithCustomAxe(axeCoreLegacy);
+            var results = await RunWithCustomAxe(axeCoreLegacy);
 #pragma warning restore CS0618
 
             Assert.IsNotNull(results);
             Assert.IsTrue(results.Passes.Any());
+        }
+
+        [Test]
+        public async Task ShouldPreventCrossOriginFrameTesting()
+        {
+            await GoToFixture("cross-origin.html");
+
+#pragma warning disable CS0618
+            var results = await Page!.RunAxeLegacy(null);
+#pragma warning restore CS0618
+
+            foreach (var rule in results.Incomplete)
+            {
+                if (rule.Id == "frame-tested")
+                {
+                    return;
+                }
+            }
+            Assert.Fail("Could not find frame-tested");
+        }
+
+        [Test]
+        public async Task LegacySourceShouldThrowIfTopFrameErrors()
+        {
+            await GoToFixture("crash.html");
+
+            Assert.ThrowsAsync<PlaywrightException>(() => RunWithCustomAxe(CustomSource($"{axeCoreLegacy}{Environment.NewLine}{axeCrashScript}")));
+        }
+
+        [Test]
+        public async Task LegacySourceShouldTestCrossOrigin()
+        {
+            await GoToFixture("cross-origin.html");
+
+            var res = await RunWithCustomAxe(CustomSource(axeCoreLegacy));
+            foreach (var rule in res.Incomplete)
+            {
+                if (rule.Id == "frame-tested")
+                {
+                    Assert.Fail("Cross origin frames should be tested");
+                }
+            }
         }
 
         [Test]

@@ -1,5 +1,8 @@
 #nullable enable
 
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using Deque.AxeCore.Commons;
 using Microsoft.Playwright;
 using System.Threading.Tasks;
@@ -42,15 +45,15 @@ namespace Deque.AxeCore.Playwright.AxeContent
         public async Task ConfigureAxeInFrame(IFrame frame, bool setAllowedOrigin)
         {
 
-            var runPartialExists = await frame.EvaluateAsync<bool>(EmbeddedResourceProvider.ReadEmbeddedFile("runPartialExists.js"));
+            var runPartialExists = await frame.EvaluateAsync<bool>(await EmbeddedResourceProvider.ReadEmbeddedFileAsync("runPartialExists.js"));
 
             if (!runPartialExists && setAllowedOrigin)
             {
                 await frame.EvaluateAsync(
-                    EmbeddedResourceProvider.ReadEmbeddedFile("allowIframeUnsafe.js")
+                    await EmbeddedResourceProvider.ReadEmbeddedFileAsync("allowIframeUnsafe.js")
                 );
             }
-            await frame.EvaluateAsync(EmbeddedResourceProvider.ReadEmbeddedFile("branding.js"));
+            await frame.EvaluateAsync(await EmbeddedResourceProvider.ReadEmbeddedFileAsync("branding.js"));
         }
 
         /// <inheritdoc />

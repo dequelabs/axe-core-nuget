@@ -1,3 +1,4 @@
+using Microsoft.Playwright;
 using System.Linq;
 using System.Threading.Tasks;
 using Deque.AxeCore.Commons;
@@ -8,11 +9,21 @@ namespace Deque.AxeCore.Playwright.Test.RunPartial
 {
     public class FinishRunTests : TestBase
     {
+        private static readonly string finishRunThrows = ";axe.finishRun = () => { throw new Error('No finishRun')}";
+
         [Test]
         public async Task ShouldIsolateCallToFinishRun()
         {
             await GoToFixture("isolated-finish.html");
             Assert.DoesNotThrowAsync(() => Page!.RunAxe());
+        }
+
+        [Test]
+        public async Task ShouldThrowIfFinishRunThrows()
+        {
+            await GoToFixture("index.html");
+
+            Assert.ThrowsAsync<PlaywrightException>(() => RunWithCustomAxe($"{{ {axeSource}; {finishRunThrows}; }}"));
         }
 
         [Test]

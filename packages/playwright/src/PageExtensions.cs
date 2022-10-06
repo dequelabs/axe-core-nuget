@@ -6,7 +6,6 @@ using Deque.AxeCore.Playwright.AxeCoreWrapper;
 using Microsoft.Playwright;
 using System;
 using System.Collections.Generic;
-using System.IO.Abstractions;
 using System.Threading.Tasks;
 
 namespace Deque.AxeCore.Playwright
@@ -76,7 +75,6 @@ namespace Deque.AxeCore.Playwright
             IAxeCoreWrapper axeCoreWrapper = new DefaultAxeCoreWrapper(axeContentEmbedder);
 
             AxeResult results = await axeCoreWrapper.Run(page, context, options).ConfigureAwait(false);
-            IFileSystem fileSystem = new FileSystem();
 
             return results;
         }
@@ -117,7 +115,6 @@ namespace Deque.AxeCore.Playwright
 #pragma warning disable CS0618
             AxeResult results = await axeCoreWrapper.RunLegacy(page, context, options);
 #pragma warning restore CS0618
-            IFileSystem fileSystem = new FileSystem();
 
             return results;
         }
