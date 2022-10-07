@@ -39,18 +39,18 @@ namespace Deque.AxeCore.Playwright.AxeCoreWrapper
         /// <inheritdoc/>
         public async Task<IList<AxeRuleMetadata>> GetRules(IPage page, IList<string>? tags = null)
         {
-            await m_axeContentEmbedder.EmbedAxeCoreIntoPage(page, false);
+            await m_axeContentEmbedder.EmbedAxeCoreIntoPage(page, false).ConfigureAwait(false);
 
-            object jsonObject = await page.EvaluateAsync<object>("(paramTags) => window.axe.getRules(paramTags)", tags);
+            object jsonObject = await page.EvaluateAsync<object>("(paramTags) => window.axe.getRules(paramTags)", tags).ConfigureAwait(false);
             return DeserializeRuleMetadata(jsonObject);
         }
 
         /// <inheritdoc/>
         public async Task<AxeResult> Run(IPage page, AxeRunContext? context = null, AxeRunOptions? options = null)
         {
-            await m_axeContentEmbedder.EmbedAxeCoreIntoPage(page, options?.Iframes);
+            await m_axeContentEmbedder.EmbedAxeCoreIntoPage(page, options?.Iframes).ConfigureAwait(false);
 
-            AxeResult axeResult = await EvaluateAxeRun(page, context, options);
+            AxeResult axeResult = await EvaluateAxeRun(page, context, options).ConfigureAwait(false);
 
             return axeResult;
         }
@@ -58,12 +58,12 @@ namespace Deque.AxeCore.Playwright.AxeCoreWrapper
         /// <inheritdoc/>
         public async Task<AxeResult> RunOnLocator(ILocator locator, AxeRunOptions? options = null)
         {
-            await m_axeContentEmbedder.EmbedAxeCoreIntoPage(locator.Page, options?.Iframes);
+            await m_axeContentEmbedder.EmbedAxeCoreIntoPage(locator.Page, options?.Iframes).ConfigureAwait(false);
 
             string paramString = JsonConvert.SerializeObject(options);
             string runParamTemplate = options != null ? "JSON.parse(runOptions)" : string.Empty;
 
-            object jsonObject = await locator.EvaluateAsync<object>($"(node, runOptions) => window.axe.run(node, {runParamTemplate})", paramString);
+            object jsonObject = await locator.EvaluateAsync<object>($"(node, runOptions) => window.axe.run(node, {runParamTemplate})", paramString).ConfigureAwait(false);
             return DeserializeResult(jsonObject);
         }
 
@@ -75,7 +75,7 @@ namespace Deque.AxeCore.Playwright.AxeCoreWrapper
 
             string? contextParam = context is null ? string.Empty : ($"JSON.parse(\'{JsonConvert.SerializeObject(context)}\'),");
 
-            object jsonObject = await page.EvaluateAsync<object>($"(runOptions) => window.axe.run({contextParam}{runParamTemplate})", paramString);
+            object jsonObject = await page.EvaluateAsync<object>($"(runOptions) => window.axe.run({contextParam}{runParamTemplate})", paramString).ConfigureAwait(false);
 
             return DeserializeResult(jsonObject);
         }
