@@ -296,11 +296,11 @@ namespace Deque.AxeCore.Selenium
                 // array of object, not an array of strings.
                 partialResults.Add(JsonConvert.DeserializeObject<object>(partialRes));
             }
-            catch (Exception ex)
+            catch
             {
                 if (isTopLevel)
                 {
-                    throw ex;
+                    throw;
                 }
                 else
                 {

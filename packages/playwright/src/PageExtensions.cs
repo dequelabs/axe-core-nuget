@@ -29,7 +29,7 @@ namespace Deque.AxeCore.Playwright
 
             IAxeCoreWrapper axeCoreWrapper = new DefaultAxeCoreWrapper(axeContentEmbedder);
 
-            return await axeCoreWrapper.GetRules(page, tags);
+            return await axeCoreWrapper.GetRules(page, tags).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace Deque.AxeCore.Playwright
         /// <returns>The AxeResult</returns>
         public static async Task<AxeResult> RunAxe(this IPage page, AxeRunOptions? options = null)
         {
-            return await RunAxeInner(page, null, options);
+            return await RunAxeInner(page, null, options).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace Deque.AxeCore.Playwright
             AxeRunContext context,
             AxeRunOptions? options = null)
         {
-            return await RunAxeInner(page, context, options);
+            return await RunAxeInner(page, context, options).ConfigureAwait(false);
         }
 
         private static async Task<AxeResult> RunAxeInner(this IPage page, AxeRunContext? context, AxeRunOptions? options)
@@ -65,7 +65,7 @@ namespace Deque.AxeCore.Playwright
 
             IAxeCoreWrapper axeCoreWrapper = new DefaultAxeCoreWrapper(axeContentEmbedder);
 
-            AxeResult results = await axeCoreWrapper.Run(page, context, options);
+            AxeResult results = await axeCoreWrapper.Run(page, context, options).ConfigureAwait(false);
             IFileSystem fileSystem = new FileSystem();
 
             return results;

@@ -28,12 +28,12 @@ namespace Deque.AxeCore.Playwright.AxeContent
             {
                 foreach (IFrame frame in page.Frames)
                 {
-                    await frame.EvaluateAsync($"() => {axeCoreScriptContent}");
+                    await frame.EvaluateAsync($"() => {axeCoreScriptContent}").ConfigureAwait(false);
                 }
             }
             else
             {
-                await page.EvaluateAsync($"() => {axeCoreScriptContent}");
+                await page.EvaluateAsync($"() => {axeCoreScriptContent}").ConfigureAwait(false);
             }
         }
     }

@@ -7,6 +7,7 @@
     -->
     <TargetFrameworks>net471;netcoreapp3.1;net6.0</TargetFrameworks>
 
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
