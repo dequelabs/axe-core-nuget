@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <Authors>Deque</Authors>
     <Description>Automated accessibility testing via axe for tests written with Microsoft Playwright .NET</Description>
@@ -18,7 +17,7 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
 
-    <!-- override this in official/release build/pack/publish commands with -p:Version=x.y.z -->
+    <!-- Do not update this by-hand; updates are automated via the create-release workflow -->
     <VersionPrefix>4.4.0</VersionPrefix>
     <VersionSuffix>development</VersionSuffix>
   </PropertyGroup>
