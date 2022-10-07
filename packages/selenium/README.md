@@ -352,7 +352,12 @@ This project acts as a drop-in replacement for most of the functionality from th
 1. Update your test `.csproj` file's `<PackageReference>` for `Selenium.Axe` to `Deque.AxeCore.Selenium`
 1. Add a new `<PackageReference>` to `Deque.AxeCore.Commons` at the same version number as `Deque.AxeCore.Selenium`
 1. Update all `using Selenium.Axe;` statements in your tests to `using Deque.AxeCore.Selenium;` and/or `using Deque.AxeCore.Commons;`
-1. The `.Target` and `.XPath` properties of `AxeResultNode` or `AxeResultRelatedNode` are now strongly-typed `AxeSelector` objects. This will not impact most `Selenium.Axe` users, but if your tests refer to those properties explicitly, you will probably want to do so via their `ToString()` representations.
+
+This project does *not* include a replacement for `Selenium.Axe`'s built-in HTML report functionality. We expect it to be split out into a separate standalone library (usable from either this package or `Deque.AxeCore.Playwright`) at a later date, but there is currently no direct replacement.
+
+Finally, there are a few minor breaking changes which won't impact most `Selenium.Axe` users, but which may require updates if you use certain advanced features:
+
+1. The `.Target` and `.XPath` properties of `AxeResultNode` or `AxeResultRelatedNode` are now strongly-typed `AxeSelector` objects. Most `Selenium.Axe` users do not refer to these properties explicitly, but if your tests do, you will probably want to do so via their `ToString()` representations.
 1. `AxeRunOptions.FrameWaitTimeInMilliseconds` was renamed to `AxeRunOptions.FrameWaitTime` to match the equivalent `axe-core` API. The usage is unchanged; it still represents a value in milliseconds.
 1. The already-deprecated `AxeBuilder.Options` property was removed; replace it with `WithOptions`, `WithRules`, `WithTags`, and/or `DisableRules`.
 1. The `AxeBuilder.Include` and `AxeBuilder.Exclude` overloads which accept more than one parameter have changed:
@@ -375,8 +380,6 @@ This project acts as a drop-in replacement for most of the functionality from th
         // new
         new AxeBuilder(webDriver).Include("#foo").Include("#bar").Analyze();
         ```
-
-This project does *not* include a replacement for `Selenium.Axe`'s built-in HTML report functionality. We expect it to be split out into a separate standalone library (usable from either this package or `Deque.AxeCore.Playwright`) at a later date, but there is currently no direct replacement.
 
 ## Contributing
 
