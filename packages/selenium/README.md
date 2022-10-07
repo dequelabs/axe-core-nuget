@@ -311,7 +311,7 @@ AxeBuilderOptions axeBuilderOptions = new AxeBuilderOptions
 AxeResult axeResult = new AxeBuilder(webDriver, axeBuilderOptions).Analyze();
 ```
 
-### `AxeBuilder.UseLegacyMode(boolean legacyMode)`
+### `AxeBuilder.UseLegacyMode(boolean legacyMode = true)`
 
 Set the frame testing method to "legacy mode". In this mode, axe will not open a blank page in which to aggregate its results. This can be used in an environment where opening a blank page is causes issues.
 
