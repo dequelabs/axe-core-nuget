@@ -60,7 +60,7 @@ axeScriptProvider.GetScript(); // synchronously reads the contents of file ./pat
 
 ## License
 
-This package, including its embedded copy of [axe-core][axe-core], is distributed under the terms of the [Mozilla Public License, version 2.0](../../LICENSE-Deque.AxeCore.Commons.txt).
+This package, including its embedded copy of [axe-core](https://github.com/dequelabs/axe-core), is distributed under the terms of the [Mozilla Public License, version 2.0](../../LICENSE-Deque.AxeCore.Commons.txt).
 
 ## Acknowledgements
 
