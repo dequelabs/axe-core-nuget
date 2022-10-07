@@ -69,9 +69,9 @@ namespace Deque.AxeCore.Selenium
         /// axe.finishRun() which is called in a blank page. This uses axe.run() instead,
         /// but with the restriction that cross-origin frames will not be tested.
         /// </summary>
-        /// <param name="legacyMode"></param>
+        /// <param name="legacyMode">Whether to enable or disable Legacy Mode</param>
         [Obsolete("Legacy Mode is being removed in the future. Use with caution!")]
-        public AxeBuilder UseLegacyMode(bool legacyMode = false)
+        public AxeBuilder UseLegacyMode(bool legacyMode = true)
         {
             this.useLegacyMode = legacyMode;
             return this;
@@ -81,7 +81,7 @@ namespace Deque.AxeCore.Selenium
         ///  Run configuration data that is passed to axe for scanning the web page.
         ///  This will override the value set by <see cref="WithRules(string[])"/>, <see cref="WithTags(string[])"/> & <see cref="DisableRules(string[])"/>
         /// </summary>
-        /// <param name="runOptions">run options to be used for scanning. </param>
+        /// <param name="runOptions">run options to be used for scanning</param>
         public AxeBuilder WithOptions(AxeRunOptions runOptions)
         {
             ValidateNotNullParameter(runOptions, nameof(runOptions));

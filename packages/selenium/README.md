@@ -311,6 +311,20 @@ AxeBuilderOptions axeBuilderOptions = new AxeBuilderOptions
 AxeResult axeResult = new AxeBuilder(webDriver, axeBuilderOptions).Analyze();
 ```
 
+### `AxeBuilder.UseLegacyMode(boolean legacyMode = true)`
+
+Set the frame testing method to "legacy mode". In this mode, axe will not open a blank page in which to aggregate its results. This can be used in an environment where opening a blank page causes issues.
+
+With legacy mode turned on, axe will fall back to its test solution prior to the 4.3 release, but with cross-origin frame testing disabled. The frame-tested rule will report which frames were untested.
+
+**Important**: Use of `.UseLegacyMode()` is a last resort. If you find there is no other solution, please [report this as an issue](https://github.com/dequelabs/axe-core-nuget/issues/). It will be removed in a future release.
+
+```csharp
+AxeResult axeResult = new AxeBuilder(webDriver)
+    .UseLegacyMode()
+    .Analyze();
+```
+
 ## Working with AxeResult objects
 
 In most cases, you would run an axe scan from within a test method in a suite of end to end tests, and you would want to use a test assertion to verify that there are no unexpected accessibility violations in a page or component.
