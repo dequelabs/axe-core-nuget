@@ -1,0 +1,4 @@
+[*.cs]
+# Requires the use of ConfigureAwait when awaiting tasks
+# See https://devblogs.microsoft.com/dotnet/configureawait-faq/
+dotnet_diagnostic.CA2007.severity = error
