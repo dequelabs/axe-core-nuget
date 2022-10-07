@@ -345,6 +345,39 @@ new AxeBuilder(webDriver)
     .Violations.Should().BeEmpty();
 ```
 
+## Migrating from `Selenium.Axe` ([SeleniumAxeDotnet](https://github.com/TroyWalshProf/SeleniumAxeDotnet))
+
+This project acts as a drop-in replacement for most of the functionality from the `Selenium.Axe` NuGet package ([SeleniumAxeDotnet](https://github.com/TroyWalshProf/SeleniumAxeDotnet)). To migrate:
+
+1. Update your test `.csproj` file's `<PackageReference>` for `Selenium.Axe` to `Deque.AxeCore.Selenium`
+1. Add a new `<PackageReference>` to `Deque.AxeCore.Commons` at the same version number as `Deque.AxeCore.Selenium`
+1. Update all `using Selenium.Axe;` statements in your tests to `using Deque.AxeCore.Selenium;` and/or `using Deque.AxeCore.Commons;`
+1. The `.Target` and `.XPath` properties of `AxeResultNode` or `AxeResultRelatedNode` are now strongly-typed `AxeSelector` objects. This will not impact most `Selenium.Axe` users, but if your tests refer to those properties explicitly, you will probably want to do so via their `ToString()` representations.
+1. `AxeRunOptions.FrameWaitTimeInMilliseconds` was renamed to `AxeRunOptions.FrameWaitTime` to match the equivalent `axe-core` API. The usage is unchanged; it still represents a value in milliseconds.
+1. The already-deprecated `AxeBuilder.Options` property was removed; replace it with `WithOptions`, `WithRules`, `WithTags`, and/or `DisableRules`.
+1. The `AxeBuilder.Include` and `AxeBuilder.Exclude` overloads which accept more than one parameter have changed:
+    * If you were using it to refer to an element inside a nested frame, replace it with the `Include`/`Exclude` overloads which accept an `AxeSelector`:
+        ```cs
+        //old
+        new AxeBuilder(webDriver).Include("#some-iframe", "#element-in-nested-frame").Analyze();
+
+        // new
+        new AxeBuilder(webDriver).Include(new AxeBuilder("#element-in-nested-frame", new List<string> { "#some-iframe" })).Analyze();
+        ```
+    * If you were using it to refer to multiple elements in the main frame of the page under test, replace it with multiple `Include`/`Exclude` calls (one per element):
+        ```cs
+        // old
+        // This wasn't doing what you meant it to and may have been hiding issues; this
+        // would have looked for #bar elements inside an iframe with selector #foo, *not*
+        // for sibling #foo and #bar elements in the main frame of a page.
+        new AxeBuilder(webDriver).Include("#foo", "#bar").Analyze();
+
+        // new
+        new AxeBuilder(webDriver).Include("#foo").Include("#bar").Analyze();
+        ```
+
+This project does *not* include a replacement for `Selenium.Axe`'s built-in HTML report functionality. We expect it to be split out into a separate standalone library (usable from either this package or `Deque.AxeCore.Playwright`) at a later date, but there is currently no direct replacement.
+
 ## Contributing
 
 Refer to the general [axe-core-nuget CONTRIBUTING.md](../../CONTRIBUTING.md).
