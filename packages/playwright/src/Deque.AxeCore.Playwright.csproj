@@ -17,6 +17,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
 
     <!-- override this in official/release build/pack/publish commands with -p:Version=x.y.z -->
     <VersionPrefix>4.4.0</VersionPrefix>
