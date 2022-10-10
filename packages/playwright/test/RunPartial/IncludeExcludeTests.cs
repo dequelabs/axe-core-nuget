@@ -14,7 +14,7 @@ namespace Deque.AxeCore.Playwright.Test.RunPartial
 
             var context = new AxeRunContext
             {
-                Include = new List<string[]> { new string[] { ".include" } },
+                Include = new List<AxeSelector> { new AxeSelector(".include") },
                 Exclude = null
                             ,
             };
@@ -32,7 +32,7 @@ namespace Deque.AxeCore.Playwright.Test.RunPartial
             var context = new AxeRunContext
             {
                 Include = null,
-                Exclude = new List<string[]> { new string[] { ".exclude" } }
+                Exclude = new List<AxeSelector> { new AxeSelector(".exclude") }
                             ,
             };
             var excludeRes = await Page!.RunAxe(context);

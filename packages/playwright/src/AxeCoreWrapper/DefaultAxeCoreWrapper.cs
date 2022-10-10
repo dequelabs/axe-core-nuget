@@ -87,14 +87,11 @@ namespace Deque.AxeCore.Playwright.AxeCoreWrapper
 
         private static async Task<AxeResult> EvaluateAxeRun(IPage page, string? context = null, object? param = null)
         {
-            string? paramString = JsonConvert.SerializeObject(param);
-
-            string runParamTemplate = param != null ? "JSON.parse(runOptions)" : string.Empty;
-
+            string? paramString = param != null ? JsonConvert.SerializeObject(param) : JsonConvert.SerializeObject(new AxeRunOptions());
             string? contextParam = context is null ? string.Empty : ($"JSON.parse(\'{context}\'),");
 
-            object jsonObject = await page.EvaluateAsync<object>($"(runOptions) => window.axe.run({contextParam}{runParamTemplate})", paramString);
-
+            string legacyRun = await EmbeddedResourceProvider.ReadEmbeddedFileAsync("legacyRun.js");
+            object jsonObject = await page.EvaluateAsync<object>(legacyRun, new[] {context, paramString});
             return DeserializeResult(jsonObject);
         }
 
@@ -192,7 +189,7 @@ namespace Deque.AxeCore.Playwright.AxeCoreWrapper
                 // array of object, not an array of strings.
                 partialResults.Add(JsonConvert.DeserializeObject<object>(partialRes));
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 if (isTopLevel)
                 {
@@ -212,6 +209,7 @@ namespace Deque.AxeCore.Playwright.AxeCoreWrapper
             }
 
             var frameContexts = await GetFrameContexts(frame, context);
+            var partialResultTasks = new List<Task<List<object?>>>();
             foreach (var fContext in frameContexts)
             {
                 try
@@ -224,29 +222,31 @@ namespace Deque.AxeCore.Playwright.AxeCoreWrapper
                         var childFrameElement = frameHandle.AsElement();
                         if (childFrameElement == null)
                         {
-                            partialResults.Add(null);
+                            partialResults.Add(Task.FromResult<List<object?>>(new List<object?>(null)));
                             continue;
                         }
 
                         var childFrame = await childFrameElement.ContentFrameAsync();
                         if (childFrame == null)
                         {
-                            partialResults.Add(null);
+                            partialResults.Add(Task.FromResult<List<object?>>(new List<object?>(null)));
                             continue;
                         }
-
-                        partialResults.AddRange(await RunPartialRecursive(childFrame, options, frameContext, false, iframes));
+                        partialResultTasks.Add(RunPartialRecursive(childFrame, options, frameContext, false, iframes));
                     }
                     else
                     {
-                        Console.WriteLine("Frame Handle is null!!!!");
-                        partialResults.Add(null);
+                        partialResults.Add(Task.FromResult<List<object?>>(new List<object?>(null)));
                     }
                 }
                 catch (Exception)
                 {
-                    partialResults.Add(null);
+                    partialResults.Add(Task.FromResult<List<object?>>(new List<object?>(null)));
                 }
+            }
+
+            foreach (var partialResultsList in await Task.WhenAll(partialResultTasks)) {
+                partialResults.AddRange(partialResultsList);
             }
 
             return partialResults;
