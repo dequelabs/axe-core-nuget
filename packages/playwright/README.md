@@ -3,7 +3,7 @@
 [![Deque.AxeCore.Playwright NuGet package](https://img.shields.io/nuget/v/Deque.AxeCore.Playwright)](https://www.nuget.org/packages/Deque.AxeCore.Selenium) 
 [![NuGet package download counter](https://img.shields.io/nuget/dt/Deque.AxeCore.Playwright)](https://www.nuget.org/packages/Deque.AxeCore.Selenium/) 
 
-Automated web accessibility testing with .NET, C#, and Playwright. Wraps the [axe-core](https://github.com/dequelabs/axe-core) accessibility scanning engine and the [Selenium.WebDriver](https://www.seleniumhq.org/) browser automation framework.
+Automated web accessibility testing with .NET, C#, and Playwright. Wraps the [axe-core](https://github.com/dequelabs/axe-core) accessibility scanning engine and the [Playwright](https://playwright.dev/dotnet/) browser automation framework.
 
 Compatible with .NET Standard 2.1.
 
@@ -198,6 +198,37 @@ axeResults = await locator.RunAxe(options);
 
 
 ```
+## Migrating from `Playwright.Axe` ([PlaywrightAxeDotnet](https://github.com/IsaacWalker/PlaywrightAxeDotnet))
+
+This project acts as a drop-in replacement for most of the functionality from `Playwright.Axe`. ([PlaywrightAxeDotnet](https://github.com/IsaacWalker/PlaywrightAxeDotnet)). To migrate:
+
+1. Update your test `.csproj` file's `<PackageReference>` for `Playwright.Axe` to `Deque.AxeCore.Playwright`
+1. Add a new `<PackageReference>` to `Deque.AxeCore.Commons` at the same version number as `Deque.AxeCore.Playwright`
+1. Update all `using Playwright.Axe;` statements in your tests to `using Deque.AxeCore.Playwright;` and/or `using Deque.AxeCore.Commons;`
+
+There are a few minor breaking changes which won't impact most `Playwright.Axe` users, but which may require updates if you use certain advanced features:
+1. The `.Target` and `.XPath` properties of `AxeResultNode` or `AxeResultRelatedNode` are now strongly-typed `AxeSelector` objects. Most `Selenium.Axe` users do not refer to these properties explicitly, but if your tests do, you will probably want to do so via their `ToString()` representations.
+1. `AxeRunOptions.FrameWaitTimeInMilliseconds` was renamed to `AxeRunOptions.FrameWaitTime` to match the equivalent `axe-core` API. The usage is unchanged; it still represents a value in milliseconds.
+1. `AxeResult.TestEngineName` and `AxeResult.TestEngineVersion` were replaced by a separate `AxeTestEngine` object containing `Name` and `Version` properties. You will have to replace usages of `AxeResult.TestEngineName` and `AxeResult.TestEngineVersion` with `AxeResult.TestEngine.Name` and `AxeResult.TestEngine.Version`, respectively.
+1. `AxeRunSerialContext` has been replaced by `AxeRunContext` and `AxeSelector` types. Here are some examples of how to use the new types: 
+       ```cs
+       //including/excluding an element in a child frame
+       new AxeRunContext()
+            {
+                Include = new List<AxeSelector> { new AxeSelector("#element-in-child-frame", new List<string> { "#iframe-in-main-frame" })},
+                Exclude = new List<AxeSelector> {},
+            };
+    
+       //including/excluding elements in the main frame
+       new AxeRunContext()
+            {
+                Include = new List<AxeSelector> { new AxeSelector("#foo") },
+                Exclude = new List<AxeSelector> {},
+            };
+    
+       //finding a single element using the Playwright Locator API
+        ILocator locator = page.GetByRole("menu").RunAxe();
+        ```
 
 ## Contributing
 
