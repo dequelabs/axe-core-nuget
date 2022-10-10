@@ -207,27 +207,26 @@ This project acts as a drop-in replacement for most of the functionality from `P
 1. Update all `using Playwright.Axe;` statements in your tests to `using Deque.AxeCore.Playwright;` and/or `using Deque.AxeCore.Commons;`
 
 There are a few minor breaking changes which won't impact most `Playwright.Axe` users, but which may require updates if you use certain advanced features:
-1. The `.Target` and `.XPath` properties of `AxeResultNode` or `AxeResultRelatedNode` are now strongly-typed `AxeSelector` objects. Most `Selenium.Axe` users do not refer to these properties explicitly, but if your tests do, you will probably want to do so via their `ToString()` representations.
-1. `AxeRunOptions.FrameWaitTimeInMilliseconds` was renamed to `AxeRunOptions.FrameWaitTime` to match the equivalent `axe-core` API. The usage is unchanged; it still represents a value in milliseconds.
+
 1. `AxeResult.TestEngineName` and `AxeResult.TestEngineVersion` were replaced by a separate `AxeTestEngine` object containing `Name` and `Version` properties. You will have to replace usages of `AxeResult.TestEngineName` and `AxeResult.TestEngineVersion` with `AxeResult.TestEngine.Name` and `AxeResult.TestEngine.Version`, respectively.
 1. `AxeRunSerialContext` has been replaced by `AxeRunContext` and `AxeSelector` types. Here are some examples of how to use the new types: 
        ```cs
-       //including/excluding an element in a child frame
-       new AxeRunContext()
-            {
-                Include = new List<AxeSelector> { new AxeSelector("#element-in-child-frame", new List<string> { "#iframe-in-main-frame" })},
-                Exclude = new List<AxeSelector> {},
-            };
-    
-       //including/excluding elements in the main frame
+       //finding a single element using the Playwright Locator API
+        ILocator locator = page.GetByRole("menu").RunAxe();
+        
+        //including/excluding elements in the main frame
        new AxeRunContext()
             {
                 Include = new List<AxeSelector> { new AxeSelector("#foo") },
                 Exclude = new List<AxeSelector> {},
             };
-    
-       //finding a single element using the Playwright Locator API
-        ILocator locator = page.GetByRole("menu").RunAxe();
+
+        //including/excluding an element in a child frame
+       new AxeRunContext()
+            {
+                Include = new List<AxeSelector> { new AxeSelector("#element-in-child-frame", new List<string> { "#iframe-in-main-frame" })},
+                Exclude = new List<AxeSelector> {},
+            };
         ```
 
 ## Contributing
