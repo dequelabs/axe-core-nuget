@@ -91,7 +91,7 @@ namespace Deque.AxeCore.Playwright.AxeCoreWrapper
             string? contextParam = context is null ? string.Empty : ($"JSON.parse(\'{context}\'),");
 
             string legacyRun = await EmbeddedResourceProvider.ReadEmbeddedFileAsync("legacyRun.js").ConfigureAwait(false);
-            object jsonObject = await page.EvaluateAsync<object>(legacyRun, new[] {context, paramString}).ConfigureAwait(false);
+            object jsonObject = await page.EvaluateAsync<object>(legacyRun, new[] { context, paramString }).ConfigureAwait(false);
             return DeserializeResult(jsonObject);
         }
 
@@ -139,13 +139,13 @@ namespace Deque.AxeCore.Playwright.AxeCoreWrapper
             {
                 if (rawContextArg is ILocator)
                 {
-                    return await RunLegacyOnLocator((ILocator) rawContextArg, runOptions).ConfigureAwait(false);
+                    return await RunLegacyOnLocator((ILocator)rawContextArg, runOptions).ConfigureAwait(false);
                 }
                 else if (rawContextArg is string)
                 {
 
                     await m_axeContentEmbedder.EmbedAxeCoreIntoPage(frame.Page, runOptions.Iframes, true).ConfigureAwait(false);
-                    return await EvaluateAxeRun(frame.Page, (string) rawContextArg, runOptions).ConfigureAwait(false);
+                    return await EvaluateAxeRun(frame.Page, (string)rawContextArg, runOptions).ConfigureAwait(false);
                 }
                 else
                 {
@@ -245,7 +245,8 @@ namespace Deque.AxeCore.Playwright.AxeCoreWrapper
                 }
             }
 
-            foreach (var partialResultsList in await Task.WhenAll(partialResultTasks).ConfigureAwait(false)) {
+            foreach (var partialResultsList in await Task.WhenAll(partialResultTasks).ConfigureAwait(false))
+            {
                 partialResults.AddRange(partialResultsList);
             }
 
