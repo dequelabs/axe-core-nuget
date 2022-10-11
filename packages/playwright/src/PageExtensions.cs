@@ -94,7 +94,7 @@ namespace Deque.AxeCore.Playwright
             AxeRunOptions? options = null,
             string? axeSource = null)
         {
-            return await RunAxeLegacyInner(page, context, options, axeSource);
+            return await RunAxeLegacyInner(page, context, options, axeSource).ConfigureAwait(false);
         }
 
         private static async Task<AxeResult> RunAxeLegacyInner(this IPage page, AxeRunContext? context, AxeRunOptions? options, string? axeSource)
@@ -113,7 +113,7 @@ namespace Deque.AxeCore.Playwright
             IAxeCoreWrapper axeCoreWrapper = new DefaultAxeCoreWrapper(axeContentEmbedder);
 
 #pragma warning disable CS0618
-            AxeResult results = await axeCoreWrapper.RunLegacy(page, context, options);
+            AxeResult results = await axeCoreWrapper.RunLegacy(page, context, options).ConfigureAwait(false);
 #pragma warning restore CS0618
 
             return results;

@@ -44,7 +44,7 @@ namespace Deque.AxeCore.Playwright
 
             IAxeCoreWrapper axeCoreWrapper = new DefaultAxeCoreWrapper(axeContentEmbedder);
 
-            return await axeCoreWrapper.RunLegacyOnLocator(locator, options);
+            return await axeCoreWrapper.RunLegacyOnLocator(locator, options).ConfigureAwait(false);
         }
     }
 }

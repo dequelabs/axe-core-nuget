@@ -32,35 +32,35 @@ namespace Deque.AxeCore.Playwright.AxeContent
                 foreach (IFrame frame in page.Frames)
                 {
                     await frame.EvaluateAsync($"() => {axeCoreScriptContent}").ConfigureAwait(false);
-                    await ConfigureAxeInFrame(frame, setAllowOrigin);
+                    await ConfigureAxeInFrame(frame, setAllowOrigin).ConfigureAwait(false);
                 }
             }
             else
             {
                 await page.EvaluateAsync($"() => {axeCoreScriptContent}").ConfigureAwait(false);
-                await ConfigureAxeInFrame(page.MainFrame, setAllowOrigin);
+                await ConfigureAxeInFrame(page.MainFrame, setAllowOrigin).ConfigureAwait(false);
             }
         }
 
         public async Task ConfigureAxeInFrame(IFrame frame, bool setAllowedOrigin)
         {
 
-            var runPartialExists = await frame.EvaluateAsync<bool>(await EmbeddedResourceProvider.ReadEmbeddedFileAsync("runPartialExists.js"));
+            var runPartialExists = await frame.EvaluateAsync<bool>(await EmbeddedResourceProvider.ReadEmbeddedFileAsync("runPartialExists.js").ConfigureAwait(false)).ConfigureAwait(false);
 
             if (!runPartialExists && setAllowedOrigin)
             {
                 await frame.EvaluateAsync(
-                    await EmbeddedResourceProvider.ReadEmbeddedFileAsync("allowIframeUnsafe.js")
-                );
+                    await EmbeddedResourceProvider.ReadEmbeddedFileAsync("allowIframeUnsafe.js").ConfigureAwait(false)
+                ).ConfigureAwait(false);
             }
-            await frame.EvaluateAsync(await EmbeddedResourceProvider.ReadEmbeddedFileAsync("branding.js"));
+            await frame.EvaluateAsync(await EmbeddedResourceProvider.ReadEmbeddedFileAsync("branding.js").ConfigureAwait(false)).ConfigureAwait(false);
         }
 
         /// <inheritdoc />
         public async Task EmbedAxeCoreIntoFrame(IFrame frame)
         {
             string axeCoreScriptContent = m_axeScriptProvider.GetScript();
-            await frame.EvaluateAsync($"() => {axeCoreScriptContent}");
+            await frame.EvaluateAsync($"() => {axeCoreScriptContent}").ConfigureAwait(false);
         }
     }
 }
