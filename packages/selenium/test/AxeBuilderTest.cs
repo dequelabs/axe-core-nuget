@@ -27,11 +27,6 @@ namespace Deque.AxeCore.Selenium.Test
         private static Mock<IJavaScriptExecutor> jsExecutorMock = webDriverMock.As<IJavaScriptExecutor>();
         private static Mock<ITargetLocator> targetLocatorMock = new Mock<ITargetLocator>();
         private static Mock<INavigation> navigationMock = new Mock<INavigation>();
-        private static readonly JsonSerializerSettings JsonSerializerSettings = new JsonSerializerSettings
-        {
-            Formatting = Formatting.None,
-            NullValueHandling = NullValueHandling.Ignore
-        };
 
         private static readonly AxeBuilderOptions stubAxeBuilderOptions = new AxeBuilderOptions
         {
@@ -352,7 +347,7 @@ namespace Deque.AxeCore.Selenium.Test
 
         private string SerializeObject<T>(T obj)
         {
-            return JsonConvert.SerializeObject(obj, JsonSerializerSettings);
+            return JsonConvert.SerializeObject(obj, AxeJsonSerializerSettings.Default);
         }
 
     }

@@ -103,7 +103,7 @@ namespace Deque.AxeCore.Commons
 
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this, Formatting.Indented);
+            return JsonConvert.SerializeObject(this, AxeJsonSerializerSettings.WithFormatting(Formatting.Indented));
         }
     }
 }

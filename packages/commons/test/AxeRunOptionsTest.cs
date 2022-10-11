@@ -8,11 +8,6 @@ namespace Deque.AxeCore.Commons.Test
     [TestFixture]
     public class AxeRunOptionsTest
     {
-        private readonly JsonSerializerSettings serializerSettings = new JsonSerializerSettings
-        {
-            Formatting = Formatting.None,
-        };
-
         [Test]
         public void ShouldSerializeRunOnlyOption()
         {
@@ -25,7 +20,7 @@ namespace Deque.AxeCore.Commons.Test
                 }
             };
 
-            var serializedObject = JsonConvert.SerializeObject(options, serializerSettings);
+            var serializedObject = JsonConvert.SerializeObject(options, AxeJsonSerializerSettings.Default);
             var expectedObject = "{\"runOnly\":{\"type\":\"tag\",\"values\":[\"tag1\",\"tag2\"]}}";
 
             serializedObject.Should().Be(expectedObject);
@@ -46,7 +41,7 @@ namespace Deque.AxeCore.Commons.Test
             };
             var expectedObject = "{\"rules\":{\"enabledRule\":{\"enabled\":true},\"disabledRule\":{\"enabled\":false},\"rule3WithoutOptionsData\":{}}}";
 
-            var serializedObject = JsonConvert.SerializeObject(options, serializerSettings);
+            var serializedObject = JsonConvert.SerializeObject(options, AxeJsonSerializerSettings.Default);
 
             serializedObject.Should().Be(expectedObject);
             JsonConvert.DeserializeObject<AxeRunOptions>(expectedObject).Should().BeEquivalentTo(options);
@@ -67,7 +62,7 @@ namespace Deque.AxeCore.Commons.Test
             };
             var expectedObject = "{\"selectors\":true,\"ancestry\":true,\"absolutePaths\":true,\"iframes\":true,\"restoreScroll\":true,\"frameWaitTime\":10,\"pingWaitTime\":100}";
 
-            var serializedObject = JsonConvert.SerializeObject(options, serializerSettings);
+            var serializedObject = JsonConvert.SerializeObject(options, AxeJsonSerializerSettings.Default);
 
             serializedObject.Should().Be(expectedObject);
             JsonConvert.DeserializeObject<AxeRunOptions>(expectedObject).Should().BeEquivalentTo(options);
@@ -81,7 +76,7 @@ namespace Deque.AxeCore.Commons.Test
                 ResultTypes = new HashSet<ResultType>() { ResultType.Inapplicable, ResultType.Incomplete, ResultType.Passes, ResultType.Violations }
             };
 
-            var serializedObject = JsonConvert.SerializeObject(options, serializerSettings);
+            var serializedObject = JsonConvert.SerializeObject(options, AxeJsonSerializerSettings.Default);
 
             var expectedObject = "{\"resultTypes\":[\"inapplicable\",\"incomplete\",\"passes\",\"violations\"]}";
 

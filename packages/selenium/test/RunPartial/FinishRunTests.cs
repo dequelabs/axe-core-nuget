@@ -66,15 +66,9 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             Assert.That(ToJson(legacyResults.ToolOptions), Is.EqualTo(ToJson(runPartialResults.ToolOptions)));
         }
 
-        private static readonly JsonSerializerSettings JsonSerializerSettings = new JsonSerializerSettings
-        {
-            Formatting = Formatting.None,
-            NullValueHandling = NullValueHandling.Include
-        };
-
         private static string ToJson(object obj)
         {
-            return JsonConvert.SerializeObject(obj, JsonSerializerSettings);
+            return JsonConvert.SerializeObject(obj, AxeJsonSerializerSettings.Default);
         }
 
         private static void AssertAxeItemsEqual(AxeResultItem a, AxeResultItem b, bool compareNodes = false)
