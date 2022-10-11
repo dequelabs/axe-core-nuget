@@ -374,7 +374,7 @@ Finally, there are a few minor breaking changes which won't impact most `Seleniu
 1. The `.Target` and `.XPath` properties of `AxeResultNode` or `AxeResultRelatedNode` are now strongly-typed `AxeSelector` objects. Most `Selenium.Axe` users do not refer to these properties explicitly, but if your tests do, you will probably want to do so via their `ToString()` representations.
 1. `AxeRunOptions.FrameWaitTimeInMilliseconds` was renamed to `AxeRunOptions.FrameWaitTime` to match the equivalent `axe-core` API. The usage is unchanged; it still represents a value in milliseconds.
 1. The already-deprecated `AxeBuilder.Options` property was removed; replace it with `WithOptions`, `WithRules`, `WithTags`, and/or `DisableRules`.
-1. The `AxeResult.Error` property was removed; any errors that would have appeared here are instead be reported as exceptions.
+1. The `AxeResult.Error` property was removed; any errors that would have appeared here are instead reported as exceptions.
 1. The `AxeBuilder.Include` and `AxeBuilder.Exclude` overloads which accept more than one parameter have changed:
     * If you were using it to refer to an element inside a nested frame, replace it with the `Include`/`Exclude` overloads which accept an `AxeSelector`:
         ```cs
