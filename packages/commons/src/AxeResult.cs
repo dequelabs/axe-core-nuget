@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 
@@ -98,6 +99,11 @@ namespace Deque.AxeCore.Commons
             TestEngineName = testEngineName?.ToObject<string>();
             TestEngineVersion = testEngineVersion?.ToObject<string>();
             ToolOptions = toolOptions?.ToObject<object>();
+        }
+
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
     }
 }
