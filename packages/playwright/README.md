@@ -1,7 +1,7 @@
 # Deque.AxeCore.Playwright
 
-[![Deque.AxeCore.Playwright NuGet package](https://img.shields.io/nuget/v/Deque.AxeCore.Playwright)](https://www.nuget.org/packages/Deque.AxeCore.Selenium) 
-[![NuGet package download counter](https://img.shields.io/nuget/dt/Deque.AxeCore.Playwright)](https://www.nuget.org/packages/Deque.AxeCore.Selenium/) 
+[![Deque.AxeCore.Playwright NuGet package](https://img.shields.io/nuget/v/Deque.AxeCore.Playwright)](https://www.nuget.org/packages/Deque.AxeCore.Selenium)
+[![NuGet package download counter](https://img.shields.io/nuget/dt/Deque.AxeCore.Playwright)](https://www.nuget.org/packages/Deque.AxeCore.Selenium/)
 
 Automated web accessibility testing with .NET, C#, and Playwright. Wraps the [axe-core](https://github.com/dequelabs/axe-core) accessibility scanning engine and the [Selenium.WebDriver](https://www.seleniumhq.org/) browser automation framework.
 
@@ -31,7 +31,7 @@ class Program
         await using var browser = await playwright.Chromium.LaunchAsync(new() { Headless = false });
         var page = await browser.NewPageAsync();
         await page.GotoAsync("https://playwright.dev/dotnet");
-        
+
         AxeResults axeResults = await page.RunAxe();
 
         // Assert.AreEqual(axeResults.Violations.Count, 0);
@@ -120,7 +120,7 @@ foreach(var inapplicable in axeResults.Inapplicable)
     Console.WriteLine($"Rule Id: {inapplicable.Id}.");
 }
 
-``` 
+```
 
 This method can be run on an element via the context parameter.
 This allows the inclusion and exclusion of string selectors.
@@ -197,6 +197,18 @@ axeResults = await page.RunAxe(context, options);
 axeResults = await locator.RunAxe(options);
 
 
+```
+
+### `RunAxeLegacy`
+
+Set the frame testing method to "legacy mode". In this mode, axe will not open a blank page in which to aggregate its results. This can be used in an environment where opening a blank page causes issues.
+
+With legacy mode turned on, axe will fall back to its test solution prior to the 4.3 release, but with cross-origin frame testing disabled. The frame-tested rule will report which frames were untested.
+
+**Important**: Use of `.RunAxeLegacy()` is a last resort. If you find there is no other solution, please [report this as an issue](https://github.com/dequelabs/axe-core-nuget/issues/). It will be removed in a future release.
+
+```csharp
+AxeResults axeResults = await page.RunAxeLegacy();
 ```
 
 ## Contributing

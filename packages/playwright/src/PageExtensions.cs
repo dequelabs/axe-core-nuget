@@ -90,7 +90,7 @@ namespace Deque.AxeCore.Playwright
         [Obsolete("Legacy Mode is being removed in the future. Use with caution!")]
         public static async Task<AxeResult> RunAxeLegacy(
             this IPage page,
-            AxeRunContext context,
+            AxeRunContext? context = null,
             AxeRunOptions? options = null,
             string? axeSource = null)
         {
