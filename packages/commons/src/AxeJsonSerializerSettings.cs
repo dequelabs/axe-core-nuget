@@ -17,7 +17,8 @@ namespace Deque.AxeCore.Commons
         /// <summary>
         /// Produces serialization settings appropriate for use with this namespace's Axe* types with specific formatting settings.
         /// </summary>
-        public static JsonSerializerSettings WithFormatting(Formatting formatting) {
+        public static JsonSerializerSettings WithFormatting(Formatting formatting)
+        {
             return new JsonSerializerSettings
             {
                 Formatting = formatting,
