@@ -26,6 +26,26 @@ namespace Deque.AxeCore.Playwright.Test.RunPartial
         }
 
         [Test]
+        public async Task ShouldAnalyzeInNestedIFrames()
+        {
+            await GoToFixture("nested-iframes.html");
+            var frame = Page!.Locator("#ifr-foo");
+
+            var res = await frame.RunAxe();
+
+            foreach (var violation in res.Violations)
+            {
+
+                if (violation.Id == "label")
+                {
+                    Assert.That(violation.Nodes.Count, Is.EqualTo(2));
+                    return;
+                }
+            }
+            Assert.Fail("Could not find label violation");
+        }
+
+        [Test]
         public async Task ShouldAnalyzeNestedFramesets()
         {
             await GoToFixture("nested-frameset.html");
@@ -45,6 +65,26 @@ namespace Deque.AxeCore.Playwright.Test.RunPartial
         }
 
         [Test]
+        public async Task ShouldAnalyzeInNestedFramesets()
+        {
+            await GoToFixture("nested-frameset.html");
+            var frame = Page!.Locator("#frm-foo");
+
+            var res = await frame.RunAxe();
+
+            foreach (var violation in res.Violations)
+            {
+
+                if (violation.Id == "label")
+                {
+                    Assert.That(violation.Nodes.Count, Is.EqualTo(2));
+                    return;
+                }
+            }
+            Assert.Fail("Could not find label violation");
+        }
+
+        [Test]
         public async Task ShouldAnalyzeShadowDOMFrames()
         {
             await GoToFixture("shadow-frames.html");
@@ -57,6 +97,26 @@ namespace Deque.AxeCore.Playwright.Test.RunPartial
                 if (violation.Id == "label")
                 {
                     Assert.That(violation.Nodes.Count, Is.EqualTo(3));
+                    return;
+                }
+            }
+            Assert.Fail("Could not find label violation");
+        }
+
+        [Test]
+        public async Task ShouldAnalyzeInShadowDOMFrames()
+        {
+            await GoToFixture("shadow-frames.html");
+            var frame = Page!.Locator("#shadow-root");
+
+            var res = await frame.RunAxe();
+
+            foreach (var violation in res.Violations)
+            {
+
+                if (violation.Id == "label")
+                {
+                    Assert.That(violation.Nodes.Count, Is.EqualTo(2));
                     return;
                 }
             }

@@ -23,6 +23,29 @@ namespace Deque.AxeCore.Playwright.Test.RunPartial
         }
 
         [Test]
+        public async Task ShouldRunLegacyAxeOnLocator()
+        {
+
+            await GoToFixture("nested-iframes.html");
+            var frame = Page!.Locator("#ifr-foo");
+
+#pragma warning disable CS0618
+            var res = await frame.RunAxeLegacy();
+#pragma warning restore CS0618
+
+            foreach (var violation in res.Violations)
+            {
+
+                if (violation.Id == "label")
+                {
+                    Assert.That(violation.Nodes.Count, Is.EqualTo(2));
+                    return;
+                }
+            }
+            Assert.Fail("Could not find label violation");
+        }
+
+        [Test]
         public async Task ShouldPreventCrossOriginFrameTesting()
         {
             await GoToFixture("cross-origin.html");
