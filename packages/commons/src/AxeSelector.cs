@@ -9,13 +9,13 @@ namespace Deque.AxeCore.Commons
     /// Represents a CSS selector pointing to an element (or elements) on a page. Also supports elements which are nested inside of
     /// iframes and/or open shadow DOMs by using nested lists of selectors representing the chain of iframe/shadow root elements
     /// leading up to the final selector (see <see cref="FrameSelectors"/> and <see cref="FrameShadowSelectors"/>).
-    ///
+    /// 
     /// Most users just interested in writing test cases should prefer using <see cref="ToString"/> rather than interacting with
     /// the individual properties of this class.
     /// </summary>
     /// <example><![CDATA[
     /// var simpleSelector = new AxeSelector("#some-element-id");
-    ///
+    /// 
     /// // simpleSelector.Selector == "#some-element-id"
     /// // simpleSelector.FrameSelectors == ["#some-element-id"]
     /// // simpleSelector.FrameShadowSelectors = [["#some-element-id"]]
@@ -27,6 +27,7 @@ namespace Deque.AxeCore.Commons
     /// // selectorInIframe.Selector throws InvalidOperationException
     /// // selectorInIframe.FrameSelectors == ["#parent-iframe-element", "#child-element"]
     /// // selectorInIframe.FrameShadowSelectors == [["#parent-iframe-element"], ["#child-element"]]
+    /// // selectorInIframe.ToString() == "[\"#parent-iframe-element\", \"#child-element\"]" 
     /// ]]></example>
     /// <example><![CDATA[
     /// var selectorInShadowDomInIframe = AxeSelector.FromFrameShadowSelectors(new List<IList<string>>
