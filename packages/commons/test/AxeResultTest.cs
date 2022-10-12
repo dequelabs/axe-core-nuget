@@ -98,8 +98,8 @@ namespace Deque.AxeCore.Commons.Test
         {
             var result = new AxeResult(JObject.FromObject(JsonConvert.DeserializeObject(basicAxeResultJson)));
 
-            result.TestEngineName.Should().Be("axe-core");
-            result.TestEngineVersion.Should().Be("4.4.1");
+            result.TestEngine.Name.Should().Be("axe-core");
+            result.TestEngine.Version.Should().Be("4.4.1");
             result.TestRunner.Name.Should().Be("axe");
             result.TestEnvironment.UserAgent.Should().Be("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/100.0.4889.0 Safari/537.36");
             result.TestEnvironment.WindowWidth.Should().Be(800);
