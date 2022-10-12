@@ -52,11 +52,6 @@ namespace Deque.AxeCore.Commons
         public string Url { get; private set; }
 
         /// <summary>
-        /// The Error that was found on the application that ran the audit.
-        /// </summary>
-        public string Error { get; private set; }
-
-        /// <summary>
         /// The Name of the application that ran the audit.
         /// </summary>
         public string TestEngineName { get; private set; }
@@ -73,6 +68,14 @@ namespace Deque.AxeCore.Commons
 
         public AxeResult(JObject result)
         {
+            // Some (but not all) WebDrivers treat objects with an error property as a JavaScript error
+            // and don't reach this point, but for those that don't, we handle it as an error ourselves.
+            string error = result.SelectToken("error")?.ToObject<string>();
+            if (error != null)
+            {
+                throw new Exception($"JavaScript error occurred while running axe-core in page: {error}");
+            }
+
             JToken violationsToken = result.SelectToken("violations");
             JToken passesToken = result.SelectToken("passes");
             JToken inapplicableToken = result.SelectToken("inapplicable");
@@ -85,7 +88,6 @@ namespace Deque.AxeCore.Commons
             JToken testEngineName = testEngine?.SelectToken("name");
             JToken testEngineVersion = testEngine?.SelectToken("version");
             JToken toolOptions = result?.SelectToken("toolOptions");
-            JToken error = result.SelectToken("error");
 
             Violations = violationsToken?.ToObject<AxeResultItem[]>();
             Passes = passesToken?.ToObject<AxeResultItem[]>();
@@ -95,7 +97,6 @@ namespace Deque.AxeCore.Commons
             TestEnvironment = testEnvironment?.ToObject<AxeTestEnvironment>();
             TestRunner = testRunner?.ToObject<AxeTestRunner>();
             Url = urlToken?.ToObject<string>();
-            Error = error?.ToObject<string>();
             TestEngineName = testEngineName?.ToObject<string>();
             TestEngineVersion = testEngineVersion?.ToObject<string>();
             ToolOptions = toolOptions?.ToObject<object>();
