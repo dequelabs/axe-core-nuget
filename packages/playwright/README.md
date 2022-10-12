@@ -206,18 +206,18 @@ This project acts as a drop-in replacement for most of the functionality from `P
 1. Add a new `<PackageReference>` to `Deque.AxeCore.Commons` at the same version number as `Deque.AxeCore.Playwright`
 1. Update all `using Playwright.Axe;` statements in your tests to `using Deque.AxeCore.Playwright;` and/or `using Deque.AxeCore.Commons;`
 
-In a move to standardize, we migrated this package away from Playwright specific typings, instead opting to use the typings from the `Deque.AxeCore.Commons` package instead. The result is a few minor breaking changes that may require updates:
-
-### Additions
-1. Added `Ancestry` to `AxeResultNode` and `AxeRunOptions`
-1. Added `Selectors` and `PingWaitTime` to `AxeRunOptions`
-
-### Removals
-1. Removed `AxeEnvironmentData` interface and using the existing environment data info in `Deque.AxeCore.Commons.AxeResult`
-1. Removed `AxeImpactValue` and `AxeRunOnlyType` enums in favor of using `string` in the Commons typings (`AxeResultItem.cs` and `AxeRunOptions.cs`, respectively)
+In a move to standardize, we migrated this package away from Playwright specific typings, instead opting to use the typings from the `Deque.AxeCore.Commons` package instead. The result is several minor breaking changes that may require updates to your code:
 ### Replacements/Renamings
-1. `AxeResults` has now been renamed to `AxeResult`; the previously used `AxeResult` for this package will now be `AxeResultItem`
-1. `AxeRunSerialContext` has been replaced by `AxeRunContext` and `AxeSelector` types. Here are some examples of how to use the new types: 
+1. `AxeResults` has now been renamed to `AxeResult`; the previously used `AxeResult` for this package will now be `AxeResultItem`.
+1. `AxeNodeResult` has been replaced with `AxeResultNode`
+1. `AxeCheckResult` has been replaced with `AxeResultCheck`
+1. `AxeRelatedNode` has been replaced with `AxeResultRelatedNode`
+1. `AxeResultGroup` has been replaced with `ResultType`
+1. `AxeRuleObjectValue` has been replaced with `RuleOptions`
+1. `AxeRunOnly` has been replaced with `RunOnlyOptions`
+1. `AxeResultRelatedNode` is now used in lieu of `AxeRelatedNode`. With this type, the Targets property is changed from a `IList<string>` to a `List<AxeResultTarget>`; users should expect to modify usages of the Targets property to include a `.ToString()` method call.
+1. `AxeRunSerialContext` has been replaced by `AxeRunContext` and `AxeSelector` types. Here are some examples of how to use the new types:
+ 
        ```cs
        //finding a single element using the Playwright Locator API
         ILocator locator = page.GetByRole("menu").RunAxe();
@@ -237,6 +237,16 @@ In a move to standardize, we migrated this package away from Playwright specific
             };
         ```
 
+### Type Modifications
+1. The Timestamp type in `AxeResult` changed from System.DateTime to System.DateTimeOffset
+1. The url type in `AxeResult` changed from Uri to string
+1. The `OrientationAngle` type in `AxeTestEnvironment` changed from int to double
+1. The `HelpUrl` in `AxeResultItem` changed from Uri to string
+### Removals
+1. Removed `AxeEnvironmentData` interface and using the existing environment data info in `Deque.AxeCore.Commons.AxeResult`
+1. Removed `AxeImpactValue` and `AxeRunOnlyType` enums in favor of using `string` in the Commons typings (`AxeResultItem.cs` and `AxeRunOptions.cs`, respectively)
+1. `FailureSummary` was removed from `AxeResultNode` (formerly `AxeNodeResult`)
+1. `ElementRef` and `PerformanceTimer` were removed from `AxeRunOptions`
 ## Contributing
 
 Refer to the general [axe-core-nuget CONTRIBUTING.md](../../CONTRIBUTING.md).
