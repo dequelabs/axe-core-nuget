@@ -24,23 +24,6 @@ namespace Deque.AxeCore.Selenium
         private string outputFilePath = null;
         private bool useLegacyMode = false;
 
-        private static readonly JsonSerializerSettings JsonSerializerSettings = new JsonSerializerSettings
-        {
-            Formatting = Formatting.None,
-            NullValueHandling = NullValueHandling.Include
-        };
-
-        private static readonly DefaultContractResolver camelCaseContractResolver = new DefaultContractResolver
-        {
-            NamingStrategy = new CamelCaseNamingStrategy()
-        };
-        private static readonly JsonSerializerSettings JsonSerializerSettingsFinishRun = new JsonSerializerSettings
-        {
-            ContractResolver = camelCaseContractResolver,
-            Formatting = Formatting.None,
-            NullValueHandling = NullValueHandling.Include
-        };
-
         /// <summary>
         /// Initialize an instance of <see cref="AxeBuilder"/>
         /// </summary>
@@ -230,7 +213,7 @@ namespace Deque.AxeCore.Selenium
         {
             bool runContextHasData = runContext.Include?.Any() == true || runContext.Exclude?.Any() == true;
 
-            string rawContext = runContextHasData ? JsonConvert.SerializeObject(runContext, JsonSerializerSettings) : null;
+            string rawContext = runContextHasData ? JsonConvert.SerializeObject(runContext, AxeJsonSerializerSettings.Default) : null;
 
             return AnalyzeRawContext(rawContext);
         }
@@ -320,8 +303,8 @@ namespace Deque.AxeCore.Selenium
             {
                 try
                 {
-                    object frameContext = JsonConvert.SerializeObject(fContext.Context, JsonSerializerSettings);
-                    object frameSelector = JsonConvert.SerializeObject(fContext.Selector, JsonSerializerSettings);
+                    object frameContext = JsonConvert.SerializeObject(fContext.Context, AxeJsonSerializerSettings.Default);
+                    object frameSelector = JsonConvert.SerializeObject(fContext.Selector, AxeJsonSerializerSettings.Default);
                     var frame = _webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("shadowSelect.js"), frameSelector);
                     _webDriver.SwitchTo().Frame(frame as IWebElement);
 
@@ -364,7 +347,7 @@ namespace Deque.AxeCore.Selenium
 
             ConfigureAxe();
 
-            var serializedPartials = JsonConvert.SerializeObject(partialResults, JsonSerializerSettingsFinishRun);
+            var serializedPartials = JsonConvert.SerializeObject(partialResults, AxeJsonSerializerSettings.Default);
             // grab result ...
             var result = _webDriver.ExecuteAsyncScript(EmbeddedResourceProvider.ReadEmbeddedFile("finishRun.js"), serializedPartials, options);
 
@@ -423,7 +406,7 @@ namespace Deque.AxeCore.Selenium
 
         private string SerializedRunOptions()
         {
-            return JsonConvert.SerializeObject(runOptions, JsonSerializerSettings);
+            return JsonConvert.SerializeObject(runOptions, AxeJsonSerializerSettings.Default);
         }
 
         private static void ValidateParameters(string[] parameterValue, string parameterName)

@@ -1,3 +1,5 @@
+using Newtonsoft.Json;
+
 namespace Deque.AxeCore.Commons
 {
     /// <summary>
@@ -39,5 +41,10 @@ namespace Deque.AxeCore.Commons
         /// List of all elements the Rule evaluated to the same result for.
         /// </summary>
         public AxeResultNode[] Nodes { get; set; }
+
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(this, AxeJsonSerializerSettings.WithFormatting(Formatting.Indented));
+        }
     }
 }

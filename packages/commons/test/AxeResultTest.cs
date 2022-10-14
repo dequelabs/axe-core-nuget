@@ -148,5 +148,29 @@ namespace Deque.AxeCore.Commons.Test
 
             result1.ToString().Should().Be(result2.ToString());
         }
+
+        [Test]
+        public void ToStringShouldIncludeEnoughInfoToBeActionable()
+        {
+            var result = new AxeResult(JObject.FromObject(JsonConvert.DeserializeObject(basicAxeResultJson)));
+            var toStringOutput = result.ToString();
+
+            toStringOutput.Should().ContainAll(new string[] {
+                "4.4.1",
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/100.0.4889.0 Safari/537.36",
+                "2000-01-02T03:04:05.006+00:00",
+                "http://localhost/",
+                "document-title",
+                "wcag242",
+                "serious",
+                "Ensures each HTML document contains a non-empty <title> element",
+                "https://dequeuniversity.com/rules/axe/4.4/document-title?application=axe-puppeteer",
+                "<html><head></head><body>",
+                "</body></html>",
+                "/html",
+                "doc-has-title",
+                "Document does not have a non-empty <title> element",
+            });
+        }
     }
 }
