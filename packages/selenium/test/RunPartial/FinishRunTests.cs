@@ -30,7 +30,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             var legacyResults = new AxeBuilder(WebDriver, CustomSource($"{axeSource}{axeForceLegacy}"))
                 .Analyze();
 
-            Assert.That(legacyResults.TestEngineName, Is.EqualTo("axe-legacy"));
+            Assert.That(legacyResults.TestEngine.Name, Is.EqualTo("axe-legacy"));
 
 
             GoToFixture("nested-iframes.html");
@@ -61,7 +61,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             Assert.That(ToJson(legacyResults.TestEnvironment), Is.EqualTo(ToJson(runPartialResults.TestEnvironment)));
             Assert.That(ToJson(legacyResults.TestRunner), Is.EqualTo(ToJson(runPartialResults.TestRunner)));
             Assert.That(ToJson(legacyResults.Url), Is.EqualTo(ToJson(runPartialResults.Url)));
-            Assert.That(ToJson(legacyResults.TestEngineVersion), Is.EqualTo(ToJson(runPartialResults.TestEngineVersion)));
+            Assert.That(ToJson(legacyResults.TestEngine.Version), Is.EqualTo(ToJson(runPartialResults.TestEngine.Version)));
             Assert.That(ToJson(legacyResults.ToolOptions), Is.EqualTo(ToJson(runPartialResults.ToolOptions)));
         }
 

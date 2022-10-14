@@ -373,6 +373,7 @@ Finally, there are a few minor breaking changes which won't impact most `Seleniu
 
 1. The `.Target` and `.XPath` properties of `AxeResultNode` or `AxeResultRelatedNode` are now strongly-typed `AxeSelector` objects. Most `Selenium.Axe` users do not refer to these properties explicitly, but if your tests do, you will probably want to do so via their `ToString()` representations.
 1. `AxeRunOptions.FrameWaitTimeInMilliseconds` was renamed to `AxeRunOptions.FrameWaitTime` to match the equivalent `axe-core` API. The usage is unchanged; it still represents a value in milliseconds.
+1. `AxeResult.TestEngineName` and `AxeResult.TestEngineVersion` were replaced by a separate `AxeTestEngine` object containing `Name` and `Version` properties. You will have to replace usages of `AxeResult.TestEngineName` and `AxeResult.TestEngineVersion` with `AxeResult.TestEngine.Name` and `AxeResult.TestEngine.Version`, respectively.
 1. The already-deprecated `AxeBuilder.Options` property was removed; replace it with `WithOptions`, `WithRules`, `WithTags`, and/or `DisableRules`.
 1. The `AxeResult.Error` property was removed; any errors that would have appeared here are instead reported as exceptions.
 1. The `AxeBuilder.Include` and `AxeBuilder.Exclude` overloads which accept more than one parameter have changed:

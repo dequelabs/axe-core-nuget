@@ -52,14 +52,9 @@ namespace Deque.AxeCore.Commons
         public string Url { get; private set; }
 
         /// <summary>
-        /// The Name of the application that ran the audit.
+        /// The application that ran the audit.
         /// </summary>
-        public string TestEngineName { get; private set; }
-
-        /// <summary>
-        /// The Version of the application that ran the audit.
-        /// </summary>
-        public string TestEngineVersion { get; private set; }
+        public AxeTestEngine TestEngine { get; private set; }
 
         /// <summary>
         /// The tool options used for the configuration of the data format used by axe.
@@ -85,8 +80,7 @@ namespace Deque.AxeCore.Commons
             JToken testEnvironment = result.SelectToken("testEnvironment");
             JToken testRunner = result.SelectToken("testRunner");
             JToken testEngine = result.SelectToken("testEngine");
-            JToken testEngineName = testEngine?.SelectToken("name");
-            JToken testEngineVersion = testEngine?.SelectToken("version");
+
             JToken toolOptions = result?.SelectToken("toolOptions");
 
             Violations = violationsToken?.ToObject<AxeResultItem[]>();
@@ -97,8 +91,7 @@ namespace Deque.AxeCore.Commons
             TestEnvironment = testEnvironment?.ToObject<AxeTestEnvironment>();
             TestRunner = testRunner?.ToObject<AxeTestRunner>();
             Url = urlToken?.ToObject<string>();
-            TestEngineName = testEngineName?.ToObject<string>();
-            TestEngineVersion = testEngineVersion?.ToObject<string>();
+            TestEngine = testEngine?.ToObject<AxeTestEngine>();
             ToolOptions = toolOptions?.ToObject<object>();
         }
 
