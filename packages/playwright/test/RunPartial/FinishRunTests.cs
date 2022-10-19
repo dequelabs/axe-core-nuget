@@ -62,7 +62,6 @@ namespace Deque.AxeCore.Playwright.Test.RunPartial
             Assert.That(ToJson(legacyResults.TestEnvironment), Is.EqualTo(ToJson(runPartialResults.TestEnvironment)));
             Assert.That(ToJson(legacyResults.TestRunner), Is.EqualTo(ToJson(runPartialResults.TestRunner)));
             Assert.That(ToJson(legacyResults.Url), Is.EqualTo(ToJson(runPartialResults.Url)));
-            Assert.That(ToJson(legacyResults.Error), Is.EqualTo(ToJson(runPartialResults.Error)));
             Assert.That(ToJson(legacyResults.TestEngine.Version), Is.EqualTo(ToJson(runPartialResults.TestEngine.Version)));
             Assert.That(ToJson(legacyResults.ToolOptions), Is.EqualTo(ToJson(runPartialResults.ToolOptions)));
         }
