@@ -222,32 +222,38 @@ namespace Deque.AxeCore.Playwright.AxeCoreWrapper
                         var childFrameElement = frameHandle.AsElement();
                         if (childFrameElement == null)
                         {
-                            partialResults.Add(Task.FromResult<List<object?>>(new List<object?>(null)));
+                            partialResultTasks.Add(Task.FromResult<List<object?>>(new List<object?> { null }));
                             continue;
                         }
 
                         var childFrame = await childFrameElement.ContentFrameAsync().ConfigureAwait(false);
                         if (childFrame == null)
                         {
-                            partialResults.Add(Task.FromResult<List<object?>>(new List<object?>(null)));
+                            partialResultTasks.Add(Task.FromResult<List<object?>>(new List<object?> { null }));
                             continue;
                         }
                         partialResultTasks.Add(RunPartialRecursive(childFrame, options, frameContext, false, iframes));
                     }
                     else
                     {
-                        partialResults.Add(Task.FromResult<List<object?>>(new List<object?>(null)));
+                        partialResults.Add(Task.FromResult<List<object?>>(new List<object?> { null }));
                     }
                 }
                 catch (Exception)
                 {
-                    partialResults.Add(Task.FromResult<List<object?>>(new List<object?>(null)));
+                    partialResults.Add(Task.FromResult<List<object?>>(new List<object?> { null }));
                 }
             }
 
-            foreach (var partialResultsList in await Task.WhenAll(partialResultTasks).ConfigureAwait(false))
+            foreach (var childPartialResultsTask in partialResultTasks)
             {
-                partialResults.AddRange(partialResultsList);
+                List<object?> childPartialResults;
+                try {
+                    childPartialResults = await childPartialResultsTask.ConfigureAwait(false);
+                } catch {
+                    childPartialResults = new List<object?> { null };
+                }
+                partialResults.AddRange(childPartialResults);
             }
 
             return partialResults;
