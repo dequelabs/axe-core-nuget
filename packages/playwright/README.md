@@ -3,7 +3,7 @@
 [![Deque.AxeCore.Playwright NuGet package](https://img.shields.io/nuget/v/Deque.AxeCore.Playwright)](https://www.nuget.org/packages/Deque.AxeCore.Selenium)
 [![NuGet package download counter](https://img.shields.io/nuget/dt/Deque.AxeCore.Playwright)](https://www.nuget.org/packages/Deque.AxeCore.Selenium/)
 
-Automated web accessibility testing with .NET, C#, and Playwright. Wraps the [axe-core](https://github.com/dequelabs/axe-core) accessibility scanning engine and the [Selenium.WebDriver](https://www.seleniumhq.org/) browser automation framework.
+Automated web accessibility testing with .NET, C#, and Playwright. Wraps the [axe-core](https://github.com/dequelabs/axe-core) accessibility scanning engine and the [Playwright](https://playwright.dev/dotnet/) browser automation framework.
 
 Compatible with .NET Standard 2.1.
 
@@ -210,6 +210,56 @@ With legacy mode turned on, axe will fall back to its test solution prior to the
 ```csharp
 AxeResults axeResults = await page.RunAxeLegacy();
 ```
+
+## Migrating from `Playwright.Axe` ([PlaywrightAxeDotnet](https://github.com/IsaacWalker/PlaywrightAxeDotnet))
+
+This project acts as a drop-in replacement for most of the functionality from `Playwright.Axe`. ([PlaywrightAxeDotnet](https://github.com/IsaacWalker/PlaywrightAxeDotnet)). To migrate:
+
+1. Update your test `.csproj` file's `<PackageReference>` for `Playwright.Axe` to `Deque.AxeCore.Playwright`
+1. Add a new `<PackageReference>` to `Deque.AxeCore.Commons` at the same version number as `Deque.AxeCore.Playwright`
+1. Update all `using Playwright.Axe;` statements in your tests to `using Deque.AxeCore.Playwright;` and/or `using Deque.AxeCore.Commons;`
+
+In a move to standardize, we migrated this package away from Playwright specific typings, instead opting to use the typings from the `Deque.AxeCore.Commons` package instead. The result is several minor breaking changes that may require updates to your code:
+### Replacements/Renamings
+1. `AxeResults` has now been renamed to `AxeResult`; the previously used `AxeResult` for this package will now be `AxeResultItem`.
+1. `AxeNodeResult` has been replaced with `AxeResultNode`
+1. `AxeCheckResult` has been replaced with `AxeResultCheck`
+1. `AxeRelatedNode` has been replaced with `AxeResultRelatedNode`
+1. `AxeResultGroup` has been replaced with `ResultType`
+1. `AxeRuleObjectValue` has been replaced with `RuleOptions`
+1. `AxeRunOnly` has been replaced with `RunOnlyOptions`
+1. `AxeResultRelatedNode` is now used in lieu of `AxeRelatedNode`. With this type, the Targets property is changed from a `IList<string>` to a `List<AxeResultTarget>`; users should expect to modify usages of the Targets property to include a `.ToString()` method call.
+1. `AxeRunSerialContext` has been replaced by `AxeRunContext` and `AxeSelector` types. Here are some examples of how to use the new types:
+ 
+       ```cs
+       //finding a single element using the Playwright Locator API
+        ILocator locator = page.GetByRole("menu").RunAxe();
+        
+        //including/excluding elements in the main frame
+       new AxeRunContext()
+            {
+                Include = new List<AxeSelector> { new AxeSelector("#foo") },
+                Exclude = new List<AxeSelector> {},
+            };
+
+        //including/excluding an element in a child frame
+       new AxeRunContext()
+            {
+                Include = new List<AxeSelector> { new AxeSelector("#element-in-child-frame", new List<string> { "#iframe-in-main-frame" })},
+                Exclude = new List<AxeSelector> {},
+            };
+        ```
+
+### Type Modifications
+1. The Timestamp type in `AxeResult` changed from System.DateTime to System.DateTimeOffset
+1. The url type in `AxeResult` changed from Uri to string
+1. The `OrientationAngle` type in `AxeTestEnvironment` changed from int to double
+1. The `HelpUrl` in `AxeResultItem` changed from Uri to string
+### Removals
+1. Removed `AxeEnvironmentData` interface and using the existing environment data info in `Deque.AxeCore.Commons.AxeResult`
+1. Removed `AxeImpactValue` and `AxeRunOnlyType` enums in favor of using `string` in the Commons typings (`AxeResultItem.cs` and `AxeRunOptions.cs`, respectively)
+1. `FailureSummary` was removed from `AxeResultNode` (formerly `AxeNodeResult`)
+1. `ElementRef` and `PerformanceTimer` were removed from `AxeRunOptions`
 
 ## Contributing
 
