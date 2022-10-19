@@ -52,8 +52,8 @@ namespace Deque.AxeCore.Playwright.Test.RunPartial
             var res = await Page!.RunAxe();
 
             Assert.IsNotNull(res);
-            Assert.IsNotEmpty(res.TestEngineName);
-            Assert.IsNotEmpty(res.TestEngineVersion);
+            Assert.IsNotEmpty(res.TestEngine.Name);
+            Assert.IsNotEmpty(res.TestEngine.Version);
             Assert.IsNotNull(res.TestEnvironment);
             Assert.IsNotNull(res.TestEnvironment.OrientationAngle);
             Assert.IsNotEmpty(res.TestEnvironment.OrientationType);
