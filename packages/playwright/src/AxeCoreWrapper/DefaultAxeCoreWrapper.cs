@@ -248,9 +248,12 @@ namespace Deque.AxeCore.Playwright.AxeCoreWrapper
             foreach (var childPartialResultsTask in partialResultTasks)
             {
                 List<object?> childPartialResults;
-                try {
+                try
+                {
                     childPartialResults = await childPartialResultsTask.ConfigureAwait(false);
-                } catch {
+                }
+                catch
+                {
                     childPartialResults = new List<object?> { null };
                 }
                 partialResults.AddRange(childPartialResults);
