@@ -22,10 +22,10 @@ namespace Deque.AxeCore.Playwright.Test
 
         public static readonly Uri BaseUri = new($"http://{s_ipAddress}:{Port}");
 
-        public TestServer()
+        public TestServer(string webRoot)
         {
             m_webHost = WebHost.CreateDefaultBuilder()
-                .UseWebRoot("TestFiles")
+                .UseWebRoot(webRoot)
                 .Configure(app =>
                 {
                     app.UseStaticFiles();

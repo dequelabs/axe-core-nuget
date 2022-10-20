@@ -25,6 +25,7 @@ namespace Deque.AxeCore.Playwright.Test
 
             Mock<IFrame> frameOne = new();
             Mock<IFrame> frameTwo = new();
+            Mock<IFrame> mainFrame = new();
             frameOne.Setup(mock => mock.EvaluateAsync(axeFunctionExpression, null));
             frameTwo.Setup(mock => mock.EvaluateAsync(axeFunctionExpression, null));
 
@@ -43,6 +44,7 @@ namespace Deque.AxeCore.Playwright.Test
             Mock<IPage> pageMock = new();
             pageMock.Setup(mock => mock.EvaluateAsync(axeFunctionExpression, null));
             pageMock.Setup(mock => mock.Frames).Returns(frames);
+            pageMock.Setup(mock => mock.MainFrame).Returns(mainFrame.Object);
 
             await contentEmbedder.EmbedAxeCoreIntoPage(pageMock.Object, embedIntoFrames);
 

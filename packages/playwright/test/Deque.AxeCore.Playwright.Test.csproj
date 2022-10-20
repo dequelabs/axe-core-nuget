@@ -31,20 +31,27 @@
   <ItemGroup>
     <ProjectReference Include="../src/Deque.AxeCore.Playwright.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../commons/test/Deque.AxeCore.Commons.Test.csproj" />
+  </ItemGroup>
 
-	<ItemGroup>
-		<None Include="TestFiles/**" CopyToOutputDirectory="PreserveNewest" LinkBase="TestFiles/" />
-	</ItemGroup>
+  <ItemGroup>
+    <None Include="TestFiles/**" CopyToOutputDirectory="PreserveNewest" LinkBase="TestFiles/" />
+  </ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="TestFiles/frames/" />
-	</ItemGroup>
+  <ItemGroup>
+    <Folder Include="TestFiles/frames/" />
+  </ItemGroup>
 
-	<Target Name="InstallPlaywright" AfterTargets="AfterBuild">
-		<Exec Command="pwsh -NoProfile -ExecutionPolicy Unrestricted ./$(OutDir)playwright.ps1 install"></Exec>
-	</Target>
+  <Target Name="InstallPlaywright" AfterTargets="AfterBuild">
+    <Exec Command="pwsh -NoProfile -ExecutionPolicy Unrestricted ./$(OutDir)playwright.ps1 install"></Exec>
+  </Target>
+
+  <ItemGroup>
+      <None Include="../../commons/test/node_modules/axe-test-fixtures/fixtures/**" CopyToOutputDirectory="Always" LinkBase="fixtures/" />
+  </ItemGroup>
 
   <PropertyGroup>
     <VSTestResultsDirectory>TestResults/$(TargetFramework)</VSTestResultsDirectory>
-	</PropertyGroup>
+  </PropertyGroup>
 </Project>
