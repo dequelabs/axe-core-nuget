@@ -31,8 +31,6 @@ jobs:
         run: ls packages
 
       # Order is important - if publishing Commons fails, we want the job to abort without attempting the others
-      #
-      # TODO: drop the "echo [DRY RUN]" wrapper once the NuGet publishing account is established in #38
       - name: Publish Deque.AxeCore.Commons to NuGet
         run: dotnet nuget push packages/Deque.AxeCore.Commons.*.nupkg --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json
 
