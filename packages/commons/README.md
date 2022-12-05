@@ -4,8 +4,6 @@ Provides a .NET wrapper around [axe-core](https://github.com/dequelabs/axe-core)
 
 ## Getting Started
 
-*Note: this package is still under development; these instructions won't work until we perform an initial NuGet release*
-
 Install a [.NET SDK](https://dotnet.microsoft.com/download) if you haven't already.
 
 Install `Deque.AxeCore.Commons` and its dependencies:
