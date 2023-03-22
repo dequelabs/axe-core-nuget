@@ -23,6 +23,7 @@ namespace Deque.AxeCore.Selenium
         private AxeRunOptions runOptions = new AxeRunOptions();
         private string outputFilePath = null;
         private bool useLegacyMode = false;
+        private Action<AxeResult, AxeRunOptions, IWebDriver> _postAnalyzeCallback;
 
         /// <summary>
         /// Initialize an instance of <see cref="AxeBuilder"/>
@@ -107,6 +108,16 @@ namespace Deque.AxeCore.Selenium
                 Type = "rule",
                 Values = rules.ToList()
             };
+
+            return this;
+        }
+
+        /// <summary>
+        /// Adds a callback which will be invoked after Analyze is called.
+        /// </summary>
+        public AxeBuilder WithPostAnalyzeCallback(Action<AxeResult, AxeRunOptions, IWebDriver> postAnalyzeHook)
+        {
+            _postAnalyzeCallback = postAnalyzeHook;
 
             return this;
         }
@@ -248,8 +259,14 @@ namespace Deque.AxeCore.Selenium
                 }
             }
 
-            return new AxeResult(resultObject);
+            AxeResult axeResult = new AxeResult(resultObject);
 
+            if (_postAnalyzeCallback != null)
+            {
+                _postAnalyzeCallback(axeResult, runOptions, _webDriver);
+            }
+
+            return axeResult;
         }
 
         private JObject AnalyzeAxeRunPartial(object rawContextArg)

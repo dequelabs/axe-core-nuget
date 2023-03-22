@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Deque.AxeCore.Commons;
+using OpenQA.Selenium.DevTools.V102.Runtime;
 
 namespace Deque.AxeCore.Selenium.Test
 {
@@ -27,6 +28,7 @@ namespace Deque.AxeCore.Selenium.Test
         private static Mock<IJavaScriptExecutor> jsExecutorMock = webDriverMock.As<IJavaScriptExecutor>();
         private static Mock<ITargetLocator> targetLocatorMock = new Mock<ITargetLocator>();
         private static Mock<INavigation> navigationMock = new Mock<INavigation>();
+        private static Mock<IPostAnalyzeCallback> postAnalyzeCallbackMock = new Mock<IPostAnalyzeCallback>();
 
         private static readonly AxeBuilderOptions stubAxeBuilderOptions = new AxeBuilderOptions
         {
@@ -248,6 +250,21 @@ namespace Deque.AxeCore.Selenium.Test
         }
 
         [Test]
+        public void ShouldInvokePostAnalyzeHookWhenAdded()
+        {
+            SetupVerifiablePostAnalyzeCallback();
+            SetupVerifiableAxeInjectionCall();
+            SetupVerifiableScanCall(null, "{}");
+
+            var builder = new AxeBuilder(webDriverMock.Object, stubAxeBuilderOptions)
+                .WithPostAnalyzeHook(postAnalyzeCallbackMock.Object.PostAnalyzeCallback);
+
+            var result = builder.Analyze();
+
+            postAnalyzeCallbackMock.VerifyAll();
+        }
+
+        [Test]
         public void ShouldThrowIfNullParameterPassed()
         {
             SetupVerifiableAxeInjectionCall();
@@ -345,10 +362,26 @@ namespace Deque.AxeCore.Selenium.Test
                 .Verifiable();
         }
 
+        private void SetupVerifiablePostAnalyzeCallback()
+        {
+            postAnalyzeCallbackMock.Setup(
+                m => m.PostAnalyzeCallback(It.IsAny<AxeResult>(),
+                It.IsAny<AxeRunOptions>(),
+                It.IsAny<IWebDriver>()))
+                .Verifiable();
+        }
+
         private string SerializeObject<T>(T obj)
         {
             return JsonConvert.SerializeObject(obj, AxeJsonSerializerSettings.Default);
         }
 
+        /// <summary>
+        /// Interface to simplify callback verification in Unit Tests
+        /// </summary>
+        public interface IPostAnalyzeCallback
+        {
+            void PostAnalyzeCallback(AxeResult result, AxeRunOptions options, IWebDriver driver);
+        }
     }
 }
