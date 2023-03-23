@@ -257,7 +257,7 @@ namespace Deque.AxeCore.Selenium.Test
             SetupVerifiableScanCall(null, "{}");
 
             var builder = new AxeBuilder(webDriverMock.Object, stubAxeBuilderOptions)
-                .WithPostAnalyzeHook(postAnalyzeCallbackMock.Object.PostAnalyzeCallback);
+                .WithPostAnalyzeCallback(postAnalyzeCallbackMock.Object.PostAnalyzeCallback);
 
             var result = builder.Analyze();
 
