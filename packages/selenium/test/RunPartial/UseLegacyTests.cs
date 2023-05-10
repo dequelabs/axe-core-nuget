@@ -115,7 +115,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
                     return "file://";
 
                 case "FIREFOX":
-                    return "null";
+                    return null;
 
                 default:
                     throw new ArgumentException($"Remote browser type '{browser}' is not supported");
