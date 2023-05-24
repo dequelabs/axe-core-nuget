@@ -19,7 +19,8 @@ namespace Deque.AxeCore.Playwright.Test
 
         // Install playwright browsers.
         [ModuleInitializer]
-        public static async void Init() {
+        public static async void Init()
+        {
             Microsoft.Playwright.Program.Main(new[] {"install"});
         }
 
