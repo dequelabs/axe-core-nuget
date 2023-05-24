@@ -21,7 +21,7 @@ namespace Deque.AxeCore.Playwright.Test
         [ModuleInitializer]
         public static async void Init()
         {
-            Microsoft.Playwright.Program.Main(new[] {"install"});
+            Microsoft.Playwright.Program.Main(new[] { "install" });
         }
 
         private readonly IWebHost m_webHost;
