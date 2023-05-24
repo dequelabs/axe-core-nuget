@@ -1,5 +1,7 @@
 #nullable enable
 
+using System.Runtime.CompilerServices;
+using Microsoft.Playwright;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -14,6 +16,14 @@ namespace Deque.AxeCore.Playwright.Test
     /// </summary>
     public sealed class TestServer
     {
+
+        // Install playwright browsers.
+        [ModuleInitializer]
+        public static async void Init()
+        {
+            Microsoft.Playwright.Program.Main(new[] { "install" });
+        }
+
         private readonly IWebHost m_webHost;
 
         private const int Port = 3000;

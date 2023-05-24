@@ -43,10 +43,6 @@
     <Folder Include="TestFiles/frames/" />
   </ItemGroup>
 
-  <Target Name="InstallPlaywright" AfterTargets="AfterBuild">
-    <Exec Command="pwsh -NoProfile -ExecutionPolicy Unrestricted ./$(OutDir)playwright.ps1 install"></Exec>
-  </Target>
-
   <ItemGroup>
       <None Include="../../commons/test/node_modules/axe-test-fixtures/fixtures/**" CopyToOutputDirectory="Always" LinkBase="fixtures/" />
   </ItemGroup>
