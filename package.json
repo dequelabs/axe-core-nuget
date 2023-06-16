@@ -5,4 +5,8 @@
   "license": "MPL-2.0 AND MIT",
   "repository": "dequelabs/axe-core-nuget",
   "private": true,
+  "devDependencies": {
+    "commit-and-tag-version": "^11.2.1",
+    "conventional-changelog-cli": "^3.0.0"
+  }
 }
