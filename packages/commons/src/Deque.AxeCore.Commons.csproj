@@ -19,7 +19,7 @@
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
 
     <!-- Do not update this by-hand; updates are automated via the create-release workflow -->
-    <VersionPrefix>4.4.0</VersionPrefix>
+    <VersionPrefix>4.7.1</VersionPrefix>
     <VersionSuffix>development</VersionSuffix>
   </PropertyGroup>
 
@@ -37,7 +37,7 @@
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
   </ItemGroup>
 
-  <!-- Running this using BeforeTagets="Restore" doesn't work if we run "dotnet restore" from solution folder. 
+  <!-- Running this using BeforeTagets="Restore" doesn't work if we run "dotnet restore" from solution folder.
        Running it before CollectPackageReferences, will work in both vs & command line. But, this task will be executed in both build & restore multiple times on multi-target project.
        So, skipping this task if the copied package-lock.json file is same as the source file, to support incremental builds.
   -->
