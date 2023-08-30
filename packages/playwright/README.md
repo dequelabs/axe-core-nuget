@@ -16,27 +16,33 @@ PM> Install-Package Deque.AxeCore.Playwright
 # or, use the Visual Studio "Manage NuGet Packages" UI
 ```
 
-Example usage:
+Ensure you have Playwright browsers installed. 
+For reference, see https://playwright.dev/dotnet/docs/browsers
+
+Example usage with Playwright's NUnit integration:
 
 ```csharp
 using System.Threading.Tasks;
-using Microsoft.Playwright;
+using NUnit.Framework;
+using Microsoft.Playwright.NUnit;
+using Deque.AxeCore.Commons;
 using Deque.AxeCore.Playwright;
 
-class Program
+[TestFixture]
+class MyPlaywrightTests : PageTest
 {
-    public static async Task Main()
+    [Test]
+    public async Task CheckAxeClean()
     {
-        using var playwright = await Playwright.CreateAsync();
-        await using var browser = await playwright.Chromium.LaunchAsync(new() { Headless = false });
-        var page = await browser.NewPageAsync();
-        await page.GotoAsync("https://playwright.dev/dotnet");
+        const string expectedViolationId = "color-contrast";
 
-        AxeResults axeResults = await page.RunAxe();
+        await Page!.GotoAsync("https://playwright.dev/dotnet");
 
-        // Assert.AreEqual(axeResults.Violations.Count, 0);
+        AxeResult axeResults = await Page!.RunAxe();
+        Assert.That(axeResults.Violations, Is.Null.Or.Empty);
     }
 }
+
 ```
 
 ## API Reference
