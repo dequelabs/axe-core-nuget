@@ -23,11 +23,13 @@ Example usage with Playwright's NUnit integration:
 
 ```csharp
 using System.Threading.Tasks;
+using NUnit.Framework;
 using Microsoft.Playwright.NUnit;
+using Deque.AxeCore.Commons;
 using Deque.AxeCore.Playwright;
 
 [TestFixture]
-class MyPlaywrightTests
+class MyPlaywrightTests : PageTest
 {
     [Test]
     public async Task CheckAxeClean()
@@ -40,6 +42,7 @@ class MyPlaywrightTests
         Assert.That(axeResults.Violations, Is.Null.Or.Empty);
     }
 }
+
 ```
 
 ## API Reference
