@@ -10,6 +10,19 @@ The packages are listed below:
 - [`Deque.AxeCore.Selenium`](./packages/selenium/README.md)
 - [`Deque.AxeCore.Commons`](./packages/commons/README.md)
 
+### Building
+
+* To build all projects, run `dotnet build` from the root of the repo
+* To build one project, run `dotnet build` from that project's folder (eg, `packages/commons/src`)
+
+### Testing
+
+* To run all tests, run `dotnet test` from the root of the repo
+* To run one test project, run `dotnet test` from that test project's folder (eg, `packages/commons/test`)
+* To run one individual test case, run `dotnet test --filter "Name=TestCaseMethodName"`
+  * `dotnet test --list-tests` will list the available test cases
+* To have integration tests use headed browsers instead of headless ones, run `dotnet test -e HEADED=1`
+
 ## Philosophy
 
 We believe that automated testing has an important role to play in achieving digital equality and that in order to do that, it must achieve mainstream adoption by professional web developers. That means that the tests must inspire trust, must be fast, must work everywhere and must be available everywhere.
