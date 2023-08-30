@@ -42,6 +42,9 @@ You'll need the following installed:
 * [Google Chrome (latest stable version)](https://www.google.com/chrome/downloads)
 * [Mozilla Firefox (latest stable version)](https://www.mozilla.org/firefox)
 
+Ensure you have Playwright browsers installed. 
+For reference, see https://playwright.dev/dotnet/docs/browsers
+
 ### Building
 
 * To build all projects, run `dotnet build` from the root of the repo

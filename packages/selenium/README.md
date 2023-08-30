@@ -16,6 +16,9 @@ PM> Install-Package Deque.AxeCore.Selenium
 # or, use the Visual Studio "Manage NuGet Packages" UI
 ```
 
+Ensure you have Playwright browsers installed. 
+For reference, see https://playwright.dev/dotnet/docs/browsers
+
 Import this namespace:
 
 ```csharp
