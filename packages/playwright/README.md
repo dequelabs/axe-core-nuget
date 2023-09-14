@@ -1,7 +1,7 @@
 # Deque.AxeCore.Playwright
 
-[![Deque.AxeCore.Playwright NuGet package](https://img.shields.io/nuget/v/Deque.AxeCore.Playwright)](https://www.nuget.org/packages/Deque.AxeCore.Selenium)
-[![NuGet package download counter](https://img.shields.io/nuget/dt/Deque.AxeCore.Playwright)](https://www.nuget.org/packages/Deque.AxeCore.Selenium/)
+[![Deque.AxeCore.Playwright NuGet package](https://img.shields.io/nuget/v/Deque.AxeCore.Playwright)](https://www.nuget.org/packages/Deque.AxeCore.Playwright)
+[![NuGet package download counter](https://img.shields.io/nuget/dt/Deque.AxeCore.Playwright)](https://www.nuget.org/packages/Deque.AxeCore.Playwright/)
 
 Automated web accessibility testing with .NET, C#, and Playwright. Wraps the [axe-core](https://github.com/dequelabs/axe-core) accessibility scanning engine and the [Playwright](https://playwright.dev/dotnet/) browser automation framework.
 
