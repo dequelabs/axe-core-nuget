@@ -37,10 +37,10 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             Assert.Greater(res.Incomplete.Length, 0);
             Assert.That(res.Incomplete[0].Id, Is.EqualTo("frame-tested"));
             Assert.That(res.Incomplete[0].Nodes.Length, Is.EqualTo(1));
-            AssertTargetEquals(new [] {"#ifr-lazy", "#lazy-iframe"}, res.Incomplete[0].Nodes[0].Target);
+            AssertTargetEquals(new[] { "#ifr-lazy", "#lazy-iframe" }, res.Incomplete[0].Nodes[0].Target);
             Assert.That(res.Violations[0].Id, Is.EqualTo("label"));
             Assert.That(res.Violations[0].Nodes.Length, Is.EqualTo(1));
-            AssertTargetEquals(new [] {"#ifr-lazy", "#lazy-baz", "input"}, res.Violations[0].Nodes[0].Target);
+            AssertTargetEquals(new[] { "#ifr-lazy", "#lazy-baz", "input" }, res.Violations[0].Nodes[0].Target);
         }
 
         [Test]
@@ -65,11 +65,11 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         {
             InitDriver(browser);
             GoToFixture("index.html");
-            var jsExec = (IJavaScriptExecutor) WebDriver;
+            var jsExec = (IJavaScriptExecutor)WebDriver;
             var overrideDocReady = "Object.defineProperty(document, 'readyState', {get() {return 'nope'}})";
             jsExec.ExecuteScript(overrideDocReady);
             Assert.Throws(Is.TypeOf<Exception>().And.Message.Contains("not ready"),
-                          () =>  new AxeBuilder(WebDriver).Analyze());
+                          () => new AxeBuilder(WebDriver).Analyze());
         }
 
         [Test]

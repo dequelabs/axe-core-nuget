@@ -128,12 +128,16 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
 
         public void AssertTargetEquals(string[] expected, object target)
         {
-            if (target is Newtonsoft.Json.Linq.JArray list) {
+            if (target is Newtonsoft.Json.Linq.JArray list)
+            {
                 Assert.That(list.Count, Is.EqualTo(expected.Length));
-                for (int i = 0; i < expected.Length; i++) {
+                for (int i = 0; i < expected.Length; i++)
+                {
                     Assert.That(list[i].ToString(), Is.EqualTo(expected[i]), "Target differs");
                 }
-            } else {
+            }
+            else
+            {
                 Assert.Fail("Target is not a list");
             }
         }
