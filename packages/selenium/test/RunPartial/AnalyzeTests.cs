@@ -33,13 +33,13 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             var res = new AxeBuilder(WebDriver).WithRules("label", "frame-tested").Analyze();
 
             Assert.IsNotNull(res);
-            Assert.AreNotEqual("Error", WebDriver.Title);
+            Assert.That(WebDriver.Title, Is.Not.EqualTo("Error"));
             Assert.Greater(res.Incomplete.Length, 0);
-            Assert.AreEqual("frame-tested", res.Incomplete[0].Id);
-            Assert.AreEqual(1, res.Incomplete[0].Nodes.Length);
+            Assert.That(res.Incomplete[0].Id, Is.EqualTo("frame-tested"));
+            Assert.That(res.Incomplete[0].Nodes.Length, Is.EqualTo(1));
             AssertTargetEquals(new [] {"#ifr-lazy", "#lazy-iframe"}, res.Incomplete[0].Nodes[0].Target);
-            Assert.AreEqual("label", res.Violations[0].Id);
-            Assert.AreEqual(1, res.Violations[0].Nodes.Length);
+            Assert.That(res.Violations[0].Id, Is.EqualTo("label"));
+            Assert.That(res.Violations[0].Nodes.Length, Is.EqualTo(1));
             AssertTargetEquals(new [] {"#ifr-lazy", "#lazy-baz", "input"}, res.Violations[0].Nodes[0].Target);
         }
 
@@ -54,7 +54,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             var setTO = TimeSpan.FromSeconds(50.0);
             WebDriver.Manage().Timeouts().PageLoad = setTO;
             new AxeBuilder(WebDriver).Analyze();
-            Assert.AreEqual(WebDriver.Manage().Timeouts().PageLoad, setTO);
+            Assert.That(WebDriver.Manage().Timeouts().PageLoad, Is.EqualTo(setTO));
         }
 
 

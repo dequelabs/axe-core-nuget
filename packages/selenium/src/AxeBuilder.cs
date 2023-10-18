@@ -484,7 +484,7 @@ namespace Deque.AxeCore.Selenium
 
         private void AssertFrameReady()
         {
-            Task<bool> docReady = Task.Run(() => (bool)ExecuteScript("return document.readyState === 'complete'"));
+            Task<bool> docReady = Task.Run(() => (bool)_webDriver.ExecuteScript("return document.readyState === 'complete'"));
             docReady.Wait(TimeSpan.FromSeconds(1));
             bool frameReady = !docReady.IsCompleted || !docReady.Result;
             if (frameReady) {
