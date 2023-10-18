@@ -4,6 +4,7 @@ using Newtonsoft.Json.Serialization;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -254,75 +255,126 @@ namespace Deque.AxeCore.Selenium
 
         private JObject AnalyzeAxeRunPartial(object rawContextArg)
         {
-            string rawOptionsArg = SerializedRunOptions();
-            var partialResults = RunPartialRecursive(rawOptionsArg, rawContextArg, true);
-            return IsolatedFinishRun(partialResults.ToArray(), rawOptionsArg);
+            string options = SerializedRunOptions();
+
+            var windowHandle = _webDriver.CurrentWindowHandle;
+            var partialResults = new List<object>();
+            var frameStack = new Stack<object>();
+            var prevTimeout = _webDriver.Manage().Timeouts().PageLoad;
+            _webDriver.Manage().Timeouts().PageLoad = TimeSpan.FromMilliseconds(1000.0);
+            try
+            { // restore timeout
+                try
+                {
+                    string partialRes = (string)_webDriver.ExecuteAsyncScript(EmbeddedResourceProvider.ReadEmbeddedFile("runPartial.js"), rawContextArg, options);
+                    // Important to deserialize because we want to reserialize as an
+                    // array of object, not an array of strings.
+                    partialResults.Add(JsonConvert.DeserializeObject<object>(partialRes));
+                }
+                catch
+                {
+                    throw;
+                }
+
+                // Don't go any deeper if we are just doing top-level iframe
+                if (runOptions.Iframes != false)
+                {
+                    var frameContexts = GetFrameContexts(rawContextArg);
+                    foreach (var fContext in frameContexts)
+                    {
+                        try
+                        {
+                            object frameSelector = JsonConvert.SerializeObject(fContext.Selector, AxeJsonSerializerSettings.Default);
+                            var frame = _webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("shadowSelect.js"), frameSelector);
+                            _webDriver.SwitchTo().Frame(frame as IWebElement);
+
+                            partialResults.AddRange(RunPartialRecursive(options, fContext, frameStack));
+                        }
+                        catch (Exception)
+                        {
+                            partialResults.Add(null);
+                        }
+                        finally
+                        {
+                            _webDriver.SwitchTo().Window(windowHandle);
+                        }
+                    }
+                }
+
+                return IsolatedFinishRun(partialResults.ToArray(), options);
+            }
+            finally
+            {
+                _webDriver.Manage().Timeouts().PageLoad = prevTimeout;
+            }
         }
 
         private List<object> RunPartialRecursive(
                                                         object options,
-                                                        object context,
-                                                        bool isTopLevel
+                                                        AxeFrameContext context,
+                                                        Stack<object> frameStack
                                                         )
         {
-            if (!isTopLevel)
+            var windowHandle = _webDriver.CurrentWindowHandle;
+            frameStack.Push(context.Selector);
+            try // pop stack
             {
                 ConfigureAxe();
-            }
 
-            var partialResults = new List<object>();
+                var partialResults = new List<object>();
 
-            try
-            {
-                string partialRes = (string)_webDriver.ExecuteAsyncScript(EmbeddedResourceProvider.ReadEmbeddedFile("runPartial.js"), context, options);
-                // Important to deserialize because we want to reserialize as an
-                // array of object, not an array of strings.
-                partialResults.Add(JsonConvert.DeserializeObject<object>(partialRes));
-            }
-            catch
-            {
-                if (isTopLevel)
+                try
                 {
-                    throw;
+                    string partialRes = (string)_webDriver.ExecuteAsyncScript(EmbeddedResourceProvider.ReadEmbeddedFile("runPartial.js"), context, options);
+                    // Important to deserialize because we want to reserialize as an
+                    // array of object, not an array of strings.
+                    partialResults.Add(JsonConvert.DeserializeObject<object>(partialRes));
                 }
-                else
+                catch
                 {
                     partialResults.Add(null);
                     return partialResults;
                 }
-            }
 
-            // Don't go any deeper if we are just doing top-level iframe
-            if (runOptions.Iframes == false)
-            {
+                // Don't go any deeper if we are just doing top-level iframe
+                if (runOptions.Iframes == false)
+                {
+                    return partialResults;
+                }
+
+                var frameContexts = GetFrameContexts(JsonConvert.SerializeObject(context.Context, AxeJsonSerializerSettings.Default));
+                foreach (var fContext in frameContexts)
+                {
+                    try
+                    {
+                        object frameSelector = JsonConvert.SerializeObject(fContext.Selector, AxeJsonSerializerSettings.Default);
+                        var frame = _webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("shadowSelect.js"), frameSelector);
+                        _webDriver.SwitchTo().Frame(frame as IWebElement);
+
+                        partialResults.AddRange(RunPartialRecursive(options, fContext, frameStack));
+
+                        _webDriver.SwitchTo().ParentFrame();
+                    }
+                    catch (Exception e)
+                    {
+                        _webDriver.SwitchTo().Window(windowHandle);
+                        foreach (var frameSelector in frameStack) {
+                            var selector = _webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("shadowSelect.js"), frameSelector);
+                            if (selector is IWebElement el) {
+                                _webDriver.SwitchTo().Frame(el);
+                            }
+                        }
+
+                        partialResults.Add(null);
+                    }
+                }
+
                 return partialResults;
             }
-
-            var frameContexts = GetFrameContexts(context);
-            foreach (var fContext in frameContexts)
+            finally
             {
-                try
-                {
-                    object frameContext = JsonConvert.SerializeObject(fContext.Context, AxeJsonSerializerSettings.Default);
-                    object frameSelector = JsonConvert.SerializeObject(fContext.Selector, AxeJsonSerializerSettings.Default);
-                    var frame = _webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("shadowSelect.js"), frameSelector);
-                    _webDriver.SwitchTo().Frame(frame as IWebElement);
-
-                    partialResults.AddRange(RunPartialRecursive(options, frameContext, false));
-                }
-                catch (Exception)
-                {
-                    partialResults.Add(null);
-                }
-                finally
-                {
-                    _webDriver.SwitchTo().ParentFrame();
-                }
+                frameStack.Pop();
             }
-
-
-
-            return partialResults;
         }
 
         private JObject IsolatedFinishRun(object[] partialResults, object options)
