@@ -358,9 +358,11 @@ namespace Deque.AxeCore.Selenium
                     catch (Exception e)
                     {
                         _webDriver.SwitchTo().Window(windowHandle);
-                        foreach (var frameSelector in frameStack) {
+                        foreach (var frameSelector in frameStack)
+                        {
                             var selector = _webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("shadowSelect.js"), frameSelector);
-                            if (selector is IWebElement el) {
+                            if (selector is IWebElement el)
+                            {
                                 _webDriver.SwitchTo().Frame(el);
                             }
                         }
