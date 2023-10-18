@@ -59,5 +59,27 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             Assert.IsNull(targets2.Find(t => t.Equals(".exclude")));
             Assert.IsNull(targets2.Find(t => t.Equals(".exclude2")));
         }
+
+        [Test]
+        [TestCase("Chrome")]
+        [TestCase("Firefox")]
+        public void ShouldHonorIncludeExclude(string browser)
+        {
+            InitDriver(browser);
+            GoToResource("context.html");
+
+            var axe = new AxeBuilder(WebDriver)
+                .Include(".include")
+                .Include(".include2")
+                .Exclude(".exclude")
+                .Exclude(".exclude2");
+            var res = axe.Analyze();
+            var targets = getPassTargets(res);
+
+            Assert.IsNotNull(targets.Find(t => t.Equals(".include")));
+            Assert.IsNotNull(targets.Find(t => t.Equals(".include2")));
+            Assert.IsNull(targets.Find(t => t.Equals(".exclude")));
+            Assert.IsNull(targets.Find(t => t.Equals(".exclude2")));
+        }
     }
 }
