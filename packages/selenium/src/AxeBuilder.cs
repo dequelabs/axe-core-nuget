@@ -446,6 +446,7 @@ namespace Deque.AxeCore.Selenium
         /// </summary>
         private void ConfigureAxe()
         {
+            AssertFrameReady();
             _webDriver.ExecuteScript(_AxeBuilderOptions.ScriptProvider.GetScript());
             var runPartialExists = (bool)_webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("runPartialExists.js"));
 
@@ -478,6 +479,16 @@ namespace Deque.AxeCore.Selenium
             if (parameterValue == null)
             {
                 throw new ArgumentNullException(parameterName);
+            }
+        }
+
+        private void AssertFrameReady()
+        {
+            Task<bool> docReady = Task.Run(() => (bool)ExecuteScript("return document.readyState === 'complete'"));
+            docReady.Wait(TimeSpan.FromSeconds(1));
+            bool frameReady = !docReady.IsCompleted || !docReady.Result;
+            if (frameReady) {
+                throw new Exception("Page/frame is not ready");
             }
         }
     }
