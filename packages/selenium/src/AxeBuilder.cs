@@ -487,7 +487,8 @@ namespace Deque.AxeCore.Selenium
             Task<bool> docReady = Task.Run(() => (bool)_webDriver.ExecuteScript("return document.readyState === 'complete'"));
             docReady.Wait(TimeSpan.FromSeconds(1));
             bool frameReady = !docReady.IsCompleted || !docReady.Result;
-            if (frameReady) {
+            if (frameReady)
+            {
                 throw new Exception("Page/frame is not ready");
             }
         }
