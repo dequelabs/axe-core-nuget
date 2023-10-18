@@ -87,11 +87,6 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
 
         protected void GoToFixture(string resourceFilename)
         {
-            WebDriver.Navigate().GoToUrl(FixtureUrl(resourceFilename));
-        }
-
-        protected void GoToAxeFixture(string resourceFilename)
-        {
             WebDriver.Navigate().GoToUrl("http://localhost:8080/" + resourceFilename);
         }
 

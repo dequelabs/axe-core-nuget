@@ -28,7 +28,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         public void shouldWorkWithUnloadedIframe(string browser)
         {
             InitDriver(browser);
-            GoToAxeFixture("lazy-loaded-iframe.html");
+            GoToFixture("lazy-loaded-iframe.html");
 
             var res = new AxeBuilder(WebDriver).WithRules("label", "frame-tested").Analyze();
 
@@ -49,7 +49,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         public void ShouldRevertTimeout(string browser)
         {
             InitDriver(browser);
-            GoToAxeFixture("lazy-loaded-iframe.html");
+            GoToFixture("lazy-loaded-iframe.html");
 
             var setTO = TimeSpan.FromSeconds(50.0);
             WebDriver.Manage().Timeouts().PageLoad = setTO;
@@ -64,7 +64,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         public void ShouldFailWhenPageIsNotReady(string browser)
         {
             InitDriver(browser);
-            GoToAxeFixture("index.html");
+            GoToFixture("index.html");
             var jsExec = (IJavaScriptExecutor)WebDriver;
             var overrideDocReady = "Object.defineProperty(document, 'readyState', {get() {return 'nope'}})";
             jsExec.ExecuteScript(overrideDocReady);
