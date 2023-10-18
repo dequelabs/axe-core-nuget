@@ -90,6 +90,11 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             WebDriver.Navigate().GoToUrl(FixtureUrl(resourceFilename));
         }
 
+        protected void GoToAxeFixture(string resourceFilename)
+        {
+            WebDriver.Navigate().GoToUrl("http://localhost:8080/" + resourceFilename);
+        }
+
         protected void GoToUrl(string url)
         {
             WebDriver.Navigate().GoToUrl(url);
@@ -121,5 +126,16 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             return u;
         }
 
+        public void AssertTargetEquals(string[] expected, object target)
+        {
+            if (target is Newtonsoft.Json.Linq.JArray list) {
+                Assert.AreEqual(expected.Length, list.Count);
+                for (int i = 0; i < expected.Length; i++) {
+                    Assert.AreEqual(expected[i], list[i].ToString(), "Target differs");
+                }
+            } else {
+                Assert.Fail("Target is not a list");
+            }
+        }
     }
 }

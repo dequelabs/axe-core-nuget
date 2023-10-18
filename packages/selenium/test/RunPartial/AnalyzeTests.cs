@@ -1,4 +1,5 @@
 using System;
+using OpenQA.Selenium;
 using NUnit.Framework;
 
 namespace Deque.AxeCore.Selenium.Test.RunPartial
@@ -19,6 +20,56 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             Assert.IsNotNull(res.Incomplete);
             Assert.IsNotNull(res.Passes);
             Assert.IsNotNull(res.Violations);
+        }
+
+        [Test]
+        [TestCase("Chrome")]
+        [TestCase("Firefox")]
+        public void shouldWorkWithUnloadedIframe(string browser)
+        {
+            InitDriver(browser);
+            GoToAxeFixture("lazy-loaded-iframe.html");
+
+            var res = new AxeBuilder(WebDriver).WithRules("label", "frame-tested").Analyze();
+
+            Assert.IsNotNull(res);
+            Assert.AreNotEqual("Error", WebDriver.Title);
+            Assert.Greater(res.Incomplete.Length, 0);
+            Assert.AreEqual("frame-tested", res.Incomplete[0].Id);
+            Assert.AreEqual(1, res.Incomplete[0].Nodes.Length);
+            AssertTargetEquals(new [] {"#ifr-lazy", "#lazy-iframe"}, res.Incomplete[0].Nodes[0].Target);
+            Assert.AreEqual("label", res.Violations[0].Id);
+            Assert.AreEqual(1, res.Violations[0].Nodes.Length);
+            AssertTargetEquals(new [] {"#ifr-lazy", "#lazy-baz", "input"}, res.Violations[0].Nodes[0].Target);
+        }
+
+        [Test]
+        [TestCase("Chrome")]
+        [TestCase("Firefox")]
+        public void ShouldRevertTimeout(string browser)
+        {
+            InitDriver(browser);
+            GoToFixture("lazy-loaded-iframe.html");
+
+            var setTO = TimeSpan.FromSeconds(50.0);
+            WebDriver.Manage().Timeouts().PageLoad = setTO;
+            new AxeBuilder(WebDriver).Analyze();
+            Assert.AreEqual(WebDriver.Manage().Timeouts().PageLoad, setTO);
+        }
+
+
+        [Test]
+        [TestCase("Chrome")]
+        [TestCase("Firefox")]
+        public void ShouldFailWhenPageIsNotReady(string browser)
+        {
+            InitDriver(browser);
+            GoToFixture("index.html");
+            var jsExec = (IJavaScriptExecutor) WebDriver;
+            var overrideDocReady = "Object.defineProperty(document, 'readyState', {get() {return 'nope'}})";
+            jsExec.ExecuteScript(overrideDocReady);
+            Assert.Throws(Is.TypeOf<Exception>().And.Message.Contains("not ready"),
+                          () =>  new AxeBuilder(WebDriver).Analyze());
         }
 
         [Test]
