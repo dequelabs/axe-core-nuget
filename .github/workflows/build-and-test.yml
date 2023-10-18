@@ -31,9 +31,6 @@ jobs:
       - name: Install NuGet dependencies
         run: dotnet restore
 
-      - name: Install npm dependencies
-        run: npm ci
-
       - name: Check formatting
         run: dotnet format --verify-no-changes
 
