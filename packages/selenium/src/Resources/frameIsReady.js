@@ -1,1 +1,1 @@
-return document && document.readyState === 'complete'
+return document && (document.readyState === 'complete')
