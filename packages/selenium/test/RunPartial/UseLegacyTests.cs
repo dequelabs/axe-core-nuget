@@ -84,12 +84,14 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
 
         [Test]
         [TestCase("Chrome")]
-        [TestCase("Firefox")]
+        // The cross-orgin test has an iframe that 404s. FireFox is reporting that
+        // frame as `readyState = 'interactive'`. This breaks our "AssertFrameReady"
+        // code.
         public void ShouldBeDisabledAgain(string browser)
         {
             InitDriver(browser);
-            // GoToFixture("cross-origin.html");
-            GoToUrl("http://localhost:8080/cross-origin.html");
+            GoToFixture("cross-origin.html");
+            // GoToUrl("http://localhost:8080/cross-origin.html");
 
 #pragma warning disable CS0618
             var results = new AxeBuilder(WebDriver)
