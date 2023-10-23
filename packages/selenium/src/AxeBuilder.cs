@@ -279,22 +279,26 @@ namespace Deque.AxeCore.Selenium
                 }
 
 
-                var frameStack = new Stack<object>();
-                frameContexts.ForEach(frameContext =>
+                // Don't go any deeper if we are just doing top-level iframe
+                if (runOptions.Iframes != false)
                 {
-                    try
+                    var frameStack = new Stack<object>();
+                    frameContexts.ForEach(frameContext =>
                     {
-                        partialResults.AddRange(RunPartialRecursive(
-                            frameContext,
-                            options,
-                            frameStack
-                        ));
-                    }
-                    catch (WebDriverTimeoutException)
-                    {
-                        _webDriver.SwitchTo().Window(windowHandle);
-                    }
-                });
+                        try
+                        {
+                            partialResults.AddRange(RunPartialRecursive(
+                                frameContext,
+                                options,
+                                frameStack
+                            ));
+                        }
+                        catch (WebDriverTimeoutException)
+                        {
+                            _webDriver.SwitchTo().Window(windowHandle);
+                        }
+                    });
+                }
 
                 // isolate finishRun
                 return IsolatedFinishRun(partialResults.ToArray(), options);
