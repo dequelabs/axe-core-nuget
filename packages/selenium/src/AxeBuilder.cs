@@ -491,8 +491,8 @@ namespace Deque.AxeCore.Selenium
                 {
                     throw new Exception("WD IS NULL????");
                 }
-                return (bool)wd.ExecuteScript("return document.readyState === 'complete'")
-                                           });
+                return (bool)wd.ExecuteScript("return document.readyState === 'complete'");
+            });
             docReady.Wait(TimeSpan.FromSeconds(1));
             bool frameReady = !docReady.IsCompleted || !docReady.Result;
             if (frameReady)
