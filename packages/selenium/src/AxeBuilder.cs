@@ -288,9 +288,10 @@ namespace Deque.AxeCore.Selenium
                             var frame = _webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("shadowSelect.js"), frameSelector);
                             _webDriver.SwitchTo().Frame(frame as IWebElement);
 
+var pr = ;
                             partialResults.AddRange(RunPartialRecursive(options, fContext, frameStack));
                         }
-                        catch (Exception)
+                        catch
                         {
                             partialResults.Add(null);
                         }
@@ -315,6 +316,7 @@ namespace Deque.AxeCore.Selenium
                                                         Stack<object> frameStack
                                                         )
         {
+            var serializedContext = JsonConvert.SerializeObject(context.Context, AxeJsonSerializerSettings.Default);
             var windowHandle = _webDriver.CurrentWindowHandle;
             frameStack.Push(context.Selector);
             try // pop stack
@@ -325,7 +327,7 @@ namespace Deque.AxeCore.Selenium
 
                 try
                 {
-                    string partialRes = (string)_webDriver.ExecuteAsyncScript(EmbeddedResourceProvider.ReadEmbeddedFile("runPartial.js"), context, options);
+                    string partialRes = (string)_webDriver.ExecuteAsyncScript(EmbeddedResourceProvider.ReadEmbeddedFile("runPartial.js"), serializedContext, options);
                     // Important to deserialize because we want to reserialize as an
                     // array of object, not an array of strings.
                     partialResults.Add(JsonConvert.DeserializeObject<object>(partialRes));
@@ -342,7 +344,7 @@ namespace Deque.AxeCore.Selenium
                     return partialResults;
                 }
 
-                var frameContexts = GetFrameContexts(JsonConvert.SerializeObject(context.Context, AxeJsonSerializerSettings.Default));
+                var frameContexts = GetFrameContexts(serializedContext);
                 foreach (var fContext in frameContexts)
                 {
                     try
@@ -355,7 +357,7 @@ namespace Deque.AxeCore.Selenium
 
                         _webDriver.SwitchTo().ParentFrame();
                     }
-                    catch (Exception e)
+                    catch
                     {
                         _webDriver.SwitchTo().Window(windowHandle);
                         foreach (var frameSelector in frameStack)
