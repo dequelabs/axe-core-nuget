@@ -27,6 +27,8 @@ namespace Deque.AxeCore.Selenium.Test
         private static Mock<IJavaScriptExecutor> jsExecutorMock = webDriverMock.As<IJavaScriptExecutor>();
         private static Mock<ITargetLocator> targetLocatorMock = new Mock<ITargetLocator>();
         private static Mock<INavigation> navigationMock = new Mock<INavigation>();
+        private static Mock<IOptions> manageMock = new Mock<IOptions>();
+        private static Mock<ITimeouts> timeoutMock = new Mock<ITimeouts>();
 
         private static readonly AxeBuilderOptions stubAxeBuilderOptions = new AxeBuilderOptions
         {
@@ -308,6 +310,12 @@ namespace Deque.AxeCore.Selenium.Test
             webDriverMock
                 .Setup(d => d.Navigate())
                 .Returns(navigationMock.Object);
+            webDriverMock
+                .Setup(d => d.Manage())
+                .Returns(manageMock.Object);
+            manageMock
+                .Setup(d => d.Timeouts())
+                .Returns(timeoutMock.Object);
 
             jsExecutorMock
                 .Setup(js => js.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("runPartialExists.js")))
