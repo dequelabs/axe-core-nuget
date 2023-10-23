@@ -288,7 +288,7 @@ namespace Deque.AxeCore.Selenium
                             var frame = _webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("shadowSelect.js"), frameSelector);
                             _webDriver.SwitchTo().Frame(frame as IWebElement);
 
-var pr = ;
+                            var pr = ;
                             partialResults.AddRange(RunPartialRecursive(options, fContext, frameStack));
                         }
                         catch
@@ -486,28 +486,9 @@ var pr = ;
 
         private void AssertFrameReady()
         {
-            var wd = _webDriver;
-            Task<bool> docReady = Task.Run(() =>
-            {
-                if (wd == null)
-                {
-                    throw new Exception("WD IS NULL????");
-                }
-                var res = wd.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("frameIsReady.js"));
-                if (res == null)
-                {
-                    throw new Exception("res is null");
-                }
-                var bres = res as bool?;
-                if (bres == null)
-                {
-                    throw new Exception("cast was bad");
-                }
-                return (bool)res;
-            });
+            Task<bool> docReady = Task.Run(() => (bool)_webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("frameIsReady.js")));
             docReady.Wait(TimeSpan.FromSeconds(1));
             bool frameReady = docReady.IsCompleted && docReady.Result;
-            // var frameReady = (bool)_webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("frameIsReady.js"));
             if (!frameReady)
             {
                 throw new Exception("Page/frame is not ready");
