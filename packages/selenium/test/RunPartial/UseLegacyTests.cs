@@ -88,7 +88,8 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         public void ShouldBeDisabledAgain(string browser)
         {
             InitDriver(browser);
-            GoToFixture("cross-origin.html");
+            // GoToFixture("cross-origin.html");
+            GoToUrl("http://localhost:8080/cross-origin.html");
 
 #pragma warning disable CS0618
             var results = new AxeBuilder(WebDriver)
