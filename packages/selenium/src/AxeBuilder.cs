@@ -491,7 +491,7 @@ namespace Deque.AxeCore.Selenium
                 {
                     throw new Exception("WD IS NULL????");
                 }
-                var res = wd.ExecuteScript("return document.readyState === 'complete'");
+                var res = wd.ExecuteScript("return true");
                 if (res == null)
                 {
                     throw new Exception("res is null");
