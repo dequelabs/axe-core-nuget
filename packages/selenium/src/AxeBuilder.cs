@@ -491,7 +491,17 @@ namespace Deque.AxeCore.Selenium
                 {
                     throw new Exception("WD IS NULL????");
                 }
-                return (bool)wd.ExecuteScript("return document.readyState === 'complete'");
+                val res = wd.ExecuteScript("return document.readyState === 'complete'");
+                if (res == null)
+                {
+                    throw new Exception("res is null");
+                }
+                val bres = res as bool;
+                if (bres == null)
+                {
+                    throw new Exception("cast was bad");
+                }
+                return (bool)res;
             });
             docReady.Wait(TimeSpan.FromSeconds(1));
             bool frameReady = !docReady.IsCompleted || !docReady.Result;
