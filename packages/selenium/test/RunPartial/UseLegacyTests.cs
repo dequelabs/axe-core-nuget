@@ -91,7 +91,6 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         {
             InitDriver(browser);
             GoToFixture("cross-origin.html");
-            // GoToUrl("http://localhost:8080/cross-origin.html");
 
 #pragma warning disable CS0618
             var results = new AxeBuilder(WebDriver)
