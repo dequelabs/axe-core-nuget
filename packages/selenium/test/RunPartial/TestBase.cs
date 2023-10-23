@@ -123,18 +123,11 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
 
         public void AssertTargetEquals(string[] expected, AxeSelector target)
         {
-            // if (target is Newtonsoft.Json.Linq.JArray list)\
-            // {
-            //     Assert.That(list.Count, Is.EqualTo(expected.Length));
-            //     for (int i = 0; i < expected.Length; i++)\
-            //     {
-            //         Assert.That(list[i].ToString(), Is.EqualTo(expected[i]), "Target differs");
-            //     }
-            // }\
-            // else\
-            // {
-            //     Assert.Fail("Target is not a list");
-            // }
+            Assert.That(target.FrameShadowSelectors.Count, Is.EqualTo(expected.Length));
+            for (int i = 0; i < expected.Length; i++)
+            {
+                Assert.That(target.FrameShadowSelectors[i][0].ToString(), Is.EqualTo(expected[i]), "Target differs");
+            }
         }
     }
 }

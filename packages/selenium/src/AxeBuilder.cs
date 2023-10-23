@@ -273,7 +273,7 @@ namespace Deque.AxeCore.Selenium
                 }
                 catch (Exception e)
                 {
-                    Trace.TraceWarning($"Error executing runPartial. Error message: {e.ToString()}");
+                    Console.WriteLine($"Error executing runPartial. Error message: {e.ToString()}");
                     throw e;
                 }
 
@@ -320,12 +320,12 @@ namespace Deque.AxeCore.Selenium
             try
             {
                 // get the proper selector the frame and switch to it
-                var selector = _webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("shadowSelect.js"), context.Selector);
+                var selector = _webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("shadowSelect.js"), JsonConvert.SerializeObject(context.Selector, AxeJsonSerializerSettings.Default));
                 _webDriver.SwitchTo().Frame(selector as IWebElement);
             }
             catch (Exception ex)
             {
-                Trace.TraceWarning($"Unable to switch to iframe. Error message: {ex.ToString()}");
+                Console.WriteLine($"Unable to switch to iframe. Error message: {ex.ToString()}");
                 _webDriver.SwitchTo().ParentFrame();
 
                 partialResults.Add(null);
@@ -346,7 +346,7 @@ namespace Deque.AxeCore.Selenium
                 }
                 catch (Exception e)
                 {
-                    Trace.TraceWarning($"Error executing runPartial. Error message: {e.ToString()}");
+                    Console.WriteLine($"Error executing runPartial. Error message: {e.ToString()}");
                     _webDriver.SwitchTo().ParentFrame();
 
                     partialResults.Add(null);
@@ -354,7 +354,7 @@ namespace Deque.AxeCore.Selenium
                     return partialResults;
                 }
 
-                var frameContexts = GetFrameContexts(context.Context);
+                var frameContexts = GetFrameContexts(serializedContext);
 
                 frameContexts.ForEach(fContext =>
                 {
@@ -365,10 +365,10 @@ namespace Deque.AxeCore.Selenium
                             frameStack
                         ));
                     } catch (WebDriverTimeoutException) {
-                        Trace.TraceWarning("RunPartial for sub-frame threw. Switching to parent.");
+                        Console.WriteLine("RunPartial for sub-frame threw. Switching to parent.");
                         _webDriver.SwitchTo().Window(windowHandle);
                         foreach (var frameSelector in frameStack) {
-                            var selector = _webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("shadowSelect.js"), frameSelector);
+                            var selector = _webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("shadowSelect.js"), JsonConvert.SerializeObject(frameSelector, AxeJsonSerializerSettings.Default));
                             if (selector is IWebElement el) {
                                 _webDriver.SwitchTo().Frame(el);
                             }
