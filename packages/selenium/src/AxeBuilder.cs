@@ -288,7 +288,6 @@ namespace Deque.AxeCore.Selenium
                             var frame = _webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("shadowSelect.js"), frameSelector);
                             _webDriver.SwitchTo().Frame(frame as IWebElement);
 
-                            var pr = ;
                             partialResults.AddRange(RunPartialRecursive(options, fContext, frameStack));
                         }
                         catch
