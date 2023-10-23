@@ -313,6 +313,9 @@ namespace Deque.AxeCore.Selenium.Test
                 .Setup(js => js.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("runPartialExists.js")))
                 .Returns(true);
             jsExecutorMock
+                .Setup(js => js.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("frameIsReady.js")))
+                .Returns(true);
+            jsExecutorMock
                 .Setup(js => js.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("getFrameContexts.js"), It.IsAny<object>()))
                 .Returns("[]");
 
