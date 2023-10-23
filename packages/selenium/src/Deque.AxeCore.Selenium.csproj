@@ -50,6 +50,7 @@
     <EmbeddedResource Include="Resources\shadowSelect.js" />
     <EmbeddedResource Include="Resources\runPartial.js" />
     <EmbeddedResource Include="Resources\finishRun.js" />
+    <EmbeddedResource Include="Resources\frameIsReady.js" />
   </ItemGroup>
 
 </Project>
