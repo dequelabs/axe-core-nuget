@@ -88,7 +88,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         public void ShouldBeDisabledAgain(string browser)
         {
             InitDriver(browser);
-            GoToUrl("http://localhost:8080/cross-origin.html");
+            GoToFixture("cross-origin.html");
 
 #pragma warning disable CS0618
             var results = new AxeBuilder(WebDriver)
@@ -112,11 +112,10 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             switch (browser.ToUpper())
             {
                 case "CHROME":
-                    return "file://";
+                    return "http://localhost:8080";
 
                 case "FIREFOX":
-                    return null;
-
+                    return "http://localhost:8080";
                 default:
                     throw new ArgumentException($"Remote browser type '{browser}' is not supported");
             }
