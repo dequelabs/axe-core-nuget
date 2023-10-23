@@ -491,12 +491,12 @@ namespace Deque.AxeCore.Selenium
                 {
                     throw new Exception("WD IS NULL????");
                 }
-                val res = wd.ExecuteScript("return document.readyState === 'complete'");
+                var res = wd.ExecuteScript("return document.readyState === 'complete'");
                 if (res == null)
                 {
                     throw new Exception("res is null");
                 }
-                val bres = res as bool;
+                var bres = res as bool;
                 if (bres == null)
                 {
                     throw new Exception("cast was bad");
