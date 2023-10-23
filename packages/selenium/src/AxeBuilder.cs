@@ -496,7 +496,7 @@ namespace Deque.AxeCore.Selenium
                 {
                     throw new Exception("res is null");
                 }
-                var bres = res as bool;
+                var bres = res as bool?;
                 if (bres == null)
                 {
                     throw new Exception("cast was bad");
