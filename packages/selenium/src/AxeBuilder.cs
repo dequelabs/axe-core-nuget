@@ -491,12 +491,12 @@ namespace Deque.AxeCore.Selenium
                 {
                     throw new Exception("WD IS NULL????");
                 }
-                var res = wd.ExecuteScript("return true");
+                var res = wd.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("frameIsReady.js"));
                 if (res == null)
                 {
                     throw new Exception("res is null");
                 }
-                var bres = res as bool?;
+                var bres = res as bool;
                 if (bres == null)
                 {
                     throw new Exception("cast was bad");
