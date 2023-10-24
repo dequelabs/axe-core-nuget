@@ -1,3 +1,3 @@
 using System.Reflection;
 
-[assembly:AssemblyKeyFileAttribute("../../../axe-core.snk")]
+[assembly: AssemblyKeyFileAttribute("../../../axe-core.snk")]
