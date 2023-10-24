@@ -95,7 +95,7 @@ namespace Deque.AxeCore.Selenium.Test
                     chromeOptions.AddArgument("--silent");
                     chromeOptions.AddArgument("--allow-file-access-from-files");
 
-                    ChromeDriverService chromeService = ChromeDriverService.CreateDefaultService(Path.GetDirectoryName(ChromeDriverPath));
+                    ChromeDriverService chromeService = ChromeDriverService.CreateDefaultService();
                     chromeService.SuppressInitialDiagnosticInformation = true;
                     WebDriver = new ChromeDriver(chromeService, chromeOptions);
 
@@ -108,7 +108,7 @@ namespace Deque.AxeCore.Selenium.Test
                         firefoxOptions.AddArgument("-headless");
                     }
 
-                    FirefoxDriverService firefoxService = FirefoxDriverService.CreateDefaultService(Path.GetDirectoryName(FirefoxDriverPath));
+                    FirefoxDriverService firefoxService = FirefoxDriverService.CreateDefaultService();
                     firefoxService.SuppressInitialDiagnosticInformation = true;
                     WebDriver = new FirefoxDriver(firefoxService, firefoxOptions);
                     break;
