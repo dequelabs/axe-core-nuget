@@ -2,6 +2,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 
+
 namespace Deque.AxeCore.Commons
 {
     /// <summary>
@@ -20,13 +21,13 @@ namespace Deque.AxeCore.Commons
         public AxeResultItem[] Passes { get; }
 
         /// <summary>
-        /// These results indicate which rules did not run because no matching content was found on the page. 
+        /// These results indicate which rules did not run because no matching content was found on the page.
         /// For example, with no video, those rules won't run.
         /// </summary>
         public AxeResultItem[] Inapplicable { get; }
 
         /// <summary>
-        /// These results were aborted and require further testing. 
+        /// These results were aborted and require further testing.
         /// This can happen either because of technical restrictions to what the rule can test, or because a javascript error occurred.
         /// </summary>
         public AxeResultItem[] Incomplete { get; }
