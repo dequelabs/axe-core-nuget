@@ -11,6 +11,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
+using WebDriverManager;
+using WebDriverManager.DriverConfigs;
+using WebDriverManager.DriverConfigs.Impl;
 using Deque.AxeCore.Commons;
 
 namespace Deque.AxeCore.Selenium.Test

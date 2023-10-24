@@ -1,5 +1,3 @@
-using System.Reflection;
 using System.Runtime.CompilerServices;
 
-[assembly:AssemblyKeyFileAttribute("axe-core-selenium.snk")]
-[assembly:InternalsVisibleTo("Deque.AxeCore.Selenium.Test, PublicKey=0024000004800000940000000602000000240000525341310004000001000100517ee72760a7b45fef705d0a32cdb944a8fdf92f2f04de3435c57d376480997ecadd698282ff94ad6bd0eea5154213bd0356825d1d3313dda2a9fd342d0a278054093b2433a577829c6aa9f5fc6199275014651aa71630b01004e1eaef93ff824c58634519f4a9855b1b8d80a95c0dd70644bfbeb8e7574bbbf03e8ea1370dad")]
+[assembly: InternalsVisibleTo("Deque.AxeCore.Selenium.Test")]

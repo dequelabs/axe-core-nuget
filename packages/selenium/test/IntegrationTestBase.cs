@@ -8,6 +8,9 @@ using System.Collections.Concurrent;
 using System.IO;
 using System.Reflection;
 using System.Threading;
+using WebDriverManager;
+using WebDriverManager.DriverConfigs;
+using WebDriverManager.DriverConfigs.Impl;
 
 // Setup parallelization
 [assembly: Parallelizable(ParallelScope.All)]
@@ -82,6 +85,8 @@ namespace Deque.AxeCore.Selenium.Test
             switch (browser.ToUpper())
             {
                 case "CHROME":
+                    EnsureWebdriverPathInitialized(ref ChromeDriverPath, "CHROMEWEBDRIVER", "chromedriver", new ChromeConfig());
+
                     ChromeOptions chromeOptions = new ChromeOptions
                     {
                         UnhandledPromptBehavior = UnhandledPromptBehavior.Accept,
@@ -95,20 +100,22 @@ namespace Deque.AxeCore.Selenium.Test
                     chromeOptions.AddArgument("--silent");
                     chromeOptions.AddArgument("--allow-file-access-from-files");
 
-                    ChromeDriverService chromeService = ChromeDriverService.CreateDefaultService();
+                    ChromeDriverService chromeService = ChromeDriverService.CreateDefaultService(Path.GetDirectoryName(ChromeDriverPath));
                     chromeService.SuppressInitialDiagnosticInformation = true;
                     WebDriver = new ChromeDriver(chromeService, chromeOptions);
 
                     break;
 
                 case "FIREFOX":
+                    EnsureWebdriverPathInitialized(ref FirefoxDriverPath, "GECKOWEBDRIVER", "geckodriver", new FirefoxConfig());
+
                     FirefoxOptions firefoxOptions = new FirefoxOptions();
                     if (headless)
                     {
                         firefoxOptions.AddArgument("-headless");
                     }
 
-                    FirefoxDriverService firefoxService = FirefoxDriverService.CreateDefaultService();
+                    FirefoxDriverService firefoxService = FirefoxDriverService.CreateDefaultService(Path.GetDirectoryName(FirefoxDriverPath));
                     firefoxService.SuppressInitialDiagnosticInformation = true;
                     WebDriver = new FirefoxDriver(firefoxService, firefoxOptions);
                     break;
@@ -121,6 +128,22 @@ namespace Deque.AxeCore.Selenium.Test
             Wait = new WebDriverWait(WebDriver, TimeSpan.FromSeconds(20));
             WebDriver.Manage().Timeouts().AsynchronousJavaScript = TimeSpan.FromSeconds(20);
             WebDriver.Manage().Window.Maximize();
+        }
+
+        protected static void EnsureWebdriverPathInitialized(ref string driverPath, string dirEnvVar, string binaryName, IDriverConfig driverManagerConfig)
+        {
+            LazyInitializer.EnsureInitialized(ref driverPath, () =>
+            {
+                var dirFromEnv = Environment.GetEnvironmentVariable(dirEnvVar);
+                if (dirFromEnv != null)
+                {
+                    return $"{dirFromEnv}/${binaryName}";
+                }
+                else
+                {
+                    return new DriverManager().SetUpDriver(driverManagerConfig);
+                }
+            });
         }
 
         protected static string GetFullyQualifiedTestName()
