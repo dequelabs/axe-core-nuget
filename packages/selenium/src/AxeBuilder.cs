@@ -350,14 +350,16 @@ namespace Deque.AxeCore.Selenium
             var serializedPartials = JsonConvert.SerializeObject(partialResults, AxeJsonSerializerSettings.Default);
             int sizeLimit = 10_000_000;
 
-            while (!string.IsNullOrEmpty(serializedPartials)) {
-              int chunkSize = sizeLimit;
-              if (chunkSize > serializedPartials.Length) {
-                chunkSize = serializedPartials.Length;
-              }
-              String chunk = serializedPartials.Substring(0, chunkSize);
-              serializedPartials = serializedPartials.Substring(chunkSize);
-              _webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("storeChunk.js"), chunk);
+            while (!string.IsNullOrEmpty(serializedPartials))
+            {
+                int chunkSize = sizeLimit;
+                if (chunkSize > serializedPartials.Length)
+                {
+                    chunkSize = serializedPartials.Length;
+                }
+                String chunk = serializedPartials.Substring(0, chunkSize);
+                serializedPartials = serializedPartials.Substring(chunkSize);
+                _webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("storeChunk.js"), chunk);
             }
             // grab result ...
             var result = _webDriver.ExecuteAsyncScript(EmbeddedResourceProvider.ReadEmbeddedFile("finishRun.js"), options);
