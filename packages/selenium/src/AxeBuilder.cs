@@ -515,7 +515,7 @@ namespace Deque.AxeCore.Selenium
         private void AssertFrameReady()
         {
             Task<bool> docReady = Task.Run(() => (bool)_webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("frameIsReady.js")));
-            docReady.Wait(TimeSpan.FromSeconds(1));
+            docReady.Wait(TimeSpan.FromSeconds(2));
             bool frameReady = docReady.IsCompleted && docReady.Result;
             if (!frameReady)
             {
