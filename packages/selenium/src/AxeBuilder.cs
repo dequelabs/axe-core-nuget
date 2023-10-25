@@ -3,7 +3,9 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using OpenQA.Selenium;
 using System;
+using System.Diagnostics;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -254,75 +256,157 @@ namespace Deque.AxeCore.Selenium
 
         private JObject AnalyzeAxeRunPartial(object rawContextArg)
         {
-            string rawOptionsArg = SerializedRunOptions();
-            var partialResults = RunPartialRecursive(rawOptionsArg, rawContextArg, true);
-            return IsolatedFinishRun(partialResults.ToArray(), rawOptionsArg);
-        }
+            string options = SerializedRunOptions();
 
-        private List<object> RunPartialRecursive(
-                                                        object options,
-                                                        object context,
-                                                        bool isTopLevel
-                                                        )
-        {
-            if (!isTopLevel)
-            {
-                ConfigureAxe();
-            }
-
-            var partialResults = new List<object>();
-
+            var prevTimeout = _webDriver.Manage().Timeouts().PageLoad;
+            _webDriver.Manage().Timeouts().PageLoad = System.TimeSpan.FromMilliseconds(1000.0);
             try
             {
-                string partialRes = (string)_webDriver.ExecuteAsyncScript(EmbeddedResourceProvider.ReadEmbeddedFile("runPartial.js"), context, options);
-                // Important to deserialize because we want to reserialize as an
-                // array of object, not an array of strings.
-                partialResults.Add(JsonConvert.DeserializeObject<object>(partialRes));
-            }
-            catch
-            {
-                if (isTopLevel)
+                var partialResults = new List<object>();
+
+                var frameContexts = GetFrameContexts(rawContextArg);
+
+                try
                 {
+                    var topResultString = (string)_webDriver.ExecuteAsyncScript(EmbeddedResourceProvider.ReadEmbeddedFile("runPartial.js"), rawContextArg, options);
+                    // Important to deserialize because we want to reserialize as an
+                    // array of object, not an array of strings.
+                    partialResults.Add(JsonConvert.DeserializeObject<object>(topResultString));
+                }
+                catch (Exception e)
+                {
+                    Trace.TraceWarning($"Error executing runPartial. Error message: {e.ToString()}");
                     throw;
                 }
-                else
-                {
-                    partialResults.Add(null);
-                    return partialResults;
-                }
-            }
 
+
+                partialResults.AddRange(AnalyzeAxeRunPartialSubFrames(frameContexts, options));
+
+                // isolate finishRun
+                return IsolatedFinishRun(partialResults.ToArray(), options);
+            }
+            finally
+            {
+                _webDriver.Manage().Timeouts().PageLoad = prevTimeout;
+            }
+        }
+
+        private List<object> AnalyzeAxeRunPartialSubFrames(List<AxeFrameContext> frameContexts, string options)
+        {
+            var partialResults = new List<object>();
             // Don't go any deeper if we are just doing top-level iframe
             if (runOptions.Iframes == false)
             {
                 return partialResults;
             }
 
-            var frameContexts = GetFrameContexts(context);
-            foreach (var fContext in frameContexts)
+            var windowHandle = _webDriver.CurrentWindowHandle;
+            var frameStack = new Stack<object>();
+            frameContexts.ForEach(frameContext =>
             {
                 try
                 {
-                    object frameContext = JsonConvert.SerializeObject(fContext.Context, AxeJsonSerializerSettings.Default);
-                    object frameSelector = JsonConvert.SerializeObject(fContext.Selector, AxeJsonSerializerSettings.Default);
-                    var frame = _webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("shadowSelect.js"), frameSelector);
-                    _webDriver.SwitchTo().Frame(frame as IWebElement);
-
-                    partialResults.AddRange(RunPartialRecursive(options, frameContext, false));
+                    partialResults.AddRange(RunPartialRecursive(
+                        frameContext,
+                        options,
+                        frameStack
+                    ));
                 }
-                catch (Exception)
+                catch (WebDriverTimeoutException)
                 {
+                    _webDriver.SwitchTo().Window(windowHandle);
                     partialResults.Add(null);
                 }
-                finally
-                {
-                    _webDriver.SwitchTo().ParentFrame();
-                }
-            }
-
-
+            });
 
             return partialResults;
+        }
+
+        /// <summary>
+        /// Recurse through frames, depth first, to gather all partial results
+        /// </summary>
+        /// <param name="frameContext"></param>
+        /// <param name="options"></param>
+        /// <param name="frameStack"></param>
+        /// <returns></returns>
+        private List<object> RunPartialRecursive(
+            AxeFrameContext context,
+            object options,
+            Stack<object> frameStack
+        )
+        {
+            var serializedContext = JsonConvert.SerializeObject(context.Context, AxeJsonSerializerSettings.Default);
+            var windowHandle = _webDriver.CurrentWindowHandle;
+
+            var partialResults = new List<object>();
+
+            // get the proper selector the frame and switch to it
+            var selectorForCurrentFrame = _webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("shadowSelect.js"), JsonConvert.SerializeObject(context.Selector, AxeJsonSerializerSettings.Default));
+            _webDriver.SwitchTo().Frame(selectorForCurrentFrame as IWebElement);
+
+
+            try
+            { // finally: pop frameStack
+                frameStack.Push(context.Selector);
+
+                // inject axe and configure it
+                ConfigureAxe();
+
+                try
+                {
+                    string frameResultString = (string)_webDriver.ExecuteAsyncScript(EmbeddedResourceProvider.ReadEmbeddedFile("runPartial.js"), serializedContext, options);
+                    // Important to deserialize because we want to reserialize as an
+                    // array of object, not an array of strings.
+                    partialResults.Add(JsonConvert.DeserializeObject<object>(frameResultString));
+                }
+                catch (Exception e)
+                {
+                    Trace.TraceWarning($"Error executing runPartial. Error message: {e.ToString()}");
+                    _webDriver.SwitchTo().ParentFrame();
+
+                    partialResults.Add(null);
+
+                    return partialResults;
+                }
+
+                var frameContexts = GetFrameContexts(serializedContext);
+
+                frameContexts.ForEach(fContext =>
+                {
+                    try
+                    {
+                        partialResults.AddRange(RunPartialRecursive(
+                            fContext,
+                            options,
+                            frameStack
+                        ));
+                    }
+                    catch (WebDriverTimeoutException)
+                    {
+                        Trace.TraceWarning("RunPartial for sub-frame threw. Switching to parent.");
+                        _webDriver.SwitchTo().Window(windowHandle);
+                        foreach (var frameSelector in frameStack)
+                        {
+                            var selector = _webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("shadowSelect.js"), JsonConvert.SerializeObject(frameSelector, AxeJsonSerializerSettings.Default));
+                            if (selector is IWebElement el)
+                            {
+                                _webDriver.SwitchTo().Frame(el);
+                            }
+                        }
+                        partialResults.Add(null);
+                        return;
+                    }
+                });
+
+                _webDriver.SwitchTo().ParentFrame();
+
+                return partialResults;
+
+            }
+            finally
+            {
+                frameStack.Pop();
+            }
         }
 
         private JObject IsolatedFinishRun(object[] partialResults, object options)
@@ -392,6 +476,7 @@ namespace Deque.AxeCore.Selenium
         /// </summary>
         private void ConfigureAxe()
         {
+            AssertFrameReady();
             _webDriver.ExecuteScript(_AxeBuilderOptions.ScriptProvider.GetScript());
             var runPartialExists = (bool)_webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("runPartialExists.js"));
 
@@ -424,6 +509,17 @@ namespace Deque.AxeCore.Selenium
             if (parameterValue == null)
             {
                 throw new ArgumentNullException(parameterName);
+            }
+        }
+
+        private void AssertFrameReady()
+        {
+            Task<bool> docReady = Task.Run(() => (bool)_webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("frameIsReady.js")));
+            docReady.Wait(TimeSpan.FromSeconds(2));
+            bool frameReady = docReady.IsCompleted && docReady.Result;
+            if (!frameReady)
+            {
+                throw new Exception("Page/frame is not ready");
             }
         }
     }

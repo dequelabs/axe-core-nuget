@@ -24,19 +24,19 @@ jobs:
       - name: Install .NET Core 3.1 and 6
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: | 
+          dotnet-version: |
             3.1.x
             6.x.x
 
       - name: Install NuGet dependencies
         run: dotnet restore
-      
+
       - name: Check formatting
         run: dotnet format --verify-no-changes
 
       - name: Build
         run: dotnet build --no-restore -c ${{ inputs.configuration }} -p:VersionSuffix=${{ inputs.version-suffix }}
-      
+
       - name: Test
         id: test
         run: |
@@ -50,7 +50,7 @@ jobs:
           name: test-results
           path: |
             ${{ github.workspace }}/packages/*/test/TestResults
-      
+
       - name: Prepare packages artifact
         run: |
           mkdir ${{ github.workspace }}/packages-artifact
@@ -62,4 +62,3 @@ jobs:
         with:
           name: packages
           path: ${{ github.workspace }}/packages-artifact
-            

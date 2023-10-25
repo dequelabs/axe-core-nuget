@@ -87,7 +87,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
 
         protected void GoToFixture(string resourceFilename)
         {
-            WebDriver.Navigate().GoToUrl(FixtureUrl(resourceFilename));
+            WebDriver.Navigate().GoToUrl("http://localhost:8080/" + resourceFilename);
         }
 
         protected void GoToUrl(string url)
@@ -121,5 +121,13 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             return u;
         }
 
+        public void AssertTargetEquals(string[] expected, AxeSelector target)
+        {
+            Assert.That(target.FrameShadowSelectors.Count, Is.EqualTo(expected.Length));
+            for (int i = 0; i < expected.Length; i++)
+            {
+                Assert.That(target.FrameShadowSelectors[i][0].ToString(), Is.EqualTo(expected[i]), "Target differs");
+            }
+        }
     }
 }
