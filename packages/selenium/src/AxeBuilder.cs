@@ -257,7 +257,6 @@ namespace Deque.AxeCore.Selenium
         private JObject AnalyzeAxeRunPartial(object rawContextArg)
         {
             string options = SerializedRunOptions();
-            var windowHandle = _webDriver.CurrentWindowHandle;
 
             var prevTimeout = _webDriver.Manage().Timeouts().PageLoad;
             _webDriver.Manage().Timeouts().PageLoad = System.TimeSpan.FromMilliseconds(1000.0);
@@ -279,26 +278,7 @@ namespace Deque.AxeCore.Selenium
                 }
 
 
-                // Don't go any deeper if we are just doing top-level iframe
-                if (runOptions.Iframes != false)
-                {
-                    var frameStack = new Stack<object>();
-                    frameContexts.ForEach(frameContext =>
-                    {
-                        try
-                        {
-                            partialResults.AddRange(RunPartialRecursive(
-                                frameContext,
-                                options,
-                                frameStack
-                            ));
-                        }
-                        catch (WebDriverTimeoutException)
-                        {
-                            _webDriver.SwitchTo().Window(windowHandle);
-                        }
-                    });
-                }
+                partialResults.AddRange(AnalyzeAxeRunPartialSubFrames(frameContexts, options));
 
                 // isolate finishRun
                 return IsolatedFinishRun(partialResults.ToArray(), options);
@@ -307,6 +287,36 @@ namespace Deque.AxeCore.Selenium
             {
                 _webDriver.Manage().Timeouts().PageLoad = prevTimeout;
             }
+        }
+
+        private List<object> AnalyzeAxeRunPartialSubFrames(List<AxeFrameContext> frameContexts, string options)
+        {
+            var partialResults = new List<object>();
+            // Don't go any deeper if we are just doing top-level iframe
+            if (runOptions.Iframes == false)
+            {
+                return partialResults;
+            }
+
+            var windowHandle = _webDriver.CurrentWindowHandle;
+            var frameStack = new Stack<object>();
+            frameContexts.ForEach(frameContext =>
+            {
+                try
+                {
+                    partialResults.AddRange(RunPartialRecursive(
+                        frameContext,
+                        options,
+                        frameStack
+                    ));
+                }
+                catch (WebDriverTimeoutException)
+                {
+                    _webDriver.SwitchTo().Window(windowHandle);
+                }
+            });
+
+            return partialResults;
         }
 
         /// <summary>
@@ -353,6 +363,8 @@ namespace Deque.AxeCore.Selenium
                 try
                 {
                     string frameResultString = (string)_webDriver.ExecuteAsyncScript(EmbeddedResourceProvider.ReadEmbeddedFile("runPartial.js"), serializedContext, options);
+                    // Important to deserialize because we want to reserialize as an
+                    // array of object, not an array of strings.
                     partialResults.Add(JsonConvert.DeserializeObject<object>(frameResultString));
                 }
                 catch (Exception e)
