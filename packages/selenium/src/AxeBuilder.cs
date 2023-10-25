@@ -269,6 +269,8 @@ namespace Deque.AxeCore.Selenium
                 try
                 {
                     var topResultString = (string)_webDriver.ExecuteAsyncScript(EmbeddedResourceProvider.ReadEmbeddedFile("runPartial.js"), rawContextArg, options);
+                    // Important to deserialize because we want to reserialize as an
+                    // array of object, not an array of strings.
                     partialResults.Add(JsonConvert.DeserializeObject<object>(topResultString));
                 }
                 catch (Exception e)
@@ -313,6 +315,7 @@ namespace Deque.AxeCore.Selenium
                 catch (WebDriverTimeoutException)
                 {
                     _webDriver.SwitchTo().Window(windowHandle);
+                    partialResults.Add(null);
                 }
             });
 
@@ -337,21 +340,10 @@ namespace Deque.AxeCore.Selenium
 
             var partialResults = new List<object>();
 
-            try
-            {
-                // get the proper selector the frame and switch to it
-                var selector = _webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("shadowSelect.js"), JsonConvert.SerializeObject(context.Selector, AxeJsonSerializerSettings.Default));
-                _webDriver.SwitchTo().Frame(selector as IWebElement);
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceWarning($"Unable to switch to iframe. Error message: {ex.ToString()}");
-                _webDriver.SwitchTo().ParentFrame();
+            // get the proper selector the frame and switch to it
+            var selectorForCurrentFrame = _webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("shadowSelect.js"), JsonConvert.SerializeObject(context.Selector, AxeJsonSerializerSettings.Default));
+            _webDriver.SwitchTo().Frame(selectorForCurrentFrame as IWebElement);
 
-                partialResults.Add(null);
-
-                return partialResults;
-            }
 
             try
             { // finally: pop frameStack
