@@ -43,6 +43,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\legacyScan.js" />
+    <EmbeddedResource Include="Resources\storeChunk.js" />
     <EmbeddedResource Include="Resources\branding.js" />
     <EmbeddedResource Include="Resources\allowIframeUnsafe.js" />
     <EmbeddedResource Include="Resources\runPartialExists.js" />

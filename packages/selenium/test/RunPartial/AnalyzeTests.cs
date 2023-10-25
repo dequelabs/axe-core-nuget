@@ -81,5 +81,21 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             Assert.IsNotEmpty(res.TestRunner.Name);
             Assert.IsNotNull(res.ToolOptions);
         }
+
+        [Test]
+        [TestCase("Chrome")]
+        [TestCase("Firefox")]
+        public void ShouldHandleLargeResults(string browser)
+        {
+            InitDriver(browser);
+            GoToFixture("index.html");
+
+
+            var res = new AxeBuilder(WebDriver, CustomSource($"{axeSource}{axeLargePartial}"))
+                .Analyze();
+
+            Assert.That(res.Passes.Length, Is.EqualTo(1));
+            Assert.That(res.Passes[0].Id, Is.EqualTo("duplicate-id"));
+        }
     }
 }

@@ -348,8 +348,19 @@ namespace Deque.AxeCore.Selenium
             ConfigureAxe();
 
             var serializedPartials = JsonConvert.SerializeObject(partialResults, AxeJsonSerializerSettings.Default);
+            int sizeLimit = 10_000_000;
+
+            while (!string.IsNullOrEmpty(serializedPartials)) {
+              int chunkSize = sizeLimit;
+              if (chunkSize > serializedPartials.Length) {
+                chunkSize = serializedPartials.Length;
+              }
+              String chunk = serializedPartials.Substring(0, chunkSize);
+              serializedPartials = serializedPartials.Substring(chunkSize);
+              _webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("storeChunk.js"), chunk);
+            }
             // grab result ...
-            var result = _webDriver.ExecuteAsyncScript(EmbeddedResourceProvider.ReadEmbeddedFile("finishRun.js"), serializedPartials, options);
+            var result = _webDriver.ExecuteAsyncScript(EmbeddedResourceProvider.ReadEmbeddedFile("finishRun.js"), options);
 
             // ... close the new window and go back
             _webDriver.Close();
