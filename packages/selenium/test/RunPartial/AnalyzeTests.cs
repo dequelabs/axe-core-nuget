@@ -82,7 +82,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             Assert.IsNotNull(res.ToolOptions);
         }
 
-        [Test]
+        [Test, Timeout(60000)]
         [TestCase("Chrome")]
         [TestCase("Firefox")]
         public void ShouldHandleLargeResults(string browser)
