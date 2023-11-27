@@ -7,6 +7,7 @@ on:
 jobs:
   create_sync_pull_request:
     runs-on: ubuntu-latest
+    timeout-minutes: 2
     permissions:
       pull-requests: write
     if: github.event.pull_request.merged == 'true'
