@@ -282,17 +282,18 @@ namespace Deque.AxeCore.Playwright.Test
         }
 
         [Test]
-        public async Task RunAxe_ReadmeExample() {
+        public async Task RunAxe_ReadmeExample()
+        {
             AxeResult axeResults = await Page.RunAxe();
 
             Console.WriteLine($"Axe ran against {axeResults.Url} on {axeResults.Timestamp}.");
 
             Console.WriteLine($"Rules that failed:");
-            foreach(var violation in axeResults.Violations)
+            foreach (var violation in axeResults.Violations)
             {
                 Console.WriteLine($"Rule Id: {violation.Id} Impact: {violation.Impact} HelpUrl: {violation.HelpUrl}.");
 
-                foreach(var node in violation.Nodes)
+                foreach (var node in violation.Nodes)
                 {
                     Console.WriteLine($"\tViolation found at: {node.Target}");
                     Console.WriteLine($"\t...with HTML: {node.Html}");
@@ -300,26 +301,27 @@ namespace Deque.AxeCore.Playwright.Test
             }
 
             Console.WriteLine($"Rules that passed successfully:");
-            foreach(var pass in axeResults.Passes)
+            foreach (var pass in axeResults.Passes)
             {
                 Console.WriteLine($"Rule Id: {pass.Id} Impact: {pass.Impact} HelpUrl: {pass.HelpUrl}.");
             }
 
             Console.WriteLine($"Rules that did not fully run:");
-            foreach(var incomplete in axeResults.Incomplete)
+            foreach (var incomplete in axeResults.Incomplete)
             {
                 Console.WriteLine($"Rule Id: {incomplete.Id}.");
             }
 
             Console.WriteLine($"Rules that were not applicable:");
-            foreach(var inapplicable in axeResults.Inapplicable)
+            foreach (var inapplicable in axeResults.Inapplicable)
             {
                 Console.WriteLine($"Rule Id: {inapplicable.Id}.");
             }
         }
 
         [Test]
-        public async Task AxeRunOptions_ReadmeExample() {
+        public async Task AxeRunOptions_ReadmeExample()
+        {
             AxeRunOptions options = new AxeRunOptions()
             {
                 // Run only tags that are wcag2aa.
@@ -355,7 +357,8 @@ namespace Deque.AxeCore.Playwright.Test
         }
 
         [Test]
-        public async Task AxeRunContext_ReadmeExample() {
+        public async Task AxeRunContext_ReadmeExample()
+        {
             await NavigateToPage("selector.html");
 
             AxeRunContext runContext = new AxeRunContext()
