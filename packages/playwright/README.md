@@ -119,7 +119,7 @@ foreach(var inapplicable in axeResults.Inapplicable)
 
 `RunAxe` is supported on both Playwright `Page`s and Playwright `Locator`s. `Locator`s are the easiest way to run axe against only part of a page:
 
-``` cs
+```cs
 ILocator locator = page.Locator("text=Sign In");
 
 AxeResult axeResults = await locator.RunAxe();
@@ -127,7 +127,7 @@ AxeResult axeResults = await locator.RunAxe();
 
 Alternately, when used on a `Page`, `RunAxe` supports an `AxeRunContext` parameter which supports more complex rules for deciding which parts of a page to scan (or exclude from a scan). This corresponds to the [axe.run Context parameter](https://www.deque.com/axe/core-documentation/api-documentation/#context-parameter):
 
-``` cs
+```cs
 AxeRunContext runContext = new AxeRunContext()
 {
     // Only run on this #my-id.
@@ -232,24 +232,24 @@ In a move to standardize, we migrated this package away from Playwright specific
 1. `AxeRelatedNode` has been replaced with `AxeResultRelatedNode`. With this type, the Targets property is changed from a `IList<string>` to a `List<AxeResultTarget>`; users should expect to modify usages of the Targets property to include a `.ToString()` method call.
 1. `AxeRunSerialContext` has been replaced by `AxeRunContext` and `AxeSelector` types. Here are some examples of how to use the new types:
  
-        ```cs
-        // Finding a single element using the Playwright Locator API.
-        ILocator locator = page.GetByRole("menu").RunAxe();
-        
-        // Iincluding/excluding elements in the main frame.
-        new AxeRunContext()
-            {
-                Include = new List<AxeSelector> { new AxeSelector("#foo") },
-                Exclude = new List<AxeSelector> {},
-            };
+```cs
+// Finding a single element using the Playwright Locator API.
+ILocator locator = page.GetByRole("menu").RunAxe();
 
-        // Including/excluding an element in a child frame.
-        new AxeRunContext()
-            {
-                Include = new List<AxeSelector> { new AxeSelector("#element-in-child-frame", new List<string> { "#iframe-in-main-frame" })},
-                Exclude = new List<AxeSelector> {},
-            };
-        ```
+// Iincluding/excluding elements in the main frame.
+new AxeRunContext()
+    {
+        Include = new List<AxeSelector> { new AxeSelector("#foo") },
+        Exclude = new List<AxeSelector> {},
+    };
+
+// Including/excluding an element in a child frame.
+new AxeRunContext()
+    {
+        Include = new List<AxeSelector> { new AxeSelector("#element-in-child-frame", new List<string> { "#iframe-in-main-frame" })},
+        Exclude = new List<AxeSelector> {},
+    };
+```
 
 ### Type Modifications
 
