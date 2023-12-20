@@ -21,7 +21,7 @@ For reference, see https://playwright.dev/dotnet/docs/browsers
 
 Example usage with Playwright's NUnit integration:
 
-```csharp
+```cs
 using System.Threading.Tasks;
 using NUnit.Framework;
 using Microsoft.Playwright.NUnit;
@@ -42,7 +42,6 @@ class MyPlaywrightTests : PageTest
         Assert.That(axeResults.Violations, Is.Null.Or.Empty);
     }
 }
-
 ```
 
 ## API Reference
@@ -55,21 +54,18 @@ Currently the two supported functions are for rule retrieval and for running.
 This method retrieves metadata about the rules that axe is capable of running.
 
 ```cs
-
 IList<AxeRuleMetadata> axeRules = await page.GetAxeRules();
 foreach(var rule in axeRules)
 {
     Console.WriteLine($"Rule name: {rule.RuleId} Help: {rule.Help} HelpUrl: {rule.HelpUrl}");
     Console.WriteLine($"Tags: {string.Join(", ", rule.Tags)}");
 }
-
 ```
 
 It is also possible to run this only selecting for rules with particular tags.
 Tags are considered in a disjunctive fashion.
 
 ```cs
-
 // Only take rules which are wcag2aa or wcag2a.
 IList<string> tags = new List<string>() { "wcag2aa", "wcag2a"}
 
@@ -79,16 +75,14 @@ foreach(var rule in axeRules)
     Console.WriteLine($"Rule name: {rule.RuleId} Help: {rule.Help} HelpUrl: {rule.HelpUrl}");
     Console.WriteLine($"Tags: {string.Join(", ", rule.Tags)}");
 }
-
 ```
 
 ### RunAxe
 
-This method executes the axe run method, which will run rules against the current state of the page.
+This method executes the [axe.run](https://www.deque.com/axe/core-documentation/api-documentation/#api-name-axerun) API, which will run rules against the current state of the page.
 
 ```cs
-
-AxeResults axeResults = await page.RunAxe();
+AxeResult axeResults = await page.RunAxe();
 
 Console.WriteLine($"Axe ran against {axeResults.Url} on {axeResults.Timestamp}.");
 
@@ -99,12 +93,8 @@ foreach(var violation in axeResults.Violations)
 
     foreach(var node in violation.Nodes)
     {
-        Console.WriteLine($"\tViolation found in Html: {node.Html}.");
-
-        foreach(var target in node.Target)
-        {
-            Console.WriteLine($"\t\t{target}.");
-        }
+        Console.WriteLine($"\tViolation found at: {node.Target}");
+        Console.WriteLine($"\t...with HTML: {node.Html}");
     }
 }
 
@@ -125,84 +115,88 @@ foreach(var inapplicable in axeResults.Inapplicable)
 {
     Console.WriteLine($"Rule Id: {inapplicable.Id}.");
 }
-
 ```
 
-This method can be run on an element via the context parameter.
-This allows the inclusion and exclusion of string selectors.
-When exclude is only specified, include will default to the entire document.
-Currently the node and node lists functionality are not supported.
-
-``` cs
-
-AxeRunContext runContext = new AxeRunSerialContext("#my-id"); // Only run on this id.
-
-runContext = new AxeRunSerialContext(null, "#my-id"); // Run on everything but this id.
-
-runContext = new AxeRunSerialContext("button", "#my-id"); // Run on every button that does not have this id.
-
-runContext = new AxeRunSerialContext(new List<string>()
-{
-    new List<string>()
-    {
-        "#my-frame",
-        "#my-id"
-    }
-}); // Run on the element with my-id Id and which is inside the frame with id my-frame.
-
-AxeResults axeResults = await page.RunAxe(runContext);
-
-```
-
-The run method can also be run on a Playwright Locator.
-This does not support context parameter.
+`RunAxe` is supported on both Playwright `Page`s and Playwright `Locator`s. `Locator`s are the easiest way to run axe against only part of a page:
 
 ``` cs
 ILocator locator = page.Locator("text=Sign In");
 
-AxeResults axeResults = await locator.RunAxe();
+AxeResult axeResults = await locator.RunAxe();
 ```
 
-All these run methods support an AxeRunOptions parameter.
-This is roughly the equivalent of [axe options](https://www.deque.com/axe/core-documentation/api-documentation/#options-parameter) .
+Alternately, when used on a `Page`, `RunAxe` supports an `AxeRunContext` parameter which supports more complex rules for deciding which parts of a page to scan (or exclude from a scan). This corresponds to the [axe.run Context parameter](https://www.deque.com/axe/core-documentation/api-documentation/#context-parameter):
+
+``` cs
+AxeRunContext runContext = new AxeRunContext()
+{
+    // Only run on this #my-id.
+    Include = new List<AxeSelector>() { new AxeSelector("#my-id") }
+};
+
+runContext = new AxeRunContext()
+{
+    // Run on everything except #my-id.
+    Exclude = new List<AxeSelector>() { new AxeSelector("#my-id") }
+};
+
+runContext = new AxeRunContext()
+{
+    // Run on every button except #excluded-id.
+    Include = new List<AxeSelector>() { new AxeSelector("button") },
+    Exclude = new List<AxeSelector>() { new AxeSelector("#my-id") }
+};
+
+runContext = new AxeRunContext()
+{
+    // Run on everything, except for #my-id within the iframe #my-frame.
+    Exclude = new List<AxeSelector>()
+    {
+        new AxeSelector("#my-id", new List<string>() { "#my-frame" })
+    }
+};
+
+AxeResult axeResults = await page.RunAxe(runContext);
+```
+
+All `RunAxe` methods also support an `AxeRunOptions`` parameter.
+This corresponds to the [axe.run Options parameter](https://www.deque.com/axe/core-documentation/api-documentation/#options-parameter).
 
 ```cs
-
-AxeRunOptions options = new AxeRunOptions(
+AxeRunOptions options = new AxeRunOptions()
+{
     // Run only tags that are wcag2aa.
-    runOnly: new AxeRunOnly(AxeRunOnlyType.Tag, new List<string> { "wcag2aa" }),
+    RunOnly = new RunOnlyOptions { Type = "tag", Values = new List<string> { "wcag2aa" } },
 
     // Specify rules.
-    rules: new Dictionary<string, AxeRuleObjectValue>()
+    Rules = new Dictionary<string, RuleOptions>()
     {
         // Don't run color-contrast.
-        {"color-contrast", new AxeRuleObjectValue(false)}
+        { "color-contrast", new RuleOptions() { Enabled = false } }
     },
 
     // Limit result types to Violations.
-    resultTypes: new List<AxeResultGroup>()
+    ResultTypes = new HashSet<ResultType>()
     {
-        AxeResultGroup.Violations
+        ResultType.Violations
     },
 
     // Don't return css selectors in results.
-    selectors: false,
+    Selectors = false,
 
     // Return CSS selector for elements, with all the element's ancestors.
-    ancestry: true,
+    Ancestry = true,
 
     // Don't return xpath selectors for elements.
-    xpath: false,
+    XPath = false,
 
     // Don't run axe on iframes inside the document.
-    iframes: false
-);
+    Iframes = false
+};
 
-AxeResults axeResults = await page.RunAxe(options);
+AxeResult axeResults = await page.RunAxe(options);
 axeResults = await page.RunAxe(context, options);
 axeResults = await locator.RunAxe(options);
-
-
 ```
 
 ### `RunAxeLegacy`
@@ -214,7 +208,7 @@ With legacy mode turned on, axe will fall back to its test solution prior to the
 **Important**: Use of `.RunAxeLegacy()` is a last resort. If you find there is no other solution, please [report this as an issue](https://github.com/dequelabs/axe-core-nuget/issues/). It will be removed in a future release.
 
 ```csharp
-AxeResults axeResults = await page.RunAxeLegacy();
+AxeResult axeResults = await page.RunAxeLegacy();
 ```
 
 ## Migrating from `Playwright.Axe` ([PlaywrightAxeDotnet](https://github.com/IsaacWalker/PlaywrightAxeDotnet))
@@ -226,30 +220,31 @@ This project acts as a drop-in replacement for most of the functionality from `P
 1. Update all `using Playwright.Axe;` statements in your tests to `using Deque.AxeCore.Playwright;` and/or `using Deque.AxeCore.Commons;`
 
 In a move to standardize, we migrated this package away from Playwright specific typings, instead opting to use the typings from the `Deque.AxeCore.Commons` package instead. The result is several minor breaking changes that may require updates to your code:
+
 ### Replacements/Renamings
+
 1. `AxeResults` has now been renamed to `AxeResult`; the previously used `AxeResult` for this package will now be `AxeResultItem`.
 1. `AxeNodeResult` has been replaced with `AxeResultNode`
 1. `AxeCheckResult` has been replaced with `AxeResultCheck`
-1. `AxeRelatedNode` has been replaced with `AxeResultRelatedNode`
 1. `AxeResultGroup` has been replaced with `ResultType`
 1. `AxeRuleObjectValue` has been replaced with `RuleOptions`
 1. `AxeRunOnly` has been replaced with `RunOnlyOptions`
-1. `AxeResultRelatedNode` is now used in lieu of `AxeRelatedNode`. With this type, the Targets property is changed from a `IList<string>` to a `List<AxeResultTarget>`; users should expect to modify usages of the Targets property to include a `.ToString()` method call.
+1. `AxeRelatedNode` has been replaced with `AxeResultRelatedNode`. With this type, the Targets property is changed from a `IList<string>` to a `List<AxeResultTarget>`; users should expect to modify usages of the Targets property to include a `.ToString()` method call.
 1. `AxeRunSerialContext` has been replaced by `AxeRunContext` and `AxeSelector` types. Here are some examples of how to use the new types:
  
-       ```cs
-       //finding a single element using the Playwright Locator API
+        ```cs
+        // Finding a single element using the Playwright Locator API.
         ILocator locator = page.GetByRole("menu").RunAxe();
         
-        //including/excluding elements in the main frame
-       new AxeRunContext()
+        // Iincluding/excluding elements in the main frame.
+        new AxeRunContext()
             {
                 Include = new List<AxeSelector> { new AxeSelector("#foo") },
                 Exclude = new List<AxeSelector> {},
             };
 
-        //including/excluding an element in a child frame
-       new AxeRunContext()
+        // Including/excluding an element in a child frame.
+        new AxeRunContext()
             {
                 Include = new List<AxeSelector> { new AxeSelector("#element-in-child-frame", new List<string> { "#iframe-in-main-frame" })},
                 Exclude = new List<AxeSelector> {},
@@ -257,15 +252,19 @@ In a move to standardize, we migrated this package away from Playwright specific
         ```
 
 ### Type Modifications
+
 1. The Timestamp type in `AxeResult` changed from System.DateTime to System.DateTimeOffset
 1. The url type in `AxeResult` changed from Uri to string
 1. The `OrientationAngle` type in `AxeTestEnvironment` changed from int to double
 1. The `HelpUrl` in `AxeResultItem` changed from Uri to string
+
 ### Removals
+
 1. Removed `AxeEnvironmentData` interface and using the existing environment data info in `Deque.AxeCore.Commons.AxeResult`
 1. Removed `AxeImpactValue` and `AxeRunOnlyType` enums in favor of using `string` in the Commons typings (`AxeResultItem.cs` and `AxeRunOptions.cs`, respectively)
 1. `FailureSummary` was removed from `AxeResultNode` (formerly `AxeNodeResult`)
 1. `ElementRef` and `PerformanceTimer` were removed from `AxeRunOptions`
+1. `AxeRunOptions` and `RunOnlyOptions` now use named object-initializer syntax instead of constructor parameters.
 
 ## Contributing
 

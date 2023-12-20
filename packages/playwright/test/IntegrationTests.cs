@@ -281,6 +281,114 @@ namespace Deque.AxeCore.Playwright.Test
                     includedInTargets == targets.Contains(node.Target.ToString()))));
         }
 
+        [Test]
+        public async Task RunAxe_ReadmeExample() {
+            AxeResult axeResults = await Page.RunAxe();
+
+            Console.WriteLine($"Axe ran against {axeResults.Url} on {axeResults.Timestamp}.");
+
+            Console.WriteLine($"Rules that failed:");
+            foreach(var violation in axeResults.Violations)
+            {
+                Console.WriteLine($"Rule Id: {violation.Id} Impact: {violation.Impact} HelpUrl: {violation.HelpUrl}.");
+
+                foreach(var node in violation.Nodes)
+                {
+                    Console.WriteLine($"\tViolation found at: {node.Target}");
+                    Console.WriteLine($"\t...with HTML: {node.Html}");
+                }
+            }
+
+            Console.WriteLine($"Rules that passed successfully:");
+            foreach(var pass in axeResults.Passes)
+            {
+                Console.WriteLine($"Rule Id: {pass.Id} Impact: {pass.Impact} HelpUrl: {pass.HelpUrl}.");
+            }
+
+            Console.WriteLine($"Rules that did not fully run:");
+            foreach(var incomplete in axeResults.Incomplete)
+            {
+                Console.WriteLine($"Rule Id: {incomplete.Id}.");
+            }
+
+            Console.WriteLine($"Rules that were not applicable:");
+            foreach(var inapplicable in axeResults.Inapplicable)
+            {
+                Console.WriteLine($"Rule Id: {inapplicable.Id}.");
+            }
+        }
+
+        [Test]
+        public async Task AxeRunOptions_ReadmeExample() {
+            AxeRunOptions options = new AxeRunOptions()
+            {
+                // Run only tags that are wcag2aa.
+                RunOnly = new RunOnlyOptions { Type = "tag", Values = new List<string> { "wcag2aa" } },
+
+                // Specify rules.
+                Rules = new Dictionary<string, RuleOptions>()
+                {
+                    // Don't run color-contrast.
+                    { "color-contrast", new RuleOptions() { Enabled = false } }
+                },
+
+                // Limit result types to Violations.
+                ResultTypes = new HashSet<ResultType>()
+                {
+                    ResultType.Violations
+                },
+
+                // Don't return css selectors in results.
+                Selectors = false,
+
+                // Return CSS selector for elements, with all the element's ancestors.
+                Ancestry = true,
+
+                // Don't return xpath selectors for elements.
+                XPath = false,
+
+                // Don't run axe on iframes inside the document.
+                Iframes = false
+            };
+
+            AxeResult axeResults = await Page.RunAxe(options);
+        }
+
+        [Test]
+        public async Task AxeRunContext_ReadmeExample() {
+            await NavigateToPage("selector.html");
+
+            AxeRunContext runContext = new AxeRunContext()
+            {
+                // Only run on this #my-id.
+                Include = new List<AxeSelector>() { new AxeSelector("#my-id") }
+            };
+
+            runContext = new AxeRunContext()
+            {
+                // Run on everything except #my-id.
+                Exclude = new List<AxeSelector>() { new AxeSelector("#my-id") }
+            };
+
+            runContext = new AxeRunContext()
+            {
+                // Run on every button except #excluded-id.
+                Include = new List<AxeSelector>() { new AxeSelector("button") },
+                Exclude = new List<AxeSelector>() { new AxeSelector("#my-id") }
+            };
+
+            runContext = new AxeRunContext()
+            {
+                // Run on everything, except for #my-id within the iframe #my-frame.
+                Exclude = new List<AxeSelector>()
+                {
+                    new AxeSelector("#my-id", new List<string>() { "#my-frame" })
+                }
+            };
+
+            AxeResult axeResults = await Page.RunAxe(runContext);
+        }
+
         static object[] RunAxe_WithContext_Cases = {
             new object[]
             {

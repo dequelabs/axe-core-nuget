@@ -19,7 +19,7 @@ namespace Deque.AxeCore.Playwright
         /// </summary>
         /// <param name="locator">The Playwright Locator</param>
         /// <param name="options">Options for running Axe.</param>
-        /// <returns>The AxeResults</returns>
+        /// <returns>The AxeResult</returns>
         public static async Task<AxeResult> RunAxe(this ILocator locator, AxeRunOptions? options = null)
         {
             IAxeScriptProvider axeScriptProvider = new BundledAxeScriptProvider();
@@ -35,7 +35,7 @@ namespace Deque.AxeCore.Playwright
         /// </summary>
         /// <param name="locator">The Playwright Locator</param>
         /// <param name="options">Options for running Axe.</param>
-        /// <returns>The AxeResults</returns>
+        /// <returns>The AxeResult</returns>
         [Obsolete("Legacy Mode is being removed in the future. Use with caution!")]
         public static async Task<AxeResult> RunAxeLegacy(this ILocator locator, AxeRunOptions? options = null)
         {
