@@ -240,7 +240,7 @@ In a move to standardize, we migrated this package away from Playwright specific
 // Finding a single element using the Playwright Locator API.
 ILocator locator = page.GetByRole("menu").RunAxe();
 
-// Iincluding/excluding elements in the main frame.
+// Including/excluding elements in the main frame.
 new AxeRunContext()
 {
     Include = new List<AxeSelector> { new AxeSelector("#foo") },
