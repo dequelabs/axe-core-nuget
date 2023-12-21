@@ -146,7 +146,7 @@ runContext = new AxeRunContext()
 
 runContext = new AxeRunContext()
 {
-    // Run on every button except #excluded-id.
+    // Run on every button except #my-id.
     Include = new List<AxeSelector>() { new AxeSelector("button") },
     Exclude = new List<AxeSelector>() { new AxeSelector("#my-id") }
 };
