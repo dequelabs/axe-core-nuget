@@ -136,8 +136,12 @@ AxeRunContext runContext = new AxeRunContext()
 
 runContext = new AxeRunContext()
 {
-    // Run on everything except #my-id.
-    Exclude = new List<AxeSelector>() { new AxeSelector("#my-id") }
+    // Run on everything except #my-id and #second-id.
+    Exclude = new List<AxeSelector>()
+    {
+        new AxeSelector("#my-id"),
+        new AxeSelector("#second-id"),
+    }
 };
 
 runContext = new AxeRunContext()
@@ -238,17 +242,17 @@ ILocator locator = page.GetByRole("menu").RunAxe();
 
 // Iincluding/excluding elements in the main frame.
 new AxeRunContext()
-    {
-        Include = new List<AxeSelector> { new AxeSelector("#foo") },
-        Exclude = new List<AxeSelector> {},
-    };
+{
+    Include = new List<AxeSelector> { new AxeSelector("#foo") },
+    Exclude = new List<AxeSelector> {},
+};
 
 // Including/excluding an element in a child frame.
 new AxeRunContext()
-    {
-        Include = new List<AxeSelector> { new AxeSelector("#element-in-child-frame", new List<string> { "#iframe-in-main-frame" })},
-        Exclude = new List<AxeSelector> {},
-    };
+{
+    Include = new List<AxeSelector> { new AxeSelector("#element-in-child-frame", new List<string> { "#iframe-in-main-frame" })},
+    Exclude = new List<AxeSelector> {},
+};
 ```
 
 ### Type Modifications

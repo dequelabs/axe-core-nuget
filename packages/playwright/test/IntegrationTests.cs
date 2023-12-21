@@ -369,8 +369,12 @@ namespace Deque.AxeCore.Playwright.Test
 
             runContext = new AxeRunContext()
             {
-                // Run on everything except #my-id.
-                Exclude = new List<AxeSelector>() { new AxeSelector("#my-id") }
+                // Run on everything except #my-id and #second-id.
+                Exclude = new List<AxeSelector>()
+                {
+                    new AxeSelector("#my-id"),
+                    new AxeSelector("#second-id"),
+                }
             };
 
             runContext = new AxeRunContext()
