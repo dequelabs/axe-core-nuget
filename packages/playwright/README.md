@@ -163,7 +163,7 @@ runContext = new AxeRunContext()
 AxeResult axeResults = await page.RunAxe(runContext);
 ```
 
-All `RunAxe` methods also support an `AxeRunOptions`` parameter.
+All `RunAxe` methods also support an `AxeRunOptions` parameter.
 This corresponds to the [axe.run Options parameter](https://www.deque.com/axe/core-documentation/api-documentation/#options-parameter).
 
 ```cs
