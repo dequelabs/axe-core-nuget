@@ -22,6 +22,7 @@ jobs:
     if: github.repository_owner == 'dequelabs' # don't attempt to publish from forks
     needs: ["publish-nuget"]
     runs-on: ubuntu-latest
+    timeout-minutes: 2
     permissions:
       contents: write # this permission controls release creation
     steps:     

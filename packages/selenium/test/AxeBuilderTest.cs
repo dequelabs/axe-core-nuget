@@ -318,7 +318,6 @@ namespace Deque.AxeCore.Selenium.Test
 
             jsExecutorMock.Setup(js => js.ExecuteAsyncScript(
                 EmbeddedResourceProvider.ReadEmbeddedFile("finishRun.js"),
-                It.IsAny<string>(),
                 It.IsAny<string>())).Returns(testAxeResult);
             webDriverMock.Setup(d => d.SwitchTo()).Returns(targetLocatorMock.Object);
         }

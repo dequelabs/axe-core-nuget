@@ -1,3 +1,30 @@
+## [4.8.1](https://github.com/dequelabs/axe-core-nuget/compare/v4.8.0...v4.8.1) (2024-01-09)
+
+
+### Bug Fixes
+
+* Update axe-core to v4.8.3 ([#147](https://github.com/dequelabs/axe-core-nuget/issues/147)) ([91bade8](https://github.com/dequelabs/axe-core-nuget/commit/91bade81f0af324d63e1abe52d84d0466ea13006))
+* work with extremely large results ([#135](https://github.com/dequelabs/axe-core-nuget/issues/135)) ([74b02ac](https://github.com/dequelabs/axe-core-nuget/commit/74b02ac75c0b906152d9d70eee8f5f33a6bdb66a)), closes [#80](https://github.com/dequelabs/axe-core-nuget/issues/80)
+
+
+
+## [4.8.0](https://github.com/dequelabs/axe-core-nuget/compare/v4.7.2...v4.8.0) (2023-09-27)
+
+
+### Bug Fixes
+
+* **commons:** pin axe-core version to accept patch updates only ([#116](https://github.com/dequelabs/axe-core-nuget/issues/116)) ([0893d02](https://github.com/dequelabs/axe-core-nuget/commit/0893d02ad88a97e7792424c56383e6516ebef50a))
+
+
+### Features
+
+* Update axe-core to v4.8.1 ([#110](https://github.com/dequelabs/axe-core-nuget/issues/110)) ([1eed016](https://github.com/dequelabs/axe-core-nuget/commit/1eed016be84badd1cf39ba7fbc4be6d81ae09280))
+
+
+### Reverts
+
+* Revert "TEST" ([fda79fd](https://github.com/dequelabs/axe-core-nuget/commit/fda79fd7c340830998ef840a8db82ad0adc8bd31))
+
 ## 4.7.2 (2023-08-30)
 
 
@@ -36,8 +63,6 @@
 * **selenium:** remove HTML reporting functionality ([#40](https://github.com/dequelabs/axe-core-nuget/issues/40)) ([259bab8](https://github.com/dequelabs/axe-core-nuget/commit/259bab872c86eabedcf3a04f5bfcf764bf38d00e))
 * update axe-core to v4.7.1 ([#83](https://github.com/dequelabs/axe-core-nuget/issues/83)) ([2d95a97](https://github.com/dequelabs/axe-core-nuget/commit/2d95a97ac62d42a9a0b4617bbaa1c3c92aa3d5e9))
 * upgrade to use axe-core@4.5.0 ([#76](https://github.com/dequelabs/axe-core-nuget/issues/76)) ([c9651f2](https://github.com/dequelabs/axe-core-nuget/commit/c9651f2c2284967c64d2f28e460b5181d0af5c6d))
-
-
 
 # Change Log
 

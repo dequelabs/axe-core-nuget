@@ -19,7 +19,7 @@
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
 
     <!-- Do not update this by-hand; updates are automated via the create-release workflow -->
-    <VersionPrefix>4.7.2</VersionPrefix>
+    <VersionPrefix>4.8.1</VersionPrefix>
     <VersionSuffix>development</VersionSuffix>
   </PropertyGroup>
 
