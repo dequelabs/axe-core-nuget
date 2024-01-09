@@ -1,3 +1,13 @@
+## [4.8.1](https://github.com/dequelabs/axe-core-nuget/compare/v4.8.0...v4.8.1) (2024-01-09)
+
+
+### Bug Fixes
+
+* Update axe-core to v4.8.3 ([#147](https://github.com/dequelabs/axe-core-nuget/issues/147)) ([91bade8](https://github.com/dequelabs/axe-core-nuget/commit/91bade81f0af324d63e1abe52d84d0466ea13006))
+* work with extremely large results ([#135](https://github.com/dequelabs/axe-core-nuget/issues/135)) ([74b02ac](https://github.com/dequelabs/axe-core-nuget/commit/74b02ac75c0b906152d9d70eee8f5f33a6bdb66a)), closes [#80](https://github.com/dequelabs/axe-core-nuget/issues/80)
+
+
+
 ## [4.8.0](https://github.com/dequelabs/axe-core-nuget/compare/v4.7.2...v4.8.0) (2023-09-27)
 
 
