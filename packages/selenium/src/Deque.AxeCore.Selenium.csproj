@@ -19,7 +19,7 @@
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
 
     <!-- Do not update this by-hand; updates are automated via the create-release workflow -->
-    <VersionPrefix>4.8.0</VersionPrefix>
+    <VersionPrefix>4.8.1</VersionPrefix>
     <VersionSuffix>development</VersionSuffix>
   </PropertyGroup>
 
@@ -43,6 +43,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\legacyScan.js" />
+    <EmbeddedResource Include="Resources\storeChunk.js" />
     <EmbeddedResource Include="Resources\branding.js" />
     <EmbeddedResource Include="Resources\allowIframeUnsafe.js" />
     <EmbeddedResource Include="Resources\runPartialExists.js" />

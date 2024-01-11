@@ -24,6 +24,20 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
                 return _axeCrashScript;
             }
         }
+        private string _axeLargePartial = null;
+        protected string axeLargePartial
+        {
+            get
+            {
+                if (_axeLargePartial == null)
+                {
+                    _axeLargePartial = File.ReadAllText(
+                        Path.Combine(TestFileRoot, "fixtures", "axe-large-partial.js")
+                    );
+                }
+                return _axeLargePartial;
+            }
+        }
         private string _axeForceLegacy = null;
         protected string axeForceLegacy
         {
