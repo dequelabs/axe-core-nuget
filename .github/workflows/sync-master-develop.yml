@@ -1,21 +1,19 @@
 name: Sync master/develop branches
+
 on:
-  pull_request:
-    types: [closed]
-    branches: master
+  push:
+    branches:
+      - master
 
 jobs:
   create_sync_pull_request:
     runs-on: ubuntu-latest
-    timeout-minutes: 2
-    permissions:
-      pull-requests: write
-    if: github.event.pull_request.merged == 'true'
+    timeout-minutes: 1
     steps:
       - uses: dequelabs/action-sync-branches@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          pr-title: "chore: merge master into develop"
-          pr-reviewers: AdnoC,michael-siek
+          pr-title: 'chore: merge master into develop'
+          pr-team-reviewers: axe-api-team
           pr-labels: chore
-          pr-template: .github/PULL_REQUEST_TEMPLATE.md
+          pr-body: 'Remember to _merge_ (rather than squash) this PR!'
