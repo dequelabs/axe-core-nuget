@@ -46,3 +46,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CIRCLE_PROJECT_USERNAME: ${{ github.repository_owner }}
           CIRCLE_PROJECT_REPONAME: ${{ github.event.repository.name }}
+          GITHUB_RELEASE_TARGET: master
