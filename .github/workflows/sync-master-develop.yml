@@ -16,4 +16,5 @@ jobs:
           pr-title: 'chore: merge master into develop'
           pr-team-reviewers: axe-api-team
           pr-labels: chore
+          pr-template: '.github/PULL_REQUEST_TEMPLATE.md'
           pr-body: 'Remember to _merge_ (rather than squash) this PR!'
