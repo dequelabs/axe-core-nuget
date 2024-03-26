@@ -1,3 +1,12 @@
+# [4.9.0](https://github.com/dequelabs/axe-core-nuget/compare/v4.8.2...v4.9.0) (2024-03-26)
+
+
+### Features
+
+* Update axe-core to v4.9.0 ([#164](https://github.com/dequelabs/axe-core-nuget/issues/164)) ([6e44c83](https://github.com/dequelabs/axe-core-nuget/commit/6e44c830aa8639ec1063973927fd7fea7720e36f))
+
+
+
 ## [4.8.2](https://github.com/dequelabs/axe-core-nuget/compare/v4.8.1...v4.8.2) (2024-02-08)
 
 
