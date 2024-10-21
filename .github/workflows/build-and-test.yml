@@ -20,7 +20,7 @@ jobs:
     timeout-minutes: 20
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Install .NET Core 3.1 and 6
         uses: actions/setup-dotnet@v1
@@ -44,7 +44,7 @@ jobs:
           dotnet test --no-build -c ${{ inputs.configuration }} -p:VersionSuffix=${{ inputs.version-suffix }} \
             --logger GitHubActions --logger trx --logger html --logger "console;verbosity=minimal"
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         if: ${{ success() || failure() }}
         name: Upload test-results artifact
         with:
@@ -58,7 +58,7 @@ jobs:
           cp ${{ github.workspace }}/packages/*/src/bin/*/*.nupkg ${{ github.workspace }}/packages-artifact
           cp ${{ github.workspace }}/packages/*/src/bin/*/*.snupkg ${{ github.workspace }}/packages-artifact
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         name: Upload packages artifact
         with:
           name: packages
