@@ -1,3 +1,13 @@
+## [4.10.1](https://github.com/dequelabs/axe-core-nuget/compare/v4.10.0...v4.10.1) (2024-11-08)
+
+
+### Bug Fixes
+
+* Update axe-core to v4.10.1 ([#184](https://github.com/dequelabs/axe-core-nuget/issues/184)) ([a8c5758](https://github.com/dequelabs/axe-core-nuget/commit/a8c5758d840b21b9bffbba834f43648fcea4ad51))
+* Update axe-core to v4.10.2 ([#192](https://github.com/dequelabs/axe-core-nuget/issues/192)) ([760c502](https://github.com/dequelabs/axe-core-nuget/commit/760c502ec7d035b8ac9da6b940c3775713b9fd04))
+
+
+
 # [4.10.0](https://github.com/dequelabs/axe-core-nuget/compare/v4.9.1...v4.10.0) (2024-08-07)
 
 
