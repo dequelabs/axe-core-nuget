@@ -16,6 +16,11 @@ updates:
   - dependency-name: FluentAssertions
     versions:
     - ">=6.0.0"
+    # The license for FluentAssertions v8 became paid for commercial use
+  - dependency-name: FluentAssertions
+    versions:
+    - ">=8.0.0"
+  
 - package-ecosystem: npm
   directory: "/Selenium.Axe/Selenium.Axe"
   schedule:

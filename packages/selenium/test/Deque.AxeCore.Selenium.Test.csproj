@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Do not update FluentAssertions to >=8.0.0, as the license became paid for commercial use -->
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
     <PackageReference Include="GitHubActionsTestLogger" Version="2.0.1">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
