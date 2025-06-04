@@ -7,6 +7,8 @@ Automated web accessibility testing with .NET, C#, and Playwright. Wraps the [ax
 
 Compatible with .NET Standard 2.1.
 
+This package does not follow Semantic Versioning (SemVer) but instead uses the major and minor version (but not patch version) of axe-core that the package uses. For example, if the API version is v4.7.2, then the axe-core version used by the package will be v4.7.x. The patch version of this package may include bug fixes and new API features but will not introduce breaking changes.
+
 ## Getting Started
 
 Install via NuGet:
