@@ -6,9 +6,10 @@ updates:
     interval: daily
     time: "11:00"
   open-pull-requests-limit: 10
+  cooldown:
+    default-days: 7
   labels:
   - dependencies
-  commit-message:
   ignore:
     # FluentAssertions v6 dropped support for .NET Framework 4.5, but we want
     # to maintain support for it at least until Microsoft drops official support,
@@ -20,7 +21,7 @@ updates:
   - dependency-name: FluentAssertions
     versions:
     - ">=8.0.0"
-  
+
 - package-ecosystem: npm
   directory: "/Selenium.Axe/Selenium.Axe"
   schedule:
@@ -30,4 +31,5 @@ updates:
   labels:
   - dependencies
   versioning-strategy: increase
-  commit-message:
+  cooldown:
+    default-days: 7
