@@ -32,4 +32,4 @@ updates:
   - dependencies
   versioning-strategy: increase
   cooldown:
-      default-days: 7
+    default-days: 7
