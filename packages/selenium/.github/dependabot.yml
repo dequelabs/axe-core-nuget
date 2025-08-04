@@ -7,7 +7,7 @@ updates:
     time: "11:00"
   open-pull-requests-limit: 10
   cooldown:
-      default-days: 7
+    default-days: 7
   labels:
   - dependencies
   ignore:
