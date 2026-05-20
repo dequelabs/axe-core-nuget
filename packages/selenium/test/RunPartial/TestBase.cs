@@ -70,6 +70,23 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         protected string axeRunPartialThrows { get; set; } =
             ";axe.runPartial = () => { throw new Error(\"No runPartial\")}";
 
+        private static readonly string RepoRoot = FindRepoRoot();
+
+        private static string FindRepoRoot()
+        {
+            var dir = new DirectoryInfo(TestFileRoot);
+            while (dir != null && !File.Exists(Path.Combine(dir.FullName, "Deque.AxeCore.sln")))
+            {
+                dir = dir.Parent;
+            }
+            if (dir == null)
+            {
+                throw new DirectoryNotFoundException(
+                    $"Could not locate Deque.AxeCore.sln walking up from {TestFileRoot}");
+            }
+            return dir.FullName;
+        }
+
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
@@ -77,7 +94,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
 
             dylangConfigPath = FixturePath("dylang-config.json");
 
-            var commonsPath = System.IO.Path.GetFullPath(System.IO.Path.Combine(TestFileRoot, @"../../../../..", "commons", "test"));
+            var commonsPath = Path.Combine(RepoRoot, "packages", "commons", "test");
             TestFixtureServer.Start(commonsPath);
         }
 
@@ -111,8 +128,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
 
         public static string ResourcePath(string filename)
         {
-            var p = Path.GetFullPath(Path.Combine(TestFileRoot, @"../../..", "RunPartial", filename));
-            return p;
+            return Path.Combine(RepoRoot, "packages", "selenium", "test", "RunPartial", filename);
         }
 
         public static string ResourceUrl(string filename)
