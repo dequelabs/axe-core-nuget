@@ -50,7 +50,7 @@ jobs:
         with:
           name: test-results
           path: |
-            ${{ github.workspace }}/packages/*/test/TestResults
+            ${{ github.workspace }}/packages/**/test/TestResults
       
       - name: Prepare packages artifact
         run: |
