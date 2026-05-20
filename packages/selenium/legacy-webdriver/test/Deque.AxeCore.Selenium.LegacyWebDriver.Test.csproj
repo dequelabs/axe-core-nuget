@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <RootNamespace>Deque.AxeCore.Selenium.Test</RootNamespace>
+    <AppConfig>..\..\test\app.config</AppConfig>
 
     <TargetFrameworks>net471;netcoreapp3.1;net6.0</TargetFrameworks>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
