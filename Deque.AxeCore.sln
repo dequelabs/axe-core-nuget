@@ -20,6 +20,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Deque.AxeCore.Playwright", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Deque.AxeCore.Playwright.Test", "packages\playwright\test\Deque.AxeCore.Playwright.Test.csproj", "{8C4FBD5E-384C-4767-9F40-6FECE4A97D1B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Deque.AxeCore.Selenium.LegacyWebDriver", "packages\selenium\legacy-webdriver\Deque.AxeCore.Selenium.LegacyWebDriver.csproj", "{FFD9848A-EA97-482A-97C5-595BB9CF6207}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Deque.AxeCore.Selenium.NewWebDriver", "packages\selenium\new-webdriver\Deque.AxeCore.Selenium.NewWebDriver.csproj", "{103861FC-3F41-4617-B746-41432BC3B2F1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +57,14 @@ Global
 		{8C4FBD5E-384C-4767-9F40-6FECE4A97D1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C4FBD5E-384C-4767-9F40-6FECE4A97D1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8C4FBD5E-384C-4767-9F40-6FECE4A97D1B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFD9848A-EA97-482A-97C5-595BB9CF6207}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFD9848A-EA97-482A-97C5-595BB9CF6207}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFD9848A-EA97-482A-97C5-595BB9CF6207}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFD9848A-EA97-482A-97C5-595BB9CF6207}.Release|Any CPU.Build.0 = Release|Any CPU
+		{103861FC-3F41-4617-B746-41432BC3B2F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{103861FC-3F41-4617-B746-41432BC3B2F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{103861FC-3F41-4617-B746-41432BC3B2F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{103861FC-3F41-4617-B746-41432BC3B2F1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{05A828D4-ED6F-4C8E-8D7C-62B84E3C359E} = {503C1F96-0BAB-457A-AC0F-F8E596F3ADD6}
@@ -61,5 +73,7 @@ Global
 		{7D5DB0A8-263E-40D4-90C8-B86BA672C783} = {7273D75C-DB83-4C12-B48D-7C575A8DEBC7}
 		{5AB8F02B-C656-41A0-A05A-A254EB5D12B0} = {0106102C-9CEF-4DAF-919F-52D3F4D6FF16}
 		{8C4FBD5E-384C-4767-9F40-6FECE4A97D1B} = {0106102C-9CEF-4DAF-919F-52D3F4D6FF16}
+		{FFD9848A-EA97-482A-97C5-595BB9CF6207} = {7273D75C-DB83-4C12-B48D-7C575A8DEBC7}
+		{103861FC-3F41-4617-B746-41432BC3B2F1} = {7273D75C-DB83-4C12-B48D-7C575A8DEBC7}
 	EndGlobalSection
 EndGlobal
