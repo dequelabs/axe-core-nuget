@@ -12,8 +12,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\src\*.cs">
-      <Link>%(Filename)%(Extension)</Link>
+    <Compile Include="..\src\**\*.cs" Exclude="..\src\bin\**\*;..\src\obj\**\*">
+      <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
     </Compile>
   </ItemGroup>
 
