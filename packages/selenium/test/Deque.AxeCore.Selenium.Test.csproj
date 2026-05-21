@@ -39,7 +39,8 @@
     <PackageReference Include="NUnit" Version="3.13.3" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
     <PackageReference Include="NUnit.Analyzers" Version="3.3.0" />
-    <PackageReference Include="Selenium.Support" Version="4.4.0" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
+    <PackageReference Include="Selenium.Support" Version="4.44.0" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
@@ -48,7 +49,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Deque.AxeCore.Selenium.csproj" />
+    <!--
+      The src csproj is now a pack-only shell that bundles both Selenium variants.
+      Reference the NewWebDriver variant directly so the existing integration suite
+      continues to exercise real code against modern Selenium (4.44+). Per-variant
+      integration coverage is out of scope for the dual-Selenium work; unit-test
+      coverage of both variants is provided by the variant test projects.
+    -->
+    <ProjectReference Include="..\new-webdriver\Deque.AxeCore.Selenium.NewWebDriver.csproj" />
   </ItemGroup>
 
   <ItemGroup>
