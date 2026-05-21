@@ -11,7 +11,7 @@ Compatible with .NET Standard 2.0+, .NET Framework 4.7.1+, and .NET Core 2.0+.
 
 This package supports `Selenium.WebDriver` 4.4.0 and newer, including the 4.44.0+ releases that renamed the underlying assembly from `WebDriver.dll` to `Selenium.WebDriver.dll`. The right variant of `Deque.AxeCore.Selenium.dll` is selected automatically at build time based on which `Selenium.WebDriver` your project resolves — no per-consumer configuration required.
 
-> **`packages.config` is not supported.** The auto-selection relies on an MSBuild `.targets` file that NuGet only imports for projects using `PackageReference`. Legacy `.NET Framework` projects still on `packages.config` should migrate to `PackageReference`, or pin `Selenium.WebDriver` to a version `<4.44.0`.
+> **`packages.config` is not supported.** The auto-selection relies on an MSBuild `.targets` file that NuGet only imports for projects using `PackageReference`. Legacy `.NET Framework` projects still on `packages.config` should migrate to `PackageReference`. If you cannot migrate yet, stay on a pre-picker version of `Deque.AxeCore.Selenium` (or another supported approach), rather than pinning `Selenium.WebDriver` alone.
 
 This package does not follow Semantic Versioning (SemVer) but instead uses the major and minor version (but not patch version) of axe-core that the package uses. For example, if the API version is v4.7.2, then the axe-core version used by the package will be v4.7.x. The patch version of this package may include bug fixes and new API features but will not introduce breaking changes.
 
