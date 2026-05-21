@@ -19,10 +19,10 @@
     <ItemGroup>
       <_DequeAxeCoreSeleniumResolvedSeleniumNew
         Include="@(ResolvedCompileFileDefinitions)"
-        Condition=" '%(Filename)' == 'Selenium.WebDriver' " />
+        Condition=" '%(ResolvedCompileFileDefinitions.Filename)' == 'Selenium.WebDriver' " />
       <_DequeAxeCoreSeleniumResolvedSeleniumLegacy
         Include="@(ResolvedCompileFileDefinitions)"
-        Condition=" '%(Filename)' == 'WebDriver' " />
+        Condition=" '%(ResolvedCompileFileDefinitions.Filename)' == 'WebDriver' " />
     </ItemGroup>
 
     <PropertyGroup>
