@@ -1,0 +1,81 @@
+name: Dual Selenium smoke
+
+# Builds throwaway consumer projects against each combination of
+# (Selenium.WebDriver version, consumer TargetFramework) and asserts that the
+# .targets picker shipped in Deque.AxeCore.Selenium.nupkg selected the matching
+# pre-compiled variant. Designed to catch regressions in the dual-Selenium
+# packaging machinery introduced in #252.
+
+on:
+  pull_request:
+    paths:
+      - 'packages/selenium/**'
+      - 'packages/commons/**'
+      - '.github/workflows/dual-selenium-smoke.yml'
+      - '.github/smoke/**'
+  push:
+    branches:
+      - develop
+      - master
+    paths:
+      - 'packages/selenium/**'
+      - 'packages/commons/**'
+      - '.github/workflows/dual-selenium-smoke.yml'
+      - '.github/smoke/**'
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    name: Smoke (${{ matrix.flavor }} / ${{ matrix.consumer_tfm }})
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - flavor: legacy
+            selenium_version: '4.4.0'
+            expected_ref: WebDriver
+            rejected_ref: Selenium.WebDriver
+            consumer_tfm: net471
+          - flavor: legacy
+            selenium_version: '4.4.0'
+            expected_ref: WebDriver
+            rejected_ref: Selenium.WebDriver
+            consumer_tfm: netstandard2.0
+          - flavor: new
+            selenium_version: '4.44.0'
+            expected_ref: Selenium.WebDriver
+            rejected_ref: WebDriver
+            consumer_tfm: net471
+          - flavor: new
+            selenium_version: '4.44.0'
+            expected_ref: Selenium.WebDriver
+            rejected_ref: WebDriver
+            consumer_tfm: netstandard2.0
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install .NET Core 3.1 and 6
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: |
+            3.1.x
+            6.x.x
+
+      - name: Pack Commons + Deque.AxeCore.Selenium
+        run: |
+          dotnet build Deque.AxeCore.sln -c Release
+
+      - name: Build assembly inspector
+        run: dotnet build .github/smoke/AssemblyRefInspector/AssemblyRefInspector.csproj -c Release
+
+      - name: Run smoke
+        run: |
+          .github/smoke/run-smoke.sh \
+            ${{ matrix.flavor }} \
+            ${{ matrix.selenium_version }} \
+            ${{ matrix.expected_ref }} \
+            ${{ matrix.rejected_ref }} \
+            ${{ matrix.consumer_tfm }}
