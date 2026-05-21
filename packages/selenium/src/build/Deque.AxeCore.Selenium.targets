@@ -1,0 +1,53 @@
+<Project>
+  <!--
+    Auto-imported by NuGet when a project consumes Deque.AxeCore.Selenium.
+
+    Selenium.WebDriver 4.44.0 renamed its compiled assembly from WebDriver.dll
+    to Selenium.WebDriver.dll. The Deque.AxeCore.Selenium.nupkg ships two
+    pre-compiled variants of Deque.AxeCore.Selenium.dll — one referencing each
+    Selenium identity. This file inspects which Selenium assembly the consumer's
+    project resolved at restore time and injects a <Reference> to the matching
+    variant.
+
+    Default if neither is resolved (or both, somehow): "new" (Selenium 4.44+).
+  -->
+
+  <Target Name="_DequeAxeCoreSeleniumSelectVariant"
+          AfterTargets="ResolvePackageAssets"
+          BeforeTargets="ResolveAssemblyReferences">
+
+    <ItemGroup>
+      <_DequeAxeCoreSeleniumResolvedSeleniumNew
+        Include="@(ResolvedCompileFileDefinitions)"
+        Condition=" '%(ResolvedCompileFileDefinitions.Filename)' == 'Selenium.WebDriver' " />
+      <_DequeAxeCoreSeleniumResolvedSeleniumLegacy
+        Include="@(ResolvedCompileFileDefinitions)"
+        Condition=" '%(ResolvedCompileFileDefinitions.Filename)' == 'WebDriver' " />
+    </ItemGroup>
+
+    <PropertyGroup>
+      <_DequeAxeCoreSeleniumVariant>new</_DequeAxeCoreSeleniumVariant>
+      <_DequeAxeCoreSeleniumVariant
+        Condition=" '@(_DequeAxeCoreSeleniumResolvedSeleniumLegacy)' != '' AND '@(_DequeAxeCoreSeleniumResolvedSeleniumNew)' == '' "
+      >legacy</_DequeAxeCoreSeleniumVariant>
+
+      <_DequeAxeCoreSeleniumVariantTfm>netstandard2.0</_DequeAxeCoreSeleniumVariantTfm>
+      <_DequeAxeCoreSeleniumVariantTfm
+        Condition=" $(TargetFramework.StartsWith('net4')) "
+      >net471</_DequeAxeCoreSeleniumVariantTfm>
+
+      <_DequeAxeCoreSeleniumVariantPath>$(MSBuildThisFileDirectory)..\variants\$(_DequeAxeCoreSeleniumVariant)\$(_DequeAxeCoreSeleniumVariantTfm)\Deque.AxeCore.Selenium.dll</_DequeAxeCoreSeleniumVariantPath>
+    </PropertyGroup>
+
+    <Error
+      Condition=" !Exists('$(_DequeAxeCoreSeleniumVariantPath)') "
+      Text="Deque.AxeCore.Selenium: could not locate variant '$(_DequeAxeCoreSeleniumVariant)' for TargetFramework '$(TargetFramework)' at $(_DequeAxeCoreSeleniumVariantPath). This is a packaging bug — please file an issue." />
+
+    <ItemGroup>
+      <Reference Include="Deque.AxeCore.Selenium">
+        <HintPath>$(_DequeAxeCoreSeleniumVariantPath)</HintPath>
+        <Private>true</Private>
+      </Reference>
+    </ItemGroup>
+  </Target>
+</Project>

@@ -18,6 +18,23 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
 
+    <!--
+      This project does not produce its own compiled output. Instead, it packages the
+      pre-compiled DLLs from the LegacyWebDriver and NewWebDriver sibling projects
+      (one referencing each post-rename Selenium.WebDriver assembly identity) along with
+      a .targets picker that selects the matching variant at consume time.
+    -->
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <!--
+      NU5100: variant DLLs intentionally live in variants/ not lib/ — the .targets
+      picker injects the right one as a Reference at consume time.
+      NU5128: no compile output means some target frameworks have no assemblies in
+      lib/, which is expected for a pack-only shell.
+    -->
+    <NoWarn>$(NoWarn);NU5100;NU5128</NoWarn>
+
     <!-- Do not update this by-hand; updates are automated via the create-release workflow -->
     <VersionPrefix>4.11.3</VersionPrefix>
     <VersionSuffix>development</VersionSuffix>
@@ -29,28 +46,56 @@
     <None Include="../README.md" Pack="true" PackagePath="README.md" />
   </ItemGroup>
 
+  <!--
+    Build the two variants so their DLLs exist when we pack, but do NOT consume their
+    output as a build reference (we have no sources to compile here) and do NOT
+    propagate their package dependencies — we declare those explicitly below.
+  -->
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
+    <ProjectReference Include="..\legacy-webdriver\Deque.AxeCore.Selenium.LegacyWebDriver.csproj"
+                      PrivateAssets="all"
+                      ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\new-webdriver\Deque.AxeCore.Selenium.NewWebDriver.csproj"
+                      PrivateAssets="all"
+                      ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <!--
+    Dependencies that the variants need at runtime. Declared here so they propagate to
+    consumers of the .nupkg. Selenium.WebDriver's minimum is 4.4.0; consumers may resolve
+    a higher version (e.g. 4.44+) and the .targets picker will select the matching variant.
+  -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Selenium.WebDriver" Version="4.4.0" />
-
-
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="../../commons/src/Deque.AxeCore.Commons.csproj" />
   </ItemGroup>
 
+  <!--
+    Pack the variant DLLs alongside an MSBuild .targets file that selects between them
+    based on the Selenium.WebDriver identity the consumer has resolved at restore time.
+  -->
   <ItemGroup>
-    <EmbeddedResource Include="Resources\legacyScan.js" />
-    <EmbeddedResource Include="Resources\storeChunk.js" />
-    <EmbeddedResource Include="Resources\branding.js" />
-    <EmbeddedResource Include="Resources\allowIframeUnsafe.js" />
-    <EmbeddedResource Include="Resources\runPartialExists.js" />
-    <EmbeddedResource Include="Resources\getFrameContexts.js" />
-    <EmbeddedResource Include="Resources\shadowSelect.js" />
-    <EmbeddedResource Include="Resources\runPartial.js" />
-    <EmbeddedResource Include="Resources\finishRun.js" />
-  </ItemGroup>
+    <None Include="..\legacy-webdriver\bin\$(Configuration)\net471\Deque.AxeCore.Selenium.dll"
+          Pack="true" PackagePath="variants\legacy\net471\Deque.AxeCore.Selenium.dll" Visible="false" />
+    <None Include="..\legacy-webdriver\bin\$(Configuration)\netstandard2.0\Deque.AxeCore.Selenium.dll"
+          Pack="true" PackagePath="variants\legacy\netstandard2.0\Deque.AxeCore.Selenium.dll" Visible="false" />
+    <None Include="..\new-webdriver\bin\$(Configuration)\net471\Deque.AxeCore.Selenium.dll"
+          Pack="true" PackagePath="variants\new\net471\Deque.AxeCore.Selenium.dll" Visible="false" />
+    <None Include="..\new-webdriver\bin\$(Configuration)\netstandard2.0\Deque.AxeCore.Selenium.dll"
+          Pack="true" PackagePath="variants\new\netstandard2.0\Deque.AxeCore.Selenium.dll" Visible="false" />
 
+    <None Include="build\Deque.AxeCore.Selenium.targets"
+          Pack="true" PackagePath="build\Deque.AxeCore.Selenium.targets" />
+    <None Include="buildTransitive\Deque.AxeCore.Selenium.targets"
+          Pack="true" PackagePath="buildTransitive\Deque.AxeCore.Selenium.targets" />
+
+    <!-- lib/ placeholders — NuGet requires at least an empty marker per TFM. -->
+    <None Include="_._" Pack="true" PackagePath="lib\net471\_._" Visible="false" />
+    <None Include="_._" Pack="true" PackagePath="lib\netstandard2.0\_._" Visible="false" />
+  </ItemGroup>
 </Project>
