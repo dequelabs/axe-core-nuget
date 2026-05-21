@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Reflection;
+using System.Reflection.Metadata;
+using System.Reflection.PortableExecutable;
 
 // Lists the referenced assemblies of a target DLL and asserts that one specific
 // reference is present and another specific reference is absent. Used by the
@@ -28,7 +31,17 @@ if (!System.IO.File.Exists(dllPath))
     return 2;
 }
 
-var refs = Assembly.LoadFrom(dllPath).GetReferencedAssemblies();
+IReadOnlyList<AssemblyReferenceInfo> refs;
+try
+{
+    refs = ReadAssemblyReferences(dllPath);
+}
+catch (Exception ex) when (ex is BadImageFormatException || ex is IOException || ex is UnauthorizedAccessException)
+{
+    Console.Error.WriteLine($"FAIL: could not parse assembly metadata for {dllPath}: {ex.Message}");
+    return 2;
+}
+
 Console.WriteLine($"Referenced assemblies in {dllPath}:");
 foreach (var r in refs)
 {
@@ -53,3 +66,31 @@ if (sawRejected)
     Console.Error.WriteLine($"FAIL: rejected reference to {rejected} was present (the picker selected the wrong variant).");
 }
 return 1;
+
+static IReadOnlyList<AssemblyReferenceInfo> ReadAssemblyReferences(string dllPath)
+{
+    using var stream = File.OpenRead(dllPath);
+    using var peReader = new PEReader(stream);
+    if (!peReader.HasMetadata)
+    {
+        throw new BadImageFormatException("file does not contain .NET metadata");
+    }
+
+    var metadataReader = peReader.GetMetadataReader();
+    if (!metadataReader.IsAssembly)
+    {
+        throw new BadImageFormatException("metadata does not describe a managed assembly");
+    }
+
+    var refs = new List<AssemblyReferenceInfo>();
+    foreach (var referenceHandle in metadataReader.AssemblyReferences)
+    {
+        var reference = metadataReader.GetAssemblyReference(referenceHandle);
+        var name = metadataReader.GetString(reference.Name);
+        refs.Add(new AssemblyReferenceInfo(name, $"{name}, Version={reference.Version}"));
+    }
+
+    return refs;
+}
+
+readonly record struct AssemblyReferenceInfo(string Name, string FullName);
