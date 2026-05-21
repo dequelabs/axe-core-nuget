@@ -9,6 +9,14 @@
 
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+
+    <!--
+      Variant test projects only exercise unit tests; Integration and RunPartial
+      coverage is provided by Deque.AxeCore.Selenium.Test against shared sources.
+      Filtering those categories avoids contending with the existing project for
+      the port-8080 fixture server and the CI runner's browser slots.
+    -->
+    <VSTestTestCaseFilter>Category!=Integration&amp;Category!=RunPartial</VSTestTestCaseFilter>
   </PropertyGroup>
 
   <ItemGroup>
