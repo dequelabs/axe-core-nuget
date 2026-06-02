@@ -372,8 +372,14 @@ namespace Deque.AxeCore.Selenium
             finally
             {
                 // ... close the new window and go back
-                _webDriver.Close();
-                _webDriver.SwitchTo().Window(originalWindowHandle);
+                try
+                {
+                    _webDriver.Close();
+                }
+                finally
+                {
+                    _webDriver.SwitchTo().Window(originalWindowHandle);
+                }
             }
         }
 
