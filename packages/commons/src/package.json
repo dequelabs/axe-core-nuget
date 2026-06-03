@@ -3,6 +3,6 @@
   "repository": {},
   "license": "MIT",
   "dependencies": {
-    "axe-core": "^4.11.4"
+    "axe-core": "^4.12.0"
   }
 }
