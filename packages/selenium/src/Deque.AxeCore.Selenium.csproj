@@ -14,8 +14,13 @@
 
     <TargetFrameworks>net471;netstandard2.0</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <!--
+      This is a pack-only shell with IncludeBuildOutput=false (see below), so it produces no
+      compiled assembly and therefore no .pdb. Generating a symbol package here yields an empty
+      .snupkg, which nuget.org rejects with HTTP 400 ("does not contain any symbol (.pdb) files"),
+      failing the publish step. Symbols live with the variant DLLs' own builds, not this shell.
+    -->
+    <IncludeSymbols>false</IncludeSymbols>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
 
     <!--
