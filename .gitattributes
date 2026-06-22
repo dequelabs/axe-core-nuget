@@ -1,0 +1,6 @@
+# Normalize all text files to LF on checkin; check out as LF on every platform.
+# Prevents Windows contributors from reintroducing CRLF (see #258).
+* text=auto eol=lf
+
+# Shell scripts must always be LF (CRLF breaks bash execution).
+*.sh text eol=lf

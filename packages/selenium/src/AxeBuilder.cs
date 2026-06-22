@@ -332,8 +332,9 @@ namespace Deque.AxeCore.Selenium
 
             try
             {
-                // create an isolated page
-                _webDriver.ExecuteScript("window.open('about:blank', '_blank')");
+                // create an isolated page in a 1x1 window so it does not visibly
+                // flash on screen when running in non-headless mode (parity with #257)
+                _webDriver.ExecuteScript("window.open('about:blank', '_blank', 'width=1,height=1')");
                 _webDriver.SwitchTo().Window(_webDriver.WindowHandles.Last());
                 _webDriver.Navigate().GoToUrl("about:blank");
             }
@@ -345,31 +346,41 @@ namespace Deque.AxeCore.Selenium
                 );
             }
 
-            ConfigureAxe();
-
-            var serializedPartials = JsonConvert.SerializeObject(partialResults, AxeJsonSerializerSettings.Default);
-            int sizeLimit = 10_000_000;
-
-            while (!string.IsNullOrEmpty(serializedPartials))
+            try
             {
-                int chunkSize = sizeLimit;
-                if (chunkSize > serializedPartials.Length)
+                ConfigureAxe();
+
+                var serializedPartials = JsonConvert.SerializeObject(partialResults, AxeJsonSerializerSettings.Default);
+                int sizeLimit = 10_000_000;
+
+                while (!string.IsNullOrEmpty(serializedPartials))
                 {
-                    chunkSize = serializedPartials.Length;
+                    int chunkSize = sizeLimit;
+                    if (chunkSize > serializedPartials.Length)
+                    {
+                        chunkSize = serializedPartials.Length;
+                    }
+                    String chunk = serializedPartials.Substring(0, chunkSize);
+                    serializedPartials = serializedPartials.Substring(chunkSize);
+                    _webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("storeChunk.js"), chunk);
                 }
-                String chunk = serializedPartials.Substring(0, chunkSize);
-                serializedPartials = serializedPartials.Substring(chunkSize);
-                _webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("storeChunk.js"), chunk);
+                // grab result ...
+                var result = _webDriver.ExecuteAsyncScript(EmbeddedResourceProvider.ReadEmbeddedFile("finishRun.js"), options);
+
+                return JObject.FromObject(result);
             }
-            // grab result ...
-            var result = _webDriver.ExecuteAsyncScript(EmbeddedResourceProvider.ReadEmbeddedFile("finishRun.js"), options);
-
-            // ... close the new window and go back
-            _webDriver.Close();
-            _webDriver.SwitchTo().Window(originalWindowHandle);
-
-            return JObject.FromObject(result);
-
+            finally
+            {
+                // ... close the new window and go back
+                try
+                {
+                    _webDriver.Close();
+                }
+                finally
+                {
+                    _webDriver.SwitchTo().Window(originalWindowHandle);
+                }
+            }
         }
 
         private JObject AnalyzeAxeLegacy(object rawContextArg)
