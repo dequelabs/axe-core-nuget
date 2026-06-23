@@ -269,7 +269,11 @@ namespace Deque.AxeCore.Playwright.AxeCoreWrapper
             {
                 throw new Exception("Could not locate browser associated with page");
             }
-            var blankPage = await browser.NewPageAsync().ConfigureAwait(false);
+
+            var blankPage = await browser.NewPageAsync(
+                    new BrowserNewPageOptions() { ViewportSize = new ViewportSize() { Width = 1, Height = 1 } }
+            ).ConfigureAwait(false);
+
             try
             {
                 await ConfigureAxe(blankPage.MainFrame).ConfigureAwait(false);

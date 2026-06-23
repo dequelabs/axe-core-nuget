@@ -1,0 +1,4 @@
+<Project>
+  <!-- Transitive consumers see the same picker logic as direct consumers. -->
+  <Import Project="$(MSBuildThisFileDirectory)..\build\Deque.AxeCore.Selenium.targets" />
+</Project>
