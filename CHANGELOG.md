@@ -1,3 +1,17 @@
+# [4.12.0](https://github.com/dequelabs/axe-core-nuget/compare/v4.11.3...v4.12.0) (2026-06-22)
+
+
+### Bug Fixes
+
+* **selenium:** stop generating empty symbol package that blocks Playwright publish ([#266](https://github.com/dequelabs/axe-core-nuget/issues/266)) ([#267](https://github.com/dequelabs/axe-core-nuget/issues/267)) ([ca5d610](https://github.com/dequelabs/axe-core-nuget/commit/ca5d610ebbceb717f700e328a908c4e5d911f06b)), closes [#254](https://github.com/dequelabs/axe-core-nuget/issues/254)
+* Update axe-core to v4.12.1 ([#265](https://github.com/dequelabs/axe-core-nuget/issues/265)) ([db11e52](https://github.com/dequelabs/axe-core-nuget/commit/db11e524bbda653db77998f5916a051034ab2ea3))
+
+
+### Features
+
+* **playwright:** use small viewport on blank page ([#257](https://github.com/dequelabs/axe-core-nuget/issues/257)) ([57ef290](https://github.com/dequelabs/axe-core-nuget/commit/57ef2909c1222d9263033cf31aecb003838dbcc4)), closes [#256](https://github.com/dequelabs/axe-core-nuget/issues/256)
+* **selenium:** pack dual Selenium WebDriver variants with .targets picker ([#254](https://github.com/dequelabs/axe-core-nuget/issues/254)) ([da67a83](https://github.com/dequelabs/axe-core-nuget/commit/da67a83d3209b4deea7cf82f8fa0ae3759321cf1)), closes [#252](https://github.com/dequelabs/axe-core-nuget/issues/252) [#251](https://github.com/dequelabs/axe-core-nuget/issues/251)
+* Update axe-core to v4.12.0 ([#261](https://github.com/dequelabs/axe-core-nuget/issues/261)) ([1cb3351](https://github.com/dequelabs/axe-core-nuget/commit/1cb33510fedb028153846d8691fd101a45a31d8a))
 ## [4.11.3](https://github.com/dequelabs/axe-core-nuget/compare/v4.11.2...v4.11.3) (2026-04-29)
 
 

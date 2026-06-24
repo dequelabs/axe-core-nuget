@@ -41,7 +41,7 @@
     <NoWarn>$(NoWarn);NU5100;NU5128</NoWarn>
 
     <!-- Do not update this by-hand; updates are automated via the create-release workflow -->
-    <VersionPrefix>4.11.3</VersionPrefix>
+    <VersionPrefix>4.12.0</VersionPrefix>
     <VersionSuffix>development</VersionSuffix>
   </PropertyGroup>
 
