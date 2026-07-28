@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 2
     permissions:
-      contents: write # this permission controls release creation
+      contents: read # checkout only; release creation is authenticated with secrets.PAT
     steps:     
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -43,7 +43,7 @@ jobs:
           chmod +x ./node-github-release.sh
           ./node-github-release.sh
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT }}
           CIRCLE_PROJECT_USERNAME: ${{ github.repository_owner }}
           CIRCLE_PROJECT_REPONAME: ${{ github.event.repository.name }}
           GITHUB_RELEASE_TARGET: master
