@@ -62,7 +62,8 @@ namespace Deque.AxeCore.Commons
         public object ToolOptions { get; private set; }
 
         /// <summary>
-        /// Whether <see cref="ToString"/> writes selectors as arrays in all cases. Set when the result is constructed.
+        /// Whether this result and its <see cref="AxeResultItem"/>s write selectors as arrays in all cases from
+        /// <see cref="ToString"/>. Set when the result is constructed.
         /// </summary>
         [JsonIgnore]
         public bool ArraySelectors { get; }
@@ -114,6 +115,24 @@ namespace Deque.AxeCore.Commons
             Url = urlToken?.ToObject<string>();
             TestEngine = testEngine?.ToObject<AxeTestEngine>();
             ToolOptions = toolOptions?.ToObject<object>();
+
+            ApplyArraySelectors(Violations);
+            ApplyArraySelectors(Passes);
+            ApplyArraySelectors(Inapplicable);
+            ApplyArraySelectors(Incomplete);
+        }
+
+        private void ApplyArraySelectors(AxeResultItem[] items)
+        {
+            if (items is null)
+            {
+                return;
+            }
+
+            foreach (AxeResultItem item in items)
+            {
+                item.ArraySelectors = ArraySelectors;
+            }
         }
 
         public override string ToString()

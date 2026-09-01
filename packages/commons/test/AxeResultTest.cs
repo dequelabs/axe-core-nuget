@@ -186,6 +186,35 @@ namespace Deque.AxeCore.Commons.Test
         }
 
         [Test]
+        public void ResultItemToStringUsesTheSameSelectorShapeAsItsParentResult()
+        {
+            var result = new AxeResult(JObject.FromObject(JsonConvert.DeserializeObject(basicAxeResultJson)), arraySelectors: true);
+
+            var node = JObject.Parse(result.Violations[0].ToString()).SelectToken("nodes[0]");
+
+            node.SelectToken("target").ToString(Formatting.None).Should().Be(@"[""html""]");
+            node.SelectToken("xPath").ToString(Formatting.None).Should().Be(@"[""/html""]");
+        }
+
+        [Test]
+        public void ResultItemToStringWritesSimpleSelectorsAsBareStringsByDefault()
+        {
+            var result = new AxeResult(JObject.FromObject(JsonConvert.DeserializeObject(basicAxeResultJson)));
+
+            var node = JObject.Parse(result.Violations[0].ToString()).SelectToken("nodes[0]");
+
+            node.SelectToken("target").ToString(Formatting.None).Should().Be(@"""html""");
+        }
+
+        [Test]
+        public void ResultItemArraySelectorsIsNotItselfSerialized()
+        {
+            var result = new AxeResult(JObject.FromObject(JsonConvert.DeserializeObject(basicAxeResultJson)), arraySelectors: true);
+
+            JObject.Parse(result.Violations[0].ToString()).SelectToken("arraySelectors").Should().BeNull();
+        }
+
+        [Test]
         public void ToStringShouldBeStable()
         {
             var result1 = new AxeResult(JObject.FromObject(JsonConvert.DeserializeObject(basicAxeResultJson)));
