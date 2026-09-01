@@ -484,6 +484,30 @@ namespace Deque.AxeCore.Playwright.Test
             Assert.That(TargetTokenOf(axeResults, "passes").Type, Is.EqualTo(JTokenType.Array));
         }
 
+        [Test]
+        public async Task RunAxeLegacy_WithArraySelectors_WritesSimpleTargetAsArray()
+        {
+            await NavigateToPage("basic.html");
+
+#pragma warning disable CS0618
+            AxeResult axeResults = await Page!.RunAxeLegacy(null, null, null, arraySelectors: true);
+#pragma warning restore CS0618
+
+            Assert.That(TargetTokenOf(axeResults, "violations").Type, Is.EqualTo(JTokenType.Array));
+        }
+
+        [Test]
+        public async Task RunAxeLegacyOnLocator_WithArraySelectors_WritesSimpleTargetAsArray()
+        {
+            await NavigateToPage("selector.html");
+
+#pragma warning disable CS0618
+            AxeResult axeResults = await Page!.Locator("button").RunAxeLegacy(null, arraySelectors: true);
+#pragma warning restore CS0618
+
+            Assert.That(TargetTokenOf(axeResults, "passes").Type, Is.EqualTo(JTokenType.Array));
+        }
+
         private static JToken TargetTokenOf(AxeResult result, string resultType) =>
             JObject.Parse(result.ToString()).SelectToken($"{resultType}[0].nodes[0].target")!;
 

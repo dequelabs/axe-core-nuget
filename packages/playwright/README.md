@@ -213,6 +213,10 @@ By default, a selector which involves no iframes or shadow DOMs is serialized as
 AxeResult axeResults = await page.RunAxe(options, arraySelectors: true);
 axeResults = await page.RunAxe(context, options, axeSource, arraySelectors: true);
 axeResults = await locator.RunAxe(options, arraySelectors: true);
+
+// also available on the legacy overloads
+axeResults = await page.RunAxeLegacy(context, options, axeSource, arraySelectors: true);
+axeResults = await locator.RunAxeLegacy(options, arraySelectors: true);
 ```
 
 ```jsonc

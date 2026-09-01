@@ -359,6 +359,25 @@ namespace Deque.AxeCore.Selenium.Test
             SelectorTokenOf(result).Should().Be(@"""html""");
         }
 
+        [Test]
+        public void ShouldNotChangeSerializedRunContextWhenArraySelectorsRequested()
+        {
+            var expectedContext = SerializeObject(new AxeRunContext()
+            {
+                Exclude = new List<AxeSelector> { new AxeSelector("#div1") }
+            });
+
+            SetupVerifiableAxeInjectionCall();
+            SetupVerifiableScanCall(expectedContext, "{}");
+
+            new AxeBuilder(webDriverMock.Object, stubAxeBuilderOptions)
+                .Exclude("#div1")
+                .WithArraySelectors()
+                .Analyze();
+
+            jsExecutorMock.VerifyAll();
+        }
+
         private static string SelectorTokenOf(AxeResult result) =>
             JObject.Parse(result.ToString()).SelectToken("violations[0].nodes[0].target").ToString(Formatting.None);
 

@@ -49,14 +49,26 @@ namespace Deque.AxeCore.Playwright
         /// <param name="options">Options for running Axe.</param>
         /// <returns>The AxeResult</returns>
         [Obsolete("Legacy Mode is being removed in the future. Use with caution!")]
-        public static async Task<AxeResult> RunAxeLegacy(this ILocator locator, AxeRunOptions? options = null)
+        public static async Task<AxeResult> RunAxeLegacy(this ILocator locator, AxeRunOptions? options, bool arraySelectors)
         {
             IAxeScriptProvider axeScriptProvider = new BundledAxeScriptProvider();
             IAxeContentEmbedder axeContentEmbedder = new DefaultAxeContentEmbedder(axeScriptProvider);
 
-            IAxeCoreWrapper axeCoreWrapper = new DefaultAxeCoreWrapper(axeContentEmbedder);
+            IAxeCoreWrapper axeCoreWrapper = new DefaultAxeCoreWrapper(axeContentEmbedder, arraySelectors);
 
             return await axeCoreWrapper.RunLegacyOnLocator(locator, options).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Runs Axe against the selected elements from a locator.
+        /// </summary>
+        /// <param name="locator">The Playwright Locator</param>
+        /// <param name="options">Options for running Axe.</param>
+        /// <returns>The AxeResult</returns>
+        [Obsolete("Legacy Mode is being removed in the future. Use with caution!")]
+        public static async Task<AxeResult> RunAxeLegacy(this ILocator locator, AxeRunOptions? options = null)
+        {
+            return await RunAxeLegacy(locator, options, arraySelectors: false).ConfigureAwait(false);
         }
     }
 }
