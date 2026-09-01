@@ -19,9 +19,10 @@ namespace Deque.AxeCore.Commons
     {
         private readonly bool arraySelectors;
 
+        // Public so Newtonsoft can activate it from the [JsonConverter] attribute on AxeSelector.
         public AxeSelectorJsonConverter() : this(arraySelectors: false) { }
 
-        public AxeSelectorJsonConverter(bool arraySelectors)
+        internal AxeSelectorJsonConverter(bool arraySelectors)
         {
             this.arraySelectors = arraySelectors;
         }
