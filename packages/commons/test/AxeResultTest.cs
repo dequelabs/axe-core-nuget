@@ -75,6 +75,9 @@ namespace Deque.AxeCore.Commons.Test
           ""xpath"": [
             ""/html""
           ],
+          ""ancestry"": [
+            ""html""
+          ],
           ""failureSummary"": ""Fix any of the following:\n  Document does not have a non-empty <title> element""
         }
       ]
@@ -138,6 +141,30 @@ namespace Deque.AxeCore.Commons.Test
             check.RelatedNodes.Should().BeEmpty();
             check.Impact.Should().Be("serious");
             check.Message.Should().Be("Document does not have a non-empty <title> element");
+        }
+
+        [Test]
+        public void ToStringWritesSelectorsAsArraysWhenArraySelectorsEnabled()
+        {
+            var result = new AxeResult(JObject.FromObject(JsonConvert.DeserializeObject(basicAxeResultJson)), arraySelectors: true);
+
+            var node = JObject.Parse(result.ToString()).SelectToken("violations[0].nodes[0]");
+
+            node.SelectToken("target").ToString(Formatting.None).Should().Be(@"[""html""]");
+            node.SelectToken("xPath").ToString(Formatting.None).Should().Be(@"[""/html""]");
+            node.SelectToken("ancestry").ToString(Formatting.None).Should().Be(@"[""html""]");
+        }
+
+        [Test]
+        public void ToStringWritesSimpleSelectorsAsBareStringsByDefault()
+        {
+            var result = new AxeResult(JObject.FromObject(JsonConvert.DeserializeObject(basicAxeResultJson)));
+
+            var node = JObject.Parse(result.ToString()).SelectToken("violations[0].nodes[0]");
+
+            node.SelectToken("target").ToString(Formatting.None).Should().Be(@"""html""");
+            node.SelectToken("xPath").ToString(Formatting.None).Should().Be(@"""/html""");
+            node.SelectToken("ancestry").ToString(Formatting.None).Should().Be(@"""html""");
         }
 
         [Test]

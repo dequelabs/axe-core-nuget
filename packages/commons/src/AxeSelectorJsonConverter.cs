@@ -17,6 +17,15 @@ namespace Deque.AxeCore.Commons
     // the multiple-frame case involving no shadow DOMs which results in an array-of-strings.
     class AxeSelectorJsonConverter : JsonConverter<AxeSelector>
     {
+        private readonly bool arraySelectors;
+
+        public AxeSelectorJsonConverter() : this(arraySelectors: false) { }
+
+        public AxeSelectorJsonConverter(bool arraySelectors)
+        {
+            this.arraySelectors = arraySelectors;
+        }
+
         public override AxeSelector ReadJson(JsonReader reader, Type objectType, AxeSelector existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
             if (reader.TokenType == JsonToken.String || reader.TokenType == JsonToken.Date)
@@ -63,7 +72,7 @@ namespace Deque.AxeCore.Commons
 
         public override void WriteJson(JsonWriter writer, AxeSelector value, JsonSerializer serializer)
         {
-            if (value.FrameShadowSelectors.Count == 1 && value.FrameShadowSelectors[0].Count == 1)
+            if (!arraySelectors && value.FrameShadowSelectors.Count == 1 && value.FrameShadowSelectors[0].Count == 1)
             {
                 serializer.Serialize(writer, value.FrameShadowSelectors[0][0]);
                 return;
