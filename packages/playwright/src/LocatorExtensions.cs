@@ -22,10 +22,22 @@ namespace Deque.AxeCore.Playwright
         /// <returns>The AxeResult</returns>
         public static async Task<AxeResult> RunAxe(this ILocator locator, AxeRunOptions? options = null)
         {
+            return await RunAxe(locator, options, arraySelectors: false).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Runs Axe against the selected elements from a locator.
+        /// </summary>
+        /// <param name="locator">The Playwright Locator</param>
+        /// <param name="options">Options for running Axe.</param>
+        /// <param name="arraySelectors">Whether to write selectors as arrays in all cases when serializing the results.</param>
+        /// <returns>The AxeResult</returns>
+        public static async Task<AxeResult> RunAxe(this ILocator locator, AxeRunOptions? options, bool arraySelectors)
+        {
             IAxeScriptProvider axeScriptProvider = new BundledAxeScriptProvider();
             IAxeContentEmbedder axeContentEmbedder = new DefaultAxeContentEmbedder(axeScriptProvider);
 
-            IAxeCoreWrapper axeCoreWrapper = new DefaultAxeCoreWrapper(axeContentEmbedder);
+            IAxeCoreWrapper axeCoreWrapper = new DefaultAxeCoreWrapper(axeContentEmbedder, arraySelectors);
 
             return await axeCoreWrapper.RunOnLocator(locator, options).ConfigureAwait(false);
         }

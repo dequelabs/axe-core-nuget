@@ -23,6 +23,7 @@ namespace Deque.AxeCore.Selenium
         private AxeRunOptions runOptions = new AxeRunOptions();
         private string outputFilePath = null;
         private bool useLegacyMode = false;
+        private bool arraySelectors;
 
         /// <summary>
         /// Initialize an instance of <see cref="AxeBuilder"/>
@@ -44,6 +45,19 @@ namespace Deque.AxeCore.Selenium
 
             _webDriver = webDriver;
             _AxeBuilderOptions = options;
+            arraySelectors = options.ArraySelectors;
+        }
+
+        /// <summary>
+        /// Write <see cref="AxeResultNode.Target"/>, <see cref="AxeResultNode.XPath"/> and <see cref="AxeResultNode.Ancestry"/>
+        /// as arrays in all cases when serializing the results, matching the shape axe-core itself emits. Without this, a
+        /// selector which involves no iframes or shadow DOMs is written as a bare string. Becomes the default in v5.
+        /// </summary>
+        /// <param name="arraySelectors">Whether to enable or disable array selectors</param>
+        public AxeBuilder WithArraySelectors(bool arraySelectors = true)
+        {
+            this.arraySelectors = arraySelectors;
+            return this;
         }
 
         /// <summary>
@@ -248,7 +262,7 @@ namespace Deque.AxeCore.Selenium
                 }
             }
 
-            return new AxeResult(resultObject);
+            return new AxeResult(resultObject, arraySelectors);
 
         }
 

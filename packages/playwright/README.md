@@ -205,6 +205,28 @@ axeResults = await page.RunAxe(context, options);
 axeResults = await locator.RunAxe(options);
 ```
 
+### Array selectors
+
+By default, a selector which involves no iframes or shadow DOMs is serialized as a bare string, unlike axe-core itself which always emits an array. Pass `arraySelectors: true` to serialize `Target`, `XPath` and `Ancestry` as arrays in all cases, keeping `axeResults.ToString()` interchangeable with the JSON produced by other axe integrations:
+
+```cs
+AxeResult axeResults = await page.RunAxe(options, arraySelectors: true);
+axeResults = await page.RunAxe(context, options, axeSource, arraySelectors: true);
+axeResults = await locator.RunAxe(options, arraySelectors: true);
+```
+
+```jsonc
+// default
+"target": "#some-element-id"
+
+// with arraySelectors: true
+"target": ["#some-element-id"]
+```
+
+This only affects serialization. `AxeSelector.ToString()`, `AxeSelector.Selector` and the other `AxeSelector` properties are unchanged either way.
+
+This becomes the default in the next major version. Enabling it now is the way to opt in early.
+
 ### `RunAxeLegacy`
 
 Set the frame testing method to "legacy mode". In this mode, axe will not open a blank page in which to aggregate its results. This can be used in an environment where opening a blank page causes issues.

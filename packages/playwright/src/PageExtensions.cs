@@ -39,7 +39,7 @@ namespace Deque.AxeCore.Playwright
         /// <returns>The AxeResult</returns>
         public static async Task<AxeResult> RunAxe(this IPage page, AxeRunOptions? options = null)
         {
-            return await RunAxeInner(page, null, options, null).ConfigureAwait(false);
+            return await RunAxeInner(page, null, options, null, arraySelectors: false).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -56,10 +56,41 @@ namespace Deque.AxeCore.Playwright
             AxeRunOptions? options = null,
             string? axeSource = null)
         {
-            return await RunAxeInner(page, context, options, axeSource).ConfigureAwait(false);
+            return await RunAxeInner(page, context, options, axeSource, arraySelectors: false).ConfigureAwait(false);
         }
 
-        private static async Task<AxeResult> RunAxeInner(this IPage page, AxeRunContext? context, AxeRunOptions? options, string? axeSource)
+        /// <summary>
+        /// Runs Axe against the page in its current state.
+        /// </summary>
+        /// <param name="page">The Playwright Page object</param>
+        /// <param name="options">Options for running Axe.</param>
+        /// <param name="arraySelectors">Whether to write selectors as arrays in all cases when serializing the results.</param>
+        /// <returns>The AxeResult</returns>
+        public static async Task<AxeResult> RunAxe(this IPage page, AxeRunOptions? options, bool arraySelectors)
+        {
+            return await RunAxeInner(page, null, options, null, arraySelectors).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Runs Axe against the page in its current state.
+        /// </summary>
+        /// <param name="page">The Playwright Page object</param>
+        /// <param name="context">Context to specify which element to run axe on.</param>
+        /// <param name="options">Options for running Axe.</param>
+        /// <param name="axeSource">Source code for axe-core</param>
+        /// <param name="arraySelectors">Whether to write selectors as arrays in all cases when serializing the results.</param>
+        /// <returns>The AxeResult</returns>
+        public static async Task<AxeResult> RunAxe(
+            this IPage page,
+            AxeRunContext context,
+            AxeRunOptions? options,
+            string? axeSource,
+            bool arraySelectors)
+        {
+            return await RunAxeInner(page, context, options, axeSource, arraySelectors).ConfigureAwait(false);
+        }
+
+        private static async Task<AxeResult> RunAxeInner(this IPage page, AxeRunContext? context, AxeRunOptions? options, string? axeSource, bool arraySelectors)
         {
             IAxeScriptProvider axeScriptProvider;
             if (axeSource == null)
@@ -72,7 +103,7 @@ namespace Deque.AxeCore.Playwright
             }
             IAxeContentEmbedder axeContentEmbedder = new DefaultAxeContentEmbedder(axeScriptProvider);
 
-            IAxeCoreWrapper axeCoreWrapper = new DefaultAxeCoreWrapper(axeContentEmbedder);
+            IAxeCoreWrapper axeCoreWrapper = new DefaultAxeCoreWrapper(axeContentEmbedder, arraySelectors);
 
             AxeResult results = await axeCoreWrapper.Run(page, context, options).ConfigureAwait(false);
 
