@@ -61,7 +61,11 @@ namespace Deque.AxeCore.Commons
         /// </summary>
         public object ToolOptions { get; private set; }
 
-        private readonly bool arraySelectors;
+        /// <summary>
+        /// Whether <see cref="ToString"/> writes selectors as arrays in all cases. Set when the result is constructed.
+        /// </summary>
+        [JsonIgnore]
+        public bool ArraySelectors { get; }
 
         public AxeResult(JObject result) : this(result, arraySelectors: false)
         {
@@ -78,7 +82,7 @@ namespace Deque.AxeCore.Commons
         /// </param>
         public AxeResult(JObject result, bool arraySelectors)
         {
-            this.arraySelectors = arraySelectors;
+            ArraySelectors = arraySelectors;
 
             // Some (but not all) WebDrivers treat objects with an error property as a JavaScript error
             // and don't reach this point, but for those that don't, we handle it as an error ourselves.
@@ -114,7 +118,7 @@ namespace Deque.AxeCore.Commons
 
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this, AxeJsonSerializerSettings.WithFormatting(Formatting.Indented, arraySelectors));
+            return JsonConvert.SerializeObject(this, AxeJsonSerializerSettings.WithFormatting(Formatting.Indented, ArraySelectors));
         }
     }
 }

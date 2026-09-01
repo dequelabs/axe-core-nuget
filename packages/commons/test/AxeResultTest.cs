@@ -168,6 +168,24 @@ namespace Deque.AxeCore.Commons.Test
         }
 
         [Test]
+        public void ArraySelectorsReflectsHowTheResultWasConstructed()
+        {
+            var enabled = new AxeResult(JObject.FromObject(JsonConvert.DeserializeObject(basicAxeResultJson)), arraySelectors: true);
+            var disabled = new AxeResult(JObject.FromObject(JsonConvert.DeserializeObject(basicAxeResultJson)));
+
+            enabled.ArraySelectors.Should().BeTrue();
+            disabled.ArraySelectors.Should().BeFalse();
+        }
+
+        [Test]
+        public void ArraySelectorsIsNotItselfSerialized()
+        {
+            var result = new AxeResult(JObject.FromObject(JsonConvert.DeserializeObject(basicAxeResultJson)), arraySelectors: true);
+
+            JObject.Parse(result.ToString()).SelectToken("arraySelectors").Should().BeNull();
+        }
+
+        [Test]
         public void ToStringShouldBeStable()
         {
             var result1 = new AxeResult(JObject.FromObject(JsonConvert.DeserializeObject(basicAxeResultJson)));
