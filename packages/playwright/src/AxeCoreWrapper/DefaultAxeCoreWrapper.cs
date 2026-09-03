@@ -95,7 +95,6 @@ namespace Deque.AxeCore.Playwright.AxeCoreWrapper
         private async Task<AxeResult> EvaluateAxeRun(IPage page, string? context = null, object? param = null)
         {
             string? paramString = param != null ? JsonConvert.SerializeObject(param) : JsonConvert.SerializeObject(new AxeRunOptions());
-            string? contextParam = context is null ? string.Empty : ($"JSON.parse(\'{context}\'),");
 
             string legacyRun = await EmbeddedResourceProvider.ReadEmbeddedFileAsync("legacyRun.js").ConfigureAwait(false);
             object jsonObject = await page.EvaluateAsync<object>(legacyRun, new[] { context, paramString }).ConfigureAwait(false);
