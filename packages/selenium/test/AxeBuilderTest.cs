@@ -378,8 +378,15 @@ namespace Deque.AxeCore.Selenium.Test
             jsExecutorMock.VerifyAll();
         }
 
-        private static string SelectorTokenOf(AxeResult result) =>
-            JObject.Parse(result.ToString()).SelectToken("violations[0].nodes[0].target").ToString(Formatting.None);
+        private static string SelectorTokenOf(AxeResult result)
+        {
+            const string path = "violations[0].nodes[0].target";
+            var token = JObject.Parse(result.ToString()).SelectToken(path);
+
+            Assert.That(token, Is.Not.Null, $"Expected a token at \"{path}\" in: {result}");
+
+            return token.ToString(Formatting.None);
+        }
 
         private static void SetupVerifiableAxeInjectionCall() => SetupVerifiableAxeInjectionCall(testAxeResult);
 

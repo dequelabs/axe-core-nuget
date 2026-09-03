@@ -508,8 +508,15 @@ namespace Deque.AxeCore.Playwright.Test
             Assert.That(TargetTokenOf(axeResults, "passes").Type, Is.EqualTo(JTokenType.Array));
         }
 
-        private static JToken TargetTokenOf(AxeResult result, string resultType) =>
-            JObject.Parse(result.ToString()).SelectToken($"{resultType}[0].nodes[0].target")!;
+        private static JToken TargetTokenOf(AxeResult result, string resultType)
+        {
+            string path = $"{resultType}[0].nodes[0].target";
+            JToken? token = JObject.Parse(result.ToString()).SelectToken(path);
+
+            Assert.That(token, Is.Not.Null, $"Expected a token at \"{path}\" in: {result}");
+
+            return token!;
+        }
 
         private async Task NavigateToPage(string htmlPageName)
         {
