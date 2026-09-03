@@ -3,6 +3,7 @@
 using Deque.AxeCore.Commons;
 using Microsoft.Playwright.NUnit;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -452,6 +453,63 @@ namespace Deque.AxeCore.Playwright.Test
                 false
             },
         };
+
+        [Test]
+        public async Task RunAxe_WithArraySelectors_WritesSimpleTargetAsArray()
+        {
+            await NavigateToPage("basic.html");
+
+            AxeResult axeResults = await Page!.RunAxe(null, arraySelectors: true);
+
+            Assert.That(TargetTokenOf(axeResults, "violations").Type, Is.EqualTo(JTokenType.Array));
+        }
+
+        [Test]
+        public async Task RunAxe_WithoutArraySelectors_WritesSimpleTargetAsString()
+        {
+            await NavigateToPage("basic.html");
+
+            AxeResult axeResults = await Page!.RunAxe();
+
+            Assert.That(TargetTokenOf(axeResults, "violations").Type, Is.EqualTo(JTokenType.String));
+        }
+
+        [Test]
+        public async Task RunAxeOnLocator_WithArraySelectors_WritesSimpleTargetAsArray()
+        {
+            await NavigateToPage("selector.html");
+
+            AxeResult axeResults = await Page!.Locator("button").RunAxe(null, arraySelectors: true);
+
+            Assert.That(TargetTokenOf(axeResults, "passes").Type, Is.EqualTo(JTokenType.Array));
+        }
+
+        [Test]
+        public async Task RunAxeLegacy_WithArraySelectors_WritesSimpleTargetAsArray()
+        {
+            await NavigateToPage("basic.html");
+
+#pragma warning disable CS0618
+            AxeResult axeResults = await Page!.RunAxeLegacy(null, null, null, arraySelectors: true);
+#pragma warning restore CS0618
+
+            Assert.That(TargetTokenOf(axeResults, "violations").Type, Is.EqualTo(JTokenType.Array));
+        }
+
+        [Test]
+        public async Task RunAxeLegacyOnLocator_WithArraySelectors_WritesSimpleTargetAsArray()
+        {
+            await NavigateToPage("selector.html");
+
+#pragma warning disable CS0618
+            AxeResult axeResults = await Page!.Locator("button").RunAxeLegacy(null, arraySelectors: true);
+#pragma warning restore CS0618
+
+            Assert.That(TargetTokenOf(axeResults, "passes").Type, Is.EqualTo(JTokenType.Array));
+        }
+
+        private static JToken TargetTokenOf(AxeResult result, string resultType) =>
+            JObject.Parse(result.ToString()).SelectToken($"{resultType}[0].nodes[0].target")!;
 
         private async Task NavigateToPage(string htmlPageName)
         {

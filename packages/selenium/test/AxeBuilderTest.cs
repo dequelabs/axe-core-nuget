@@ -1,6 +1,7 @@
 using FluentAssertions;
 using Moq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using System;
@@ -36,6 +37,23 @@ namespace Deque.AxeCore.Selenium.Test
         private static readonly object testAxeResult = new
         {
             violations = new object[] { },
+            passes = new object[] { },
+            inapplicable = new object[] { },
+            incomplete = new object[] { },
+            timestamp = DateTimeOffset.Now,
+            url = "www.test.com"
+        };
+
+        private static readonly object testAxeResultWithViolation = new
+        {
+            violations = new object[]
+            {
+                new
+                {
+                    id = "document-title",
+                    nodes = new object[] { new { target = new[] { "html" } } }
+                }
+            },
             passes = new object[] { },
             inapplicable = new object[] { },
             incomplete = new object[] { },
@@ -300,7 +318,72 @@ namespace Deque.AxeCore.Selenium.Test
             result.Violations.Length.Should().Be(0);
         }
 
-        private static void SetupVerifiableAxeInjectionCall()
+        [Test]
+        public void ShouldWriteSelectorsAsArraysWhenRequestedOnTheBuilder()
+        {
+            SetupVerifiableAxeInjectionCall(testAxeResultWithViolation);
+            SetupVerifiableScanCall(null, "{}");
+
+            var result = new AxeBuilder(webDriverMock.Object, stubAxeBuilderOptions)
+                .WithArraySelectors()
+                .Analyze();
+
+            SelectorTokenOf(result).Should().Be(@"[""html""]");
+        }
+
+        [Test]
+        public void ShouldWriteSelectorsAsArraysWhenRequestedInOptions()
+        {
+            SetupVerifiableAxeInjectionCall(testAxeResultWithViolation);
+            SetupVerifiableScanCall(null, "{}");
+
+            var options = new AxeBuilderOptions
+            {
+                ScriptProvider = new TestAxeScriptProvider(),
+                ArraySelectors = true
+            };
+
+            var result = new AxeBuilder(webDriverMock.Object, options).Analyze();
+
+            SelectorTokenOf(result).Should().Be(@"[""html""]");
+        }
+
+        [Test]
+        public void ShouldWriteSimpleSelectorsAsBareStringsByDefault()
+        {
+            SetupVerifiableAxeInjectionCall(testAxeResultWithViolation);
+            SetupVerifiableScanCall(null, "{}");
+
+            var result = new AxeBuilder(webDriverMock.Object, stubAxeBuilderOptions).Analyze();
+
+            SelectorTokenOf(result).Should().Be(@"""html""");
+        }
+
+        [Test]
+        public void ShouldNotChangeSerializedRunContextWhenArraySelectorsRequested()
+        {
+            var expectedContext = SerializeObject(new AxeRunContext()
+            {
+                Exclude = new List<AxeSelector> { new AxeSelector("#div1") }
+            });
+
+            SetupVerifiableAxeInjectionCall();
+            SetupVerifiableScanCall(expectedContext, "{}");
+
+            new AxeBuilder(webDriverMock.Object, stubAxeBuilderOptions)
+                .Exclude("#div1")
+                .WithArraySelectors()
+                .Analyze();
+
+            jsExecutorMock.VerifyAll();
+        }
+
+        private static string SelectorTokenOf(AxeResult result) =>
+            JObject.Parse(result.ToString()).SelectToken("violations[0].nodes[0].target").ToString(Formatting.None);
+
+        private static void SetupVerifiableAxeInjectionCall() => SetupVerifiableAxeInjectionCall(testAxeResult);
+
+        private static void SetupVerifiableAxeInjectionCall(object axeResult)
         {
             webDriverMock
                 .Setup(d => d.WindowHandles)
@@ -318,7 +401,7 @@ namespace Deque.AxeCore.Selenium.Test
 
             jsExecutorMock.Setup(js => js.ExecuteAsyncScript(
                 EmbeddedResourceProvider.ReadEmbeddedFile("finishRun.js"),
-                It.IsAny<string>())).Returns(testAxeResult);
+                It.IsAny<string>())).Returns(axeResult);
             webDriverMock.Setup(d => d.SwitchTo()).Returns(targetLocatorMock.Object);
         }
 
