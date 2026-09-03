@@ -61,8 +61,30 @@ namespace Deque.AxeCore.Commons
         /// </summary>
         public object ToolOptions { get; private set; }
 
-        public AxeResult(JObject result)
+        /// <summary>
+        /// Whether this result and its <see cref="AxeResultItem"/>s write selectors as arrays in all cases from
+        /// <see cref="ToString"/>. Set when the result is constructed.
+        /// </summary>
+        [JsonIgnore]
+        public bool ArraySelectors { get; }
+
+        public AxeResult(JObject result) : this(result, arraySelectors: false)
         {
+        }
+
+        /// <summary>
+        /// Constructs an AxeResult from a raw axe-core results object.
+        /// </summary>
+        /// <param name="result">The raw axe-core results object.</param>
+        /// <param name="arraySelectors">
+        /// When <c>true</c>, <see cref="ToString"/> writes <see cref="AxeResultNode.Target"/>, <see cref="AxeResultNode.XPath"/>
+        /// and <see cref="AxeResultNode.Ancestry"/> as arrays in all cases, matching the shape axe-core itself emits. When
+        /// <c>false</c> (the default), a selector which involves no iframes or shadow DOMs is written as a bare string.
+        /// </param>
+        public AxeResult(JObject result, bool arraySelectors)
+        {
+            ArraySelectors = arraySelectors;
+
             // Some (but not all) WebDrivers treat objects with an error property as a JavaScript error
             // and don't reach this point, but for those that don't, we handle it as an error ourselves.
             string error = result.SelectToken("error")?.ToObject<string>();
@@ -93,11 +115,29 @@ namespace Deque.AxeCore.Commons
             Url = urlToken?.ToObject<string>();
             TestEngine = testEngine?.ToObject<AxeTestEngine>();
             ToolOptions = toolOptions?.ToObject<object>();
+
+            ApplyArraySelectors(Violations);
+            ApplyArraySelectors(Passes);
+            ApplyArraySelectors(Inapplicable);
+            ApplyArraySelectors(Incomplete);
+        }
+
+        private void ApplyArraySelectors(AxeResultItem[] items)
+        {
+            if (items is null)
+            {
+                return;
+            }
+
+            foreach (AxeResultItem item in items)
+            {
+                item.ArraySelectors = ArraySelectors;
+            }
         }
 
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this, AxeJsonSerializerSettings.WithFormatting(Formatting.Indented));
+            return JsonConvert.SerializeObject(this, AxeJsonSerializerSettings.WithFormatting(Formatting.Indented, ArraySelectors));
         }
     }
 }

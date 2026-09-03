@@ -42,9 +42,12 @@ namespace Deque.AxeCore.Commons
         /// </summary>
         public AxeResultNode[] Nodes { get; set; }
 
+        // Mirrors the parent AxeResult, so an item and the result it came from serialize selectors the same way.
+        internal bool ArraySelectors { get; set; }
+
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this, AxeJsonSerializerSettings.WithFormatting(Formatting.Indented));
+            return JsonConvert.SerializeObject(this, AxeJsonSerializerSettings.WithFormatting(Formatting.Indented, ArraySelectors));
         }
     }
 }
