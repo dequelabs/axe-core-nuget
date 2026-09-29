@@ -475,6 +475,17 @@ namespace Deque.AxeCore.Playwright.Test
         }
 
         [Test]
+        public async Task RunAxe_WithArraySelectors_SerializeObjectWritesSimpleTargetAsArray()
+        {
+            await NavigateToPage("basic.html");
+
+            AxeResult axeResults = await Page!.RunAxe(null, arraySelectors: true);
+
+            JToken? target = JObject.Parse(JsonConvert.SerializeObject(axeResults)).SelectToken("Violations[0].Nodes[0].Target");
+            Assert.That(target?.Type, Is.EqualTo(JTokenType.Array));
+        }
+
+        [Test]
         public async Task RunAxeOnLocator_WithArraySelectors_WritesSimpleTargetAsArray()
         {
             await NavigateToPage("selector.html");

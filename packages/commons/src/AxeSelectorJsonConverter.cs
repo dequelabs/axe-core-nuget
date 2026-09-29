@@ -73,7 +73,7 @@ namespace Deque.AxeCore.Commons
 
         public override void WriteJson(JsonWriter writer, AxeSelector value, JsonSerializer serializer)
         {
-            if (!arraySelectors && value.FrameShadowSelectors.Count == 1 && value.FrameShadowSelectors[0].Count == 1)
+            if (!arraySelectors && !value.ArraySelectors && value.FrameShadowSelectors.Count == 1 && value.FrameShadowSelectors[0].Count == 1)
             {
                 serializer.Serialize(writer, value.FrameShadowSelectors[0][0]);
                 return;
