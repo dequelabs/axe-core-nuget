@@ -192,6 +192,32 @@ namespace Deque.AxeCore.Commons.Test
         }
 
         [Test]
+        public void SerializeObjectWritesSelectorsAssignedAfterConstructionAsArraysWhenArraySelectorsEnabled()
+        {
+            var result = new AxeResult(JObject.FromObject(JsonConvert.DeserializeObject(basicAxeResultJson)), arraySelectors: true);
+            result.Violations[0].Nodes[0].Target = new AxeSelector("#updated");
+
+            var node = JObject.Parse(JsonConvert.SerializeObject(result)).SelectToken("Violations[0].Nodes[0]");
+
+            node.SelectToken("Target").ToString(Formatting.None).Should().Be(@"[""#updated""]");
+        }
+
+        [Test]
+        public void SerializeObjectWritesSelectorsOfItemsAddedAfterConstructionAsArraysWhenArraySelectorsEnabled()
+        {
+            var result = new AxeResult(JObject.FromObject(JsonConvert.DeserializeObject(basicAxeResultJson)), arraySelectors: true);
+            result.Violations[0] = new AxeResultItem
+            {
+                Id = "added",
+                Nodes = new[] { new AxeResultNode { Target = new AxeSelector("#added") } }
+            };
+
+            var node = JObject.Parse(JsonConvert.SerializeObject(result)).SelectToken("Violations[0].Nodes[0]");
+
+            node.SelectToken("Target").ToString(Formatting.None).Should().Be(@"[""#added""]");
+        }
+
+        [Test]
         public void SerializeObjectWritesSimpleSelectorsAsBareStringsByDefault()
         {
             var result = new AxeResult(JObject.FromObject(JsonConvert.DeserializeObject(basicAxeResultJson)));

@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 
 namespace Deque.AxeCore.Commons
 {
@@ -118,48 +119,20 @@ namespace Deque.AxeCore.Commons
             TestEngine = testEngine?.ToObject<AxeTestEngine>();
             ToolOptions = toolOptions?.ToObject<object>();
 
-            ApplyArraySelectors(Violations);
-            ApplyArraySelectors(Passes);
-            ApplyArraySelectors(Inapplicable);
-            ApplyArraySelectors(Incomplete);
+            ApplyArraySelectors();
         }
 
-        private void ApplyArraySelectors(AxeResultItem[] items)
-        {
-            if (items is null)
-            {
-                return;
-            }
+        [OnSerializing]
+        internal void OnSerializing(StreamingContext context) => ApplyArraySelectors();
 
-            foreach (AxeResultItem item in items)
+        private void ApplyArraySelectors()
+        {
+            IEnumerable<AxeResultItem> items = new[] { Violations, Passes, Inapplicable, Incomplete }
+                .Where(group => group != null)
+                .SelectMany(group => group);
+            foreach (AxeResultItem item in items.Where(item => item != null))
             {
                 item.ArraySelectors = ArraySelectors;
-
-                foreach (AxeResultNode node in item.Nodes ?? Array.Empty<AxeResultNode>())
-                {
-                    ApplyArraySelectors(node.Target);
-                    ApplyArraySelectors(node.XPath);
-                    ApplyArraySelectors(node.Ancestry);
-
-                    IEnumerable<AxeResultCheck> checks = (node.Any ?? Array.Empty<AxeResultCheck>())
-                        .Concat(node.All ?? Array.Empty<AxeResultCheck>())
-                        .Concat(node.None ?? Array.Empty<AxeResultCheck>());
-                    foreach (AxeResultCheck check in checks)
-                    {
-                        foreach (AxeResultRelatedNode relatedNode in check.RelatedNodes ?? Array.Empty<AxeResultRelatedNode>())
-                        {
-                            ApplyArraySelectors(relatedNode.Target);
-                        }
-                    }
-                }
-            }
-        }
-
-        private void ApplyArraySelectors(AxeSelector selector)
-        {
-            if (selector != null)
-            {
-                selector.ArraySelectors = ArraySelectors;
             }
         }
 
