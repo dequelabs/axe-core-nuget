@@ -218,6 +218,30 @@ namespace Deque.AxeCore.Commons.Test
         }
 
         [Test]
+        public void SerializingTheResultDoesNotChangeHowANodeSerializesOnItsOwn()
+        {
+            var result = new AxeResult(JObject.FromObject(JsonConvert.DeserializeObject(basicAxeResultJson)), arraySelectors: true);
+            var before = JsonConvert.SerializeObject(result.Violations[0].Nodes[0]);
+
+            JsonConvert.SerializeObject(result);
+
+            JsonConvert.SerializeObject(result.Violations[0].Nodes[0]).Should().Be(before);
+        }
+
+        [Test]
+        public void SerializingTheResultDoesNotChangeHowAnAddedItemSerializesOnItsOwn()
+        {
+            var result = new AxeResult(JObject.FromObject(JsonConvert.DeserializeObject(basicAxeResultJson)), arraySelectors: true);
+            var added = new AxeResultItem { Id = "added", Nodes = new[] { new AxeResultNode { Target = new AxeSelector("#added") } } };
+            result.Violations[0] = added;
+            var before = JsonConvert.SerializeObject(added);
+
+            JsonConvert.SerializeObject(result);
+
+            JsonConvert.SerializeObject(added).Should().Be(before);
+        }
+
+        [Test]
         public void SerializeObjectWritesSimpleSelectorsAsBareStringsByDefault()
         {
             var result = new AxeResult(JObject.FromObject(JsonConvert.DeserializeObject(basicAxeResultJson)));

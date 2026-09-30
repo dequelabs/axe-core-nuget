@@ -122,19 +122,37 @@ namespace Deque.AxeCore.Commons
             ApplyArraySelectors();
         }
 
+        private List<AxeResultItem> itemsAdoptedForSerialization;
+
         [OnSerializing]
-        internal void OnSerializing(StreamingContext context) => ApplyArraySelectors();
+        internal void OnSerializing(StreamingContext context)
+        {
+            itemsAdoptedForSerialization = Items().Where(item => item.ArraySelectors != ArraySelectors).ToList();
+            ApplyArraySelectors();
+        }
+
+        [OnSerialized]
+        internal void OnSerialized(StreamingContext context)
+        {
+            foreach (AxeResultItem item in itemsAdoptedForSerialization ?? new List<AxeResultItem>())
+            {
+                item.ArraySelectors = !ArraySelectors;
+            }
+            itemsAdoptedForSerialization = null;
+        }
 
         private void ApplyArraySelectors()
         {
-            IEnumerable<AxeResultItem> items = new[] { Violations, Passes, Inapplicable, Incomplete }
-                .Where(group => group != null)
-                .SelectMany(group => group);
-            foreach (AxeResultItem item in items.Where(item => item != null))
+            foreach (AxeResultItem item in Items())
             {
                 item.ArraySelectors = ArraySelectors;
             }
         }
+
+        private IEnumerable<AxeResultItem> Items() => new[] { Violations, Passes, Inapplicable, Incomplete }
+            .Where(group => group != null)
+            .SelectMany(group => group)
+            .Where(item => item != null);
 
         public override string ToString()
         {

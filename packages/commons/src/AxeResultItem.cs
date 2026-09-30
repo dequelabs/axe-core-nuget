@@ -50,18 +50,26 @@ namespace Deque.AxeCore.Commons
         internal bool ArraySelectors { get; set; }
 
         [OnSerializing]
-        internal void OnSerializing(StreamingContext context)
-        {
-            foreach (AxeResultNode node in Nodes ?? Array.Empty<AxeResultNode>())
-            {
-                if (node == null)
-                {
-                    continue;
-                }
+        internal void OnSerializing(StreamingContext context) => SetSelectorsArraySelectors(ArraySelectors);
 
-                ApplyArraySelectors(node.Target);
-                ApplyArraySelectors(node.XPath);
-                ApplyArraySelectors(node.Ancestry);
+        [OnSerialized]
+        internal void OnSerialized(StreamingContext context) => SetSelectorsArraySelectors(false);
+
+        private void SetSelectorsArraySelectors(bool arraySelectors)
+        {
+            foreach (AxeSelector selector in Selectors().Where(selector => selector != null))
+            {
+                selector.ArraySelectors = arraySelectors;
+            }
+        }
+
+        private IEnumerable<AxeSelector> Selectors()
+        {
+            foreach (AxeResultNode node in (Nodes ?? Array.Empty<AxeResultNode>()).Where(node => node != null))
+            {
+                yield return node.Target;
+                yield return node.XPath;
+                yield return node.Ancestry;
 
                 IEnumerable<AxeResultCheck> checks = (node.Any ?? Array.Empty<AxeResultCheck>())
                     .Concat(node.All ?? Array.Empty<AxeResultCheck>())
@@ -71,17 +79,9 @@ namespace Deque.AxeCore.Commons
                 {
                     foreach (AxeResultRelatedNode relatedNode in check.RelatedNodes ?? Array.Empty<AxeResultRelatedNode>())
                     {
-                        ApplyArraySelectors(relatedNode?.Target);
+                        yield return relatedNode?.Target;
                     }
                 }
-            }
-        }
-
-        private void ApplyArraySelectors(AxeSelector selector)
-        {
-            if (selector != null)
-            {
-                selector.ArraySelectors = ArraySelectors;
             }
         }
 
