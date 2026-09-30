@@ -1,6 +1,9 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
 
 namespace Deque.AxeCore.Commons
 {
@@ -116,24 +119,40 @@ namespace Deque.AxeCore.Commons
             TestEngine = testEngine?.ToObject<AxeTestEngine>();
             ToolOptions = toolOptions?.ToObject<object>();
 
-            ApplyArraySelectors(Violations);
-            ApplyArraySelectors(Passes);
-            ApplyArraySelectors(Inapplicable);
-            ApplyArraySelectors(Incomplete);
+            ApplyArraySelectors();
         }
 
-        private void ApplyArraySelectors(AxeResultItem[] items)
-        {
-            if (items is null)
-            {
-                return;
-            }
+        private List<AxeResultItem> itemsAdoptedForSerialization;
 
-            foreach (AxeResultItem item in items)
+        [OnSerializing]
+        internal void OnSerializing(StreamingContext context)
+        {
+            itemsAdoptedForSerialization = Items().Where(item => item.ArraySelectors != ArraySelectors).ToList();
+            ApplyArraySelectors();
+        }
+
+        [OnSerialized]
+        internal void OnSerialized(StreamingContext context)
+        {
+            foreach (AxeResultItem item in itemsAdoptedForSerialization ?? new List<AxeResultItem>())
+            {
+                item.ArraySelectors = !ArraySelectors;
+            }
+            itemsAdoptedForSerialization = null;
+        }
+
+        private void ApplyArraySelectors()
+        {
+            foreach (AxeResultItem item in Items())
             {
                 item.ArraySelectors = ArraySelectors;
             }
         }
+
+        private IEnumerable<AxeResultItem> Items() => new[] { Violations, Passes, Inapplicable, Incomplete }
+            .Where(group => group != null)
+            .SelectMany(group => group)
+            .Where(item => item != null);
 
         public override string ToString()
         {

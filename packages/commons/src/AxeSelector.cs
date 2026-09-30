@@ -106,6 +106,8 @@ namespace Deque.AxeCore.Commons
         /// </remarks>
         public IList<IList<string>> FrameShadowSelectors { get; }
 
+        internal bool ArraySelectors { get; set; }
+
         /// <summary>
         /// Constructs an AxeSelector which represents an element in the topmost frame of a page and which does not involve any shadow DOMs.
         /// </summary>
