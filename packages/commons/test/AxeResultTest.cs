@@ -75,6 +75,9 @@ namespace Deque.AxeCore.Commons.Test
           ""xpath"": [
             ""/html""
           ],
+          ""ancestry"": [
+            ""html""
+          ],
           ""failureSummary"": ""Fix any of the following:\n  Document does not have a non-empty <title> element""
         }
       ]
@@ -138,6 +141,171 @@ namespace Deque.AxeCore.Commons.Test
             check.RelatedNodes.Should().BeEmpty();
             check.Impact.Should().Be("serious");
             check.Message.Should().Be("Document does not have a non-empty <title> element");
+        }
+
+        [Test]
+        public void ToStringWritesSelectorsAsArraysWhenArraySelectorsEnabled()
+        {
+            var result = new AxeResult(JObject.FromObject(JsonConvert.DeserializeObject(basicAxeResultJson)), arraySelectors: true);
+
+            var node = JObject.Parse(result.ToString()).SelectToken("violations[0].nodes[0]");
+
+            node.SelectToken("target").ToString(Formatting.None).Should().Be(@"[""html""]");
+            node.SelectToken("xPath").ToString(Formatting.None).Should().Be(@"[""/html""]");
+            node.SelectToken("ancestry").ToString(Formatting.None).Should().Be(@"[""html""]");
+        }
+
+        [Test]
+        public void ToStringWritesSimpleSelectorsAsBareStringsByDefault()
+        {
+            var result = new AxeResult(JObject.FromObject(JsonConvert.DeserializeObject(basicAxeResultJson)));
+
+            var node = JObject.Parse(result.ToString()).SelectToken("violations[0].nodes[0]");
+
+            node.SelectToken("target").ToString(Formatting.None).Should().Be(@"""html""");
+            node.SelectToken("xPath").ToString(Formatting.None).Should().Be(@"""/html""");
+            node.SelectToken("ancestry").ToString(Formatting.None).Should().Be(@"""html""");
+        }
+
+        [Test]
+        public void SerializeObjectWritesSelectorsAsArraysWhenArraySelectorsEnabled()
+        {
+            var result = new AxeResult(JObject.FromObject(JsonConvert.DeserializeObject(basicAxeResultJson)), arraySelectors: true);
+
+            var node = JObject.Parse(JsonConvert.SerializeObject(result)).SelectToken("Violations[0].Nodes[0]");
+
+            node.SelectToken("Target").ToString(Formatting.None).Should().Be(@"[""html""]");
+            node.SelectToken("XPath").ToString(Formatting.None).Should().Be(@"[""/html""]");
+            node.SelectToken("Ancestry").ToString(Formatting.None).Should().Be(@"[""html""]");
+        }
+
+        [Test]
+        public void SerializeObjectWritesRelatedNodeSelectorsAsArraysWhenArraySelectorsEnabled()
+        {
+            var raw = JObject.FromObject(JsonConvert.DeserializeObject(basicAxeResultJson));
+            ((JArray)raw.SelectToken("violations[0].nodes[0].any[0].relatedNodes")).Add(JObject.Parse(@"{""html"": ""<p>"", ""target"": [""p""]}"));
+            var result = new AxeResult(raw, arraySelectors: true);
+
+            var relatedNode = JObject.Parse(JsonConvert.SerializeObject(result)).SelectToken("Violations[0].Nodes[0].Any[0].RelatedNodes[0]");
+
+            relatedNode.SelectToken("Target").ToString(Formatting.None).Should().Be(@"[""p""]");
+        }
+
+        [Test]
+        public void SerializeObjectWritesSelectorsAssignedAfterConstructionAsArraysWhenArraySelectorsEnabled()
+        {
+            var result = new AxeResult(JObject.FromObject(JsonConvert.DeserializeObject(basicAxeResultJson)), arraySelectors: true);
+            result.Violations[0].Nodes[0].Target = new AxeSelector("#updated");
+
+            var node = JObject.Parse(JsonConvert.SerializeObject(result)).SelectToken("Violations[0].Nodes[0]");
+
+            node.SelectToken("Target").ToString(Formatting.None).Should().Be(@"[""#updated""]");
+        }
+
+        [Test]
+        public void SerializeObjectWritesSelectorsOfItemsAddedAfterConstructionAsArraysWhenArraySelectorsEnabled()
+        {
+            var result = new AxeResult(JObject.FromObject(JsonConvert.DeserializeObject(basicAxeResultJson)), arraySelectors: true);
+            result.Violations[0] = new AxeResultItem
+            {
+                Id = "added",
+                Nodes = new[] { new AxeResultNode { Target = new AxeSelector("#added") } }
+            };
+
+            var node = JObject.Parse(JsonConvert.SerializeObject(result)).SelectToken("Violations[0].Nodes[0]");
+
+            node.SelectToken("Target").ToString(Formatting.None).Should().Be(@"[""#added""]");
+        }
+
+        [Test]
+        public void SerializingTheResultDoesNotChangeHowANodeSerializesOnItsOwn()
+        {
+            var result = new AxeResult(JObject.FromObject(JsonConvert.DeserializeObject(basicAxeResultJson)), arraySelectors: true);
+            var before = JsonConvert.SerializeObject(result.Violations[0].Nodes[0]);
+
+            JsonConvert.SerializeObject(result);
+
+            JsonConvert.SerializeObject(result.Violations[0].Nodes[0]).Should().Be(before);
+        }
+
+        [Test]
+        public void SerializingTheResultDoesNotChangeHowAnAddedItemSerializesOnItsOwn()
+        {
+            var result = new AxeResult(JObject.FromObject(JsonConvert.DeserializeObject(basicAxeResultJson)), arraySelectors: true);
+            var added = new AxeResultItem { Id = "added", Nodes = new[] { new AxeResultNode { Target = new AxeSelector("#added") } } };
+            result.Violations[0] = added;
+            var before = JsonConvert.SerializeObject(added);
+
+            JsonConvert.SerializeObject(result);
+
+            JsonConvert.SerializeObject(added).Should().Be(before);
+        }
+
+        [Test]
+        public void SerializeObjectWritesSimpleSelectorsAsBareStringsByDefault()
+        {
+            var result = new AxeResult(JObject.FromObject(JsonConvert.DeserializeObject(basicAxeResultJson)));
+
+            var node = JObject.Parse(JsonConvert.SerializeObject(result)).SelectToken("Violations[0].Nodes[0]");
+
+            node.SelectToken("Target").ToString(Formatting.None).Should().Be(@"""html""");
+        }
+
+        [Test]
+        public void SerializeObjectWithCallerSettingsWritesSelectorsAsArraysWhenArraySelectorsEnabled()
+        {
+            var result = new AxeResult(JObject.FromObject(JsonConvert.DeserializeObject(basicAxeResultJson)), arraySelectors: true);
+
+            var json = JsonConvert.SerializeObject(result, AxeJsonSerializerSettings.Default);
+
+            JObject.Parse(json).SelectToken("violations[0].nodes[0].target").ToString(Formatting.None).Should().Be(@"[""html""]");
+        }
+
+        [Test]
+        public void ArraySelectorsReflectsHowTheResultWasConstructed()
+        {
+            var enabled = new AxeResult(JObject.FromObject(JsonConvert.DeserializeObject(basicAxeResultJson)), arraySelectors: true);
+            var disabled = new AxeResult(JObject.FromObject(JsonConvert.DeserializeObject(basicAxeResultJson)));
+
+            enabled.ArraySelectors.Should().BeTrue();
+            disabled.ArraySelectors.Should().BeFalse();
+        }
+
+        [Test]
+        public void ArraySelectorsIsNotItselfSerialized()
+        {
+            var result = new AxeResult(JObject.FromObject(JsonConvert.DeserializeObject(basicAxeResultJson)), arraySelectors: true);
+
+            JObject.Parse(result.ToString()).SelectToken("arraySelectors").Should().BeNull();
+        }
+
+        [Test]
+        public void ResultItemToStringUsesTheSameSelectorShapeAsItsParentResult()
+        {
+            var result = new AxeResult(JObject.FromObject(JsonConvert.DeserializeObject(basicAxeResultJson)), arraySelectors: true);
+
+            var node = JObject.Parse(result.Violations[0].ToString()).SelectToken("nodes[0]");
+
+            node.SelectToken("target").ToString(Formatting.None).Should().Be(@"[""html""]");
+            node.SelectToken("xPath").ToString(Formatting.None).Should().Be(@"[""/html""]");
+        }
+
+        [Test]
+        public void ResultItemToStringWritesSimpleSelectorsAsBareStringsByDefault()
+        {
+            var result = new AxeResult(JObject.FromObject(JsonConvert.DeserializeObject(basicAxeResultJson)));
+
+            var node = JObject.Parse(result.Violations[0].ToString()).SelectToken("nodes[0]");
+
+            node.SelectToken("target").ToString(Formatting.None).Should().Be(@"""html""");
+        }
+
+        [Test]
+        public void ResultItemArraySelectorsIsNotItselfSerialized()
+        {
+            var result = new AxeResult(JObject.FromObject(JsonConvert.DeserializeObject(basicAxeResultJson)), arraySelectors: true);
+
+            JObject.Parse(result.Violations[0].ToString()).SelectToken("arraySelectors").Should().BeNull();
         }
 
         [Test]

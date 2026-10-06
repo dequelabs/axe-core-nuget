@@ -1,4 +1,8 @@
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
 
 namespace Deque.AxeCore.Commons
 {
@@ -42,9 +46,48 @@ namespace Deque.AxeCore.Commons
         /// </summary>
         public AxeResultNode[] Nodes { get; set; }
 
+        // Mirrors the parent AxeResult, so an item and the result it came from serialize selectors the same way.
+        internal bool ArraySelectors { get; set; }
+
+        [OnSerializing]
+        internal void OnSerializing(StreamingContext context) => SetSelectorsArraySelectors(ArraySelectors);
+
+        [OnSerialized]
+        internal void OnSerialized(StreamingContext context) => SetSelectorsArraySelectors(false);
+
+        private void SetSelectorsArraySelectors(bool arraySelectors)
+        {
+            foreach (AxeSelector selector in Selectors().Where(selector => selector != null))
+            {
+                selector.ArraySelectors = arraySelectors;
+            }
+        }
+
+        private IEnumerable<AxeSelector> Selectors()
+        {
+            foreach (AxeResultNode node in (Nodes ?? Array.Empty<AxeResultNode>()).Where(node => node != null))
+            {
+                yield return node.Target;
+                yield return node.XPath;
+                yield return node.Ancestry;
+
+                IEnumerable<AxeResultCheck> checks = (node.Any ?? Array.Empty<AxeResultCheck>())
+                    .Concat(node.All ?? Array.Empty<AxeResultCheck>())
+                    .Concat(node.None ?? Array.Empty<AxeResultCheck>())
+                    .Where(check => check != null);
+                foreach (AxeResultCheck check in checks)
+                {
+                    foreach (AxeResultRelatedNode relatedNode in check.RelatedNodes ?? Array.Empty<AxeResultRelatedNode>())
+                    {
+                        yield return relatedNode?.Target;
+                    }
+                }
+            }
+        }
+
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this, AxeJsonSerializerSettings.WithFormatting(Formatting.Indented));
+            return JsonConvert.SerializeObject(this, AxeJsonSerializerSettings.WithFormatting(Formatting.Indented, ArraySelectors));
         }
     }
 }
