@@ -13,6 +13,16 @@ jobs:
         # Skip checks if we are not a scheduled run
         run: echo value=$(test ${{ github.event_name }} != schedule && echo true || echo false) >> "$GITHUB_OUTPUT"
 
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup pnpm
+        uses: ./.github/actions/setup-pnpm
+        with:
+          cache: false
+
       - name: Create release
         uses: dequelabs/axe-api-team-public/.github/actions/auto-patch-release-v1@main
         with:
