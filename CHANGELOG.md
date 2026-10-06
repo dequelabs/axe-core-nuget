@@ -1,3 +1,15 @@
+# [4.14.0](https://github.com/dequelabs/axe-core-nuget/compare/v4.13.0...v4.14.0) (2026-10-06)
+
+
+### Bug Fixes
+
+* **commons:** honor arraySelectors in JsonConvert.SerializeObject ([#283](https://github.com/dequelabs/axe-core-nuget/issues/283)) ([5a0fbd6](https://github.com/dequelabs/axe-core-nuget/commit/5a0fbd631d87b44c8ee9cfe303889098bfc60111)), closes [#281](https://github.com/dequelabs/axe-core-nuget/issues/281) [#217](https://github.com/dequelabs/axe-core-nuget/issues/217)
+
+
+### Features
+
+* **commons:** add opt-in arraySelectors serialization ([#281](https://github.com/dequelabs/axe-core-nuget/issues/281)) ([a26e7b7](https://github.com/dequelabs/axe-core-nuget/commit/a26e7b79e953026c778aefe29a7ce6b77c1d83d3)), closes [#217](https://github.com/dequelabs/axe-core-nuget/issues/217)
+* Update axe-core to v4.14.0 ([#285](https://github.com/dequelabs/axe-core-nuget/issues/285)) ([7470eed](https://github.com/dequelabs/axe-core-nuget/commit/7470eed378177e850ad1af20b16a22ed6a46c62f))
 # [4.13.0](https://github.com/dequelabs/axe-core-nuget/compare/v4.12.0...v4.13.0) (2026-08-10)
 
 
