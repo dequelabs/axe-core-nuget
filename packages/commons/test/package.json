@@ -1,4 +1,5 @@
 {
+  "name": "axe-core-nuget-commons-test",
   "description": "This file is used to download npm dependencies for this project",
   "repository": {},
   "license": "MPL-2.0 AND MIT",

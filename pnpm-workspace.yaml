@@ -1,0 +1,12 @@
+packages:
+  - "packages/commons/src"
+  - "packages/commons/test"
+
+allowBuilds: {}
+
+minimumReleaseAge: 10020
+minimumReleaseAgeExclude:
+  - "@deque/*"
+  - "@axe-devtools/*"
+  - "@axe-core/*"
+  - "axe-core"
