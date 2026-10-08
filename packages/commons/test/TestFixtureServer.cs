@@ -27,7 +27,7 @@ namespace Deque.AxeCore.Commons.Test.Util
             };
             serverProc = Process.Start(startInfo);
 
-            serverProc.StandardInput.WriteLine("npm run serveFixtures & exit");
+            serverProc.StandardInput.WriteLine("pnpm run serveFixtures & exit");
         }
         public static void Stop()
         {
