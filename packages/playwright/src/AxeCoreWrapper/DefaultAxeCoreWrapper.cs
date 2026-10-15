@@ -28,9 +28,16 @@ namespace Deque.AxeCore.Playwright.AxeCoreWrapper
             NullValueHandling = NullValueHandling.Include
         };
 
-        public DefaultAxeCoreWrapper(IAxeContentEmbedder axeContentEmbedder)
+        private readonly bool m_arraySelectors;
+
+        public DefaultAxeCoreWrapper(IAxeContentEmbedder axeContentEmbedder) : this(axeContentEmbedder, arraySelectors: false)
+        {
+        }
+
+        public DefaultAxeCoreWrapper(IAxeContentEmbedder axeContentEmbedder, bool arraySelectors)
         {
             m_axeContentEmbedder = axeContentEmbedder;
+            m_arraySelectors = arraySelectors;
         }
 
         /// <inheritdoc/>
@@ -85,17 +92,16 @@ namespace Deque.AxeCore.Playwright.AxeCoreWrapper
             return DeserializeResult(jsonObject);
         }
 
-        private static async Task<AxeResult> EvaluateAxeRun(IPage page, string? context = null, object? param = null)
+        private async Task<AxeResult> EvaluateAxeRun(IPage page, string? context = null, object? param = null)
         {
             string? paramString = param != null ? JsonConvert.SerializeObject(param) : JsonConvert.SerializeObject(new AxeRunOptions());
-            string? contextParam = context is null ? string.Empty : ($"JSON.parse(\'{context}\'),");
 
             string legacyRun = await EmbeddedResourceProvider.ReadEmbeddedFileAsync("legacyRun.js").ConfigureAwait(false);
             object jsonObject = await page.EvaluateAsync<object>(legacyRun, new[] { context, paramString }).ConfigureAwait(false);
             return DeserializeResult(jsonObject);
         }
 
-        private static AxeResult DeserializeResult(object jsonObject)
+        private AxeResult DeserializeResult(object jsonObject)
         {
             if (jsonObject is null)
             {
@@ -104,7 +110,7 @@ namespace Deque.AxeCore.Playwright.AxeCoreWrapper
 
             JObject jObject = JObject.FromObject(jsonObject);
 
-            return new AxeResult(jObject);
+            return new AxeResult(jObject, m_arraySelectors);
         }
 
         private static List<AxeRuleMetadata> DeserializeRuleMetadata(object jsonObject)

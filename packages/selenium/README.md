@@ -310,14 +310,39 @@ Causes future calls to `Analyze` to export their results to a JSON file, *in add
 
 The output format is exactly the same as axe-core would have produced natively, and is compatible with other tools that read axe result JSON, like [axe-sarif-converter](https://github.com/microsoft/axe-sarif-converter).
 
+### `AxeBuilder.WithArraySelectors(bool arraySelectors = true)`
+
+```csharp
+AxeResult axeResult = new AxeBuilder(webDriver)
+    .WithArraySelectors()
+    .Analyze();
+```
+
+Serializes the `Target`, `XPath` and `Ancestry` of each result node as an array in all cases, matching the shape axe-core itself emits and keeping `axeResult.ToString()` interchangeable with the JSON produced by other axe integrations.
+
+Without this, a selector which involves no iframes or shadow DOMs is serialized as a bare string:
+
+```jsonc
+// default
+"target": "#some-element-id"
+
+// with .WithArraySelectors()
+"target": ["#some-element-id"]
+```
+
+This only affects serialization. `AxeSelector.ToString()`, `AxeSelector.Selector` and the other `AxeSelector` properties are unchanged either way.
+
+This becomes the default in the next major version. Enabling it now is the way to opt in early.
+
 ### `AxeBuilder.AxeBuilder(webDriver, axeBuilderOptions)`
 
-This constructor overload enables certain advanced options not required by most `Deque.AxeCore.Selenium` users. Currently, its only use is to allow you to use a custom `axe-core` implementation, rather than the one that is packaged with this library.
+This constructor overload enables certain advanced options not required by most `Deque.AxeCore.Selenium` users: supplying a custom `axe-core` implementation rather than the one packaged with this library, and enabling array selectors.
 
 ```csharp
 AxeBuilderOptions axeBuilderOptions = new AxeBuilderOptions
 {
-    ScriptProvider = new FileAxeScriptProvider(".\\axe.min.js")
+    ScriptProvider = new FileAxeScriptProvider(".\\axe.min.js"),
+    ArraySelectors = true
 };
 AxeResult axeResult = new AxeBuilder(webDriver, axeBuilderOptions).Analyze();
 ```
