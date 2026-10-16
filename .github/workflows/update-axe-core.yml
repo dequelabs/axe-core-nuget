@@ -9,9 +9,9 @@ jobs:
     timeout-minutes: 2
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: ./.github/actions/setup-pnpm
         with:
-          node-version: 18
+          cache: false
       - uses: dequelabs/axe-api-team-public/.github/actions/create-update-axe-core-pull-request-v1@main
         with:
           token: ${{ secrets.PAT }}

@@ -39,6 +39,7 @@ You'll need the following installed:
 * [.NET Framework 4.7.1 Developer Pack](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net471)
 * [PowerShell 7+](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell)
 * [Node.js (latest LTS version)](https://nodejs.org)
+* [pnpm](https://pnpm.io/installation) (the version is pinned by `packageManager` in `package.json`)
 * [Google Chrome (latest stable version)](https://www.google.com/chrome/downloads)
 * [Mozilla Firefox (latest stable version)](https://www.mozilla.org/firefox)
 

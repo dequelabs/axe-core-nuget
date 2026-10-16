@@ -1,0 +1,16 @@
+name: Setup pnpm
+description: Install the pnpm version pinned by packageManager and set up Node, optionally with the pnpm store cache.
+inputs:
+  cache:
+    description: Whether to restore and save the pnpm store cache
+    required: false
+    default: "true"
+runs:
+  using: composite
+  steps:
+    - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 24
+        cache: ${{ inputs.cache == 'true' && 'pnpm' || '' }}
+        cache-dependency-path: pnpm-lock.yaml

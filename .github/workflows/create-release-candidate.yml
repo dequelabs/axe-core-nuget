@@ -13,6 +13,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 2
     steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-pnpm
+        with:
+          cache: false
       - uses: dequelabs/axe-api-team-public/.github/actions/create-release-candidate-v1@main
         with:
           token: ${{ secrets.PAT }}

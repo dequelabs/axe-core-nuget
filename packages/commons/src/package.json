@@ -1,4 +1,6 @@
 {
+  "name": "axe-core-nuget-commons",
+  "private": true,
   "description": "This file is used to download npm dependencies for this project",
   "repository": {},
   "license": "MIT",
