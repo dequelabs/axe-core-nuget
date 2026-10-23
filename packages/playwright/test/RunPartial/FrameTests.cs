@@ -26,6 +26,27 @@ namespace Deque.AxeCore.Playwright.Test.RunPartial
         }
 
         [Test]
+        public async Task ShouldInjectIntoNestedIFramesByDefault()
+        {
+            await GoToFixture("nested-iframes.html");
+
+            await Page!.RunAxe();
+
+            await AssertAxeInjectedIntoChildFrames();
+        }
+
+        [Test]
+        public async Task ShouldNotInjectIntoNestedIFramesWhenIframesIsFalse()
+        {
+            await GoToFixture("nested-iframes.html");
+
+            var res = await Page!.RunAxe(LabelOnlyWithoutIframes());
+
+            Assert.That(res.Violations, Is.Empty);
+            await AssertAxeNotInjectedIntoChildFrames();
+        }
+
+        [Test]
         public async Task ShouldAnalyzeInNestedIFrames()
         {
             await GoToFixture("nested-iframes.html");

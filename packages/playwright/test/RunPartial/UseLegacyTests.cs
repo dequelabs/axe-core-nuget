@@ -130,6 +130,30 @@ namespace Deque.AxeCore.Playwright.Test.RunPartial
             Assert.That(allowedOrigins, Is.EqualTo("*"));
         }
 
+        [Test]
+        public async Task ShouldNotInjectIntoNestedIFramesWhenIframesIsFalseInLegacyMode()
+        {
+            await GoToFixture("nested-iframes.html");
+
+#pragma warning disable CS0618
+            var res = await Page!.RunAxeLegacy(null, LabelOnlyWithoutIframes());
+#pragma warning restore CS0618
+
+            Assert.That(res.Violations, Is.Empty);
+            await AssertAxeNotInjectedIntoChildFrames();
+        }
+
+        [Test]
+        public async Task ShouldNotInjectIntoNestedIFramesWhenIframesIsFalseWithLegacySource()
+        {
+            await GoToFixture("nested-iframes.html");
+
+            var res = await Page!.RunAxe(null, LabelOnlyWithoutIframes(), axeCoreLegacy);
+
+            Assert.That(res.Violations, Is.Empty);
+            await AssertAxeNotInjectedIntoChildFrames();
+        }
+
         private async Task<string> AllowedOrigins()
         {
             return await Page!.EvaluateAsync<string>("() => axe._audit.allowedOrigins[0]");
