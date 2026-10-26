@@ -155,6 +155,27 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             Assert.That(res.Incomplete, Is.Empty);
         }
 
+        [Test]
+        [Timeout(15000)]
+        [TestCase("Chrome")]
+        [TestCase("Firefox")]
+        public void ShouldScanPagesAndFramesThatReplaceEvent(string browser)
+        {
+            InitDriver(browser);
+            GoToUrl("http://localhost:8080/index.html");
+            ((IJavaScriptExecutor)WebDriver).ExecuteScript("window.Event = function () {};");
+            AddFrame("replaced-event", "/index.html", null);
+            ((IJavaScriptExecutor)WebDriver).ExecuteScript(
+                "document.getElementById('replaced-event').contentWindow.Event = function () {};");
+
+            var res = new AxeBuilder(WebDriver)
+                .WithRules("frame-tested")
+                .Analyze();
+
+            Assert.That(FrameTestedTargets(res.Passes), Is.EqualTo(new[] { "#replaced-event" }));
+            Assert.That(FrameTestedTargets(res.Incomplete), Is.Empty);
+        }
+
         private void AddFrame(string id, string src, string sandbox)
         {
             ((IJavaScriptExecutor)WebDriver).ExecuteAsyncScript(@"

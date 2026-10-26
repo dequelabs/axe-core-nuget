@@ -270,6 +270,22 @@ namespace Deque.AxeCore.Playwright.Test.RunPartial
             Assert.That(res.Incomplete, Is.Empty);
         }
 
+        [Test]
+        [Timeout(15000)]
+        public async Task ShouldScanPagesAndFramesThatReplaceEvent()
+        {
+            await GoToFixture("index.html");
+            await Page!.EvaluateAsync("() => { window.Event = function () {}; }");
+            await AddFrame("replaced-event", "/index.html", null);
+            await Page!.EvaluateAsync(
+                "() => { document.getElementById('replaced-event').contentWindow.Event = function () {}; }");
+
+            var res = await RunFrameTested();
+
+            Assert.That(FrameTestedTargets(res.Passes), Is.EqualTo(new[] { "#replaced-event" }));
+            Assert.That(FrameTestedTargets(res.Incomplete), Is.Empty);
+        }
+
         private Task AddFrame(string id, string src, string sandbox)
         {
             return Page!.EvaluateAsync(@"([id, src, sandbox]) => new Promise(resolve => {
