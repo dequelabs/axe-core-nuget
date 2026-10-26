@@ -1,4 +1,5 @@
 using System.Linq;
+using Deque.AxeCore.Commons;
 using System.Threading.Tasks;
 using NUnit.Framework;
 
@@ -212,6 +213,91 @@ namespace Deque.AxeCore.Playwright.Test.RunPartial
                 }
             }
             Assert.That(found, Is.EqualTo(true));
+        }
+
+        [Test]
+        [Timeout(15000)]
+        public async Task ShouldReportFramesSandboxedWithoutScripts()
+        {
+            await GoToFixture("index.html");
+            await AddFrame("no-scripts", "/index.html", "allow-same-origin");
+
+            var res = await RunFrameTested();
+
+            Assert.That(FrameTestedTargets(res.Incomplete), Is.EqualTo(new[] { "#no-scripts" }));
+        }
+
+        [Test]
+        [Timeout(15000)]
+        public async Task ShouldReportFramesSandboxedByCspHeader()
+        {
+            await GoToFixture("index.html");
+            await AddFrame("csp-sandbox", "/csp-sandbox/index.html", null);
+
+            var res = await RunFrameTested();
+
+            Assert.That(FrameTestedTargets(res.Incomplete), Is.EqualTo(new[] { "#csp-sandbox" }));
+        }
+
+        [Test]
+        [Timeout(15000)]
+        public async Task ShouldUseTheSandboxAFrameLoadedWith()
+        {
+            await GoToFixture("index.html");
+            await AddFrame("sandboxed-later", "/index.html", null);
+            await AddFrame("unsandboxed-later", "/index.html", "allow-same-origin");
+            await Page!.EvaluateAsync(@"() => {
+                document.getElementById('sandboxed-later').setAttribute('sandbox', 'allow-same-origin');
+                document.getElementById('unsandboxed-later').removeAttribute('sandbox');
+            }");
+
+            var res = await RunFrameTested();
+
+            Assert.That(FrameTestedTargets(res.Passes), Is.EqualTo(new[] { "#sandboxed-later" }));
+            Assert.That(FrameTestedTargets(res.Incomplete), Is.EqualTo(new[] { "#unsandboxed-later" }));
+        }
+
+        [Test]
+        [Timeout(15000)]
+        public async Task ShouldAnalyzeFramesSandboxedWithScripts()
+        {
+            await GoToFixture("index.html");
+            await AddFrame("scripts", "/index.html", "allow-same-origin allow-scripts");
+
+            var res = await RunFrameTested();
+
+            Assert.That(FrameTestedTargets(res.Passes), Is.EqualTo(new[] { "#scripts" }));
+            Assert.That(res.Incomplete, Is.Empty);
+        }
+
+        private Task AddFrame(string id, string src, string sandbox)
+        {
+            return Page!.EvaluateAsync(@"([id, src, sandbox]) => new Promise(resolve => {
+                const iframe = document.createElement('iframe');
+                iframe.id = id;
+                if (sandbox !== null) {
+                    iframe.setAttribute('sandbox', sandbox);
+                }
+                iframe.onload = resolve;
+                iframe.src = src;
+                document.body.appendChild(iframe);
+            })", new[] { id, src, sandbox });
+        }
+
+        private Task<AxeResult> RunFrameTested()
+        {
+            return Page!.RunAxe(new AxeRunOptions
+            {
+                RunOnly = RunOnlyOptions.Rules("frame-tested")
+            });
+        }
+
+        private static string[] FrameTestedTargets(AxeResultItem[] items)
+        {
+            return items
+                .Where(item => item.Id == "frame-tested")
+                .SelectMany(item => item.Nodes.Select(node => node.Target.Selector))
+                .ToArray();
         }
     }
 }

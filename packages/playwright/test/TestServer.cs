@@ -38,6 +38,15 @@ namespace Deque.AxeCore.Playwright.Test
                 .UseWebRoot(webRoot)
                 .Configure(app =>
                 {
+                    app.Use(async (context, next) =>
+                    {
+                        if (context.Request.Path.StartsWithSegments("/csp-sandbox", out var path))
+                        {
+                            context.Request.Path = path;
+                            context.Response.Headers["Content-Security-Policy"] = "sandbox allow-same-origin";
+                        }
+                        await next();
+                    });
                     app.UseStaticFiles();
                 })
                 .UseKestrel(options =>

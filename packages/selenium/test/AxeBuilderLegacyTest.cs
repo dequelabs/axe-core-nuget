@@ -301,7 +301,7 @@ namespace Deque.AxeCore.Selenium.Test
                 .Setup(js => js.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("runPartialExists.js")))
                 .Returns(false);
             jsExecutorMock
-                .Setup(js => js.ExecuteScript(LegacyTestAxeScriptProvider.stubAxeScript)).Verifiable();
+                .Setup(js => js.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("assertScriptsRun.js") + LegacyTestAxeScriptProvider.stubAxeScript)).Verifiable();
             webDriverMock
                 .Setup(d => d.FindElements(It.IsAny<By>()))
                 .Returns(new List<IWebElement>().AsReadOnly());
