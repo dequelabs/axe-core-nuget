@@ -105,14 +105,17 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         public void ShouldReportFramesSandboxedByCspHeader(string browser)
         {
             InitDriver(browser);
-            GoToUrl("http://localhost:8080/index.html");
-            AddFrame("csp-sandbox", "/csp-sandbox/index.html", null);
+            using (var server = new CspSandboxServer(FixturePath("")))
+            {
+                GoToUrl($"{server.BaseUrl}/index.html");
+                AddFrame("csp-sandbox", "/csp-sandbox/index.html", null);
 
-            var res = new AxeBuilder(WebDriver)
-                .WithRules("frame-tested")
-                .Analyze();
+                var res = new AxeBuilder(WebDriver)
+                    .WithRules("frame-tested")
+                    .Analyze();
 
-            Assert.That(FrameTestedTargets(res.Incomplete), Is.EqualTo(new[] { "#csp-sandbox" }));
+                Assert.That(FrameTestedTargets(res.Incomplete), Is.EqualTo(new[] { "#csp-sandbox" }));
+            }
         }
 
         [Test]
