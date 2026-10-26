@@ -244,17 +244,17 @@ namespace Deque.AxeCore.Playwright.Test.RunPartial
         public async Task ShouldUseTheSandboxAFrameLoadedWith()
         {
             await GoToFixture("index.html");
-            await AddFrame("sandboxed-later", "/index.html", null);
-            await AddFrame("unsandboxed-later", "/index.html", "allow-same-origin");
+            await AddFrame("sandbox-added-after-load", "/index.html", null);
+            await AddFrame("sandbox-removed-after-load", "/index.html", "allow-same-origin");
             await Page!.EvaluateAsync(@"() => {
-                document.getElementById('sandboxed-later').setAttribute('sandbox', 'allow-same-origin');
-                document.getElementById('unsandboxed-later').removeAttribute('sandbox');
+                document.getElementById('sandbox-added-after-load').setAttribute('sandbox', 'allow-same-origin');
+                document.getElementById('sandbox-removed-after-load').removeAttribute('sandbox');
             }");
 
             var res = await RunFrameTested();
 
-            Assert.That(FrameTestedTargets(res.Passes), Is.EqualTo(new[] { "#sandboxed-later" }));
-            Assert.That(FrameTestedTargets(res.Incomplete), Is.EqualTo(new[] { "#unsandboxed-later" }));
+            Assert.That(FrameTestedTargets(res.Passes), Is.EqualTo(new[] { "#sandbox-added-after-load" }));
+            Assert.That(FrameTestedTargets(res.Incomplete), Is.EqualTo(new[] { "#sandbox-removed-after-load" }));
         }
 
         [Test]

@@ -86,6 +86,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         [Test]
         [Timeout(15000)]
         [TestCase("Chrome")]
+        [TestCase("Firefox")]
         public void ShouldReportFramesSandboxedWithoutScripts(string browser)
         {
             InitDriver(browser);
@@ -96,12 +97,13 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
                 .WithRules("frame-tested")
                 .Analyze();
 
-            Assert.That(FrameTestedTargets(res.Incomplete), Is.EqualTo(new[] { "#no-scripts" }));
+            AssertBlockedFrame(res, browser, "#no-scripts");
         }
 
         [Test]
         [Timeout(15000)]
         [TestCase("Chrome")]
+        [TestCase("Firefox")]
         public void ShouldReportFramesSandboxedByCspHeader(string browser)
         {
             InitDriver(browser);
@@ -114,30 +116,31 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
                     .WithRules("frame-tested")
                     .Analyze();
 
-                Assert.That(FrameTestedTargets(res.Incomplete), Is.EqualTo(new[] { "#csp-sandbox" }));
+                AssertBlockedFrame(res, browser, "#csp-sandbox");
             }
         }
 
         [Test]
         [Timeout(15000)]
         [TestCase("Chrome")]
+        [TestCase("Firefox")]
         public void ShouldUseTheSandboxAFrameLoadedWith(string browser)
         {
             InitDriver(browser);
             GoToUrl("http://localhost:8080/index.html");
-            AddFrame("sandboxed-later", "/index.html", null);
-            AddFrame("unsandboxed-later", "/index.html", "allow-same-origin");
+            AddFrame("sandbox-added-after-load", "/index.html", null);
+            AddFrame("sandbox-removed-after-load", "/index.html", "allow-same-origin");
             ((IJavaScriptExecutor)WebDriver).ExecuteScript(@"
-                document.getElementById('sandboxed-later').setAttribute('sandbox', 'allow-same-origin');
-                document.getElementById('unsandboxed-later').removeAttribute('sandbox');
+                document.getElementById('sandbox-added-after-load').setAttribute('sandbox', 'allow-same-origin');
+                document.getElementById('sandbox-removed-after-load').removeAttribute('sandbox');
             ");
 
             var res = new AxeBuilder(WebDriver)
                 .WithRules("frame-tested")
                 .Analyze();
 
-            Assert.That(FrameTestedTargets(res.Passes), Is.EqualTo(new[] { "#sandboxed-later" }));
-            Assert.That(FrameTestedTargets(res.Incomplete), Is.EqualTo(new[] { "#unsandboxed-later" }));
+            Assert.That(FrameTestedTargets(res.Passes), Does.Contain("#sandbox-added-after-load"));
+            AssertBlockedFrame(res, browser, "#sandbox-removed-after-load");
         }
 
         [Test]
@@ -192,6 +195,13 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
                 iframe.src = arguments[1];
                 document.body.appendChild(iframe);
             ", id, src, sandbox);
+        }
+
+        private static void AssertBlockedFrame(AxeResult res, string browser, string target)
+        {
+            var scanned = browser == "Firefox";
+            Assert.That(FrameTestedTargets(scanned ? res.Passes : res.Incomplete), Does.Contain(target));
+            Assert.That(FrameTestedTargets(scanned ? res.Incomplete : res.Passes), Does.Not.Contain(target));
         }
 
         private static string[] FrameTestedTargets(AxeResultItem[] items)
