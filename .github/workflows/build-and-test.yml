@@ -16,6 +16,10 @@ on:
 permissions:
   contents: read # Needed to clone the repository
 
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  TESTINGPLATFORM_TELEMETRY_OPTOUT: 1
+
 jobs:
   build-and-test:
     name: Build and test
@@ -46,7 +50,8 @@ jobs:
         id: test
         run: |
           dotnet test --no-build -f net6.0 -c ${{ inputs.configuration }} -p:VersionSuffix=${{ inputs.version-suffix }} \
-            --logger GitHubActions --logger trx --logger html --logger "console;verbosity=minimal"
+            --logger GitHubActions --logger trx --logger html --logger "console;verbosity=minimal" \
+            -- RunConfiguration.TreatNoTestsAsError=true
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: ${{ success() || failure() }}
@@ -94,7 +99,8 @@ jobs:
             packages/selenium/new-webdriver/test/Deque.AxeCore.Selenium.NewWebDriver.Test.csproj
           do
             dotnet test "$project" -f net471 -c ${{ inputs.configuration }} -p:VersionSuffix=${{ inputs.version-suffix }} \
-              --logger GitHubActions --logger trx --logger html --logger "console;verbosity=minimal"
+              --logger GitHubActions --logger trx --logger html --logger "console;verbosity=minimal" \
+              -- RunConfiguration.TreatNoTestsAsError=true
           done
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
