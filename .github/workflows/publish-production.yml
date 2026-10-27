@@ -21,16 +21,16 @@ jobs:
   publish-github-release:
     if: github.repository_owner == 'dequelabs' # don't attempt to publish from forks
     needs: ["publish-nuget"]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 2
     permissions:
       contents: read # checkout only; release creation is authenticated with secrets.PAT
     steps:     
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Setup go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
           go-version: '^1.19.0'
 
