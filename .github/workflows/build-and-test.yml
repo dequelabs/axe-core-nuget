@@ -13,6 +13,9 @@ on:
         type: string
         default: "development.${{ github.sha }}"
 
+permissions:
+  contents: read # Needed to clone the repository
+
 jobs:
   build-and-test:
     name: Build and test
@@ -25,12 +28,10 @@ jobs:
       - name: Setup pnpm
         uses: ./.github/actions/setup-pnpm
 
-      - name: Install .NET Core 3.1 and 6
+      - name: Install .NET 6
         uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
         with:
-          dotnet-version: | 
-            3.1.x
-            6.x.x
+          dotnet-version: 6.x.x
 
       - name: Install NuGet dependencies
         run: dotnet restore
@@ -44,7 +45,7 @@ jobs:
       - name: Test
         id: test
         run: |
-          dotnet test --no-build -c ${{ inputs.configuration }} -p:VersionSuffix=${{ inputs.version-suffix }} \
+          dotnet test --no-build -f net6.0 -c ${{ inputs.configuration }} -p:VersionSuffix=${{ inputs.version-suffix }} \
             --logger GitHubActions --logger trx --logger html --logger "console;verbosity=minimal"
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -66,4 +67,40 @@ jobs:
         with:
           name: packages
           path: ${{ github.workspace }}/packages-artifact
-            
+
+  test-net-framework:
+    name: Test (.NET Framework)
+    runs-on: windows-2025
+    timeout-minutes: 30
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup pnpm
+        uses: ./.github/actions/setup-pnpm
+
+      - name: Install .NET 6
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: 6.x.x
+
+      - name: Test
+        shell: bash
+        run: |
+          for project in \
+            packages/commons/test/Deque.AxeCore.Commons.Test.csproj \
+            packages/selenium/test/Deque.AxeCore.Selenium.Test.csproj \
+            packages/selenium/legacy-webdriver/test/Deque.AxeCore.Selenium.LegacyWebDriver.Test.csproj \
+            packages/selenium/new-webdriver/test/Deque.AxeCore.Selenium.NewWebDriver.Test.csproj
+          do
+            dotnet test "$project" -f net471 -c ${{ inputs.configuration }} -p:VersionSuffix=${{ inputs.version-suffix }} \
+              --logger GitHubActions --logger trx --logger html --logger "console;verbosity=minimal"
+          done
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: ${{ success() || failure() }}
+        name: Upload test-results artifact
+        with:
+          name: test-results-net-framework
+          path: |
+            ${{ github.workspace }}/packages/**/test/TestResults

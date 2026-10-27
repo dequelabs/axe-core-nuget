@@ -60,12 +60,10 @@ jobs:
       - name: Setup pnpm
         uses: ./.github/actions/setup-pnpm
 
-      - name: Install .NET Core 3.1 and 6
+      - name: Install .NET 6
         uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
         with:
-          dotnet-version: |
-            3.1.x
-            6.x.x
+          dotnet-version: 6.x.x
 
       - name: Pack Commons + Deque.AxeCore.Selenium
         run: |
