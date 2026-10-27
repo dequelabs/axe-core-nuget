@@ -60,7 +60,8 @@ namespace Deque.AxeCore.Playwright.AxeContent
         public async Task EmbedAxeCoreIntoFrame(IFrame frame)
         {
             string axeCoreScriptContent = m_axeScriptProvider.GetScript();
-            await frame.EvaluateAsync($"() => {axeCoreScriptContent}").ConfigureAwait(false);
+            string assertScriptsRun = await EmbeddedResourceProvider.ReadEmbeddedFileAsync("assertScriptsRun.js").ConfigureAwait(false);
+            await frame.EvaluateAsync($"() => {{\n{assertScriptsRun}{axeCoreScriptContent}\n}}").ConfigureAwait(false);
         }
     }
 }

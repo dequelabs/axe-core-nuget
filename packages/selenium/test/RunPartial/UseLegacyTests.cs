@@ -102,6 +102,41 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             Assert.IsNull(frameTested);
         }
 
+        [Test]
+        [TestCase("Chrome")]
+        [TestCase("Firefox")]
+        public void ShouldNotInjectIntoNestedIFramesWhenIframesIsFalseInLegacyMode(string browser)
+        {
+            InitDriver(browser);
+            GoToFixture("nested-iframes.html");
+
+#pragma warning disable CS0618
+            var res = new AxeBuilder(WebDriver)
+                .WithOptions(LabelOnlyWithoutIframes())
+                .UseLegacyMode(true)
+                .Analyze();
+#pragma warning restore CS0618
+
+            Assert.That(res.Violations, Is.Empty);
+            AssertAxeNotInjectedIntoChildFrames();
+        }
+
+        [Test]
+        [TestCase("Chrome")]
+        [TestCase("Firefox")]
+        public void ShouldNotInjectIntoNestedIFramesWhenIframesIsFalseWithLegacySource(string browser)
+        {
+            InitDriver(browser);
+            GoToFixture("nested-iframes.html");
+
+            var res = new AxeBuilder(WebDriver, CustomSource(axeCoreLegacy))
+                .WithOptions(LabelOnlyWithoutIframes())
+                .Analyze();
+
+            Assert.That(res.Violations, Is.Empty);
+            AssertAxeNotInjectedIntoChildFrames();
+        }
+
         private string AllowedOrigins()
         {
             return (string)((IJavaScriptExecutor)WebDriver).ExecuteScript("return axe._audit.allowedOrigins[0]");

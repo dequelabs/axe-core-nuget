@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.IO;
 using System.Threading.Tasks;
@@ -85,6 +87,37 @@ namespace Deque.AxeCore.Playwright.Test.RunPartial
         {
             return axeSource;
         }
+
+        protected AxeRunOptions LabelOnlyWithoutIframes()
+        {
+            return new AxeRunOptions
+            {
+                RunOnly = RunOnlyOptions.Rules("label"),
+                Iframes = false
+            };
+        }
+
+        protected Task AssertAxeNotInjectedIntoChildFrames()
+        {
+            return AssertChildFrameAxeTypes("undefined");
+        }
+
+        protected Task AssertAxeInjectedIntoChildFrames()
+        {
+            return AssertChildFrameAxeTypes("object");
+        }
+
+        private async Task AssertChildFrameAxeTypes(string expected)
+        {
+            var found = new List<string>();
+            foreach (var frame in Page!.Frames.Where(frame => frame != Page.MainFrame))
+            {
+                found.Add(await frame.EvaluateAsync<string>("() => typeof window.axe"));
+            }
+            Assert.That(found, Is.Not.Empty);
+            Assert.That(found, Is.All.EqualTo(expected));
+        }
+
         protected Task GoToResource(string resourceFilename)
         {
             return GoToUrl(ResourceUrl(resourceFilename));
