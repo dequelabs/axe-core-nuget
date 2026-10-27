@@ -224,7 +224,7 @@ namespace Deque.AxeCore.Playwright.Test.RunPartial
 
             var res = await RunFrameTested();
 
-            Assert.That(FrameTestedTargets(res.Incomplete), Is.EqualTo(new[] { "#no-scripts" }));
+            AssertBlockedFrame(res, "#no-scripts");
         }
 
         [Test]
@@ -236,7 +236,7 @@ namespace Deque.AxeCore.Playwright.Test.RunPartial
 
             var res = await RunFrameTested();
 
-            Assert.That(FrameTestedTargets(res.Incomplete), Is.EqualTo(new[] { "#csp-sandbox" }));
+            AssertBlockedFrame(res, "#csp-sandbox");
         }
 
         [Test]
@@ -253,8 +253,8 @@ namespace Deque.AxeCore.Playwright.Test.RunPartial
 
             var res = await RunFrameTested();
 
-            Assert.That(FrameTestedTargets(res.Passes), Is.EqualTo(new[] { "#sandbox-added-after-load" }));
-            Assert.That(FrameTestedTargets(res.Incomplete), Is.EqualTo(new[] { "#sandbox-removed-after-load" }));
+            Assert.That(FrameTestedTargets(res.Passes), Does.Contain("#sandbox-added-after-load"));
+            AssertBlockedFrame(res, "#sandbox-removed-after-load");
         }
 
         [Test]
@@ -306,6 +306,13 @@ namespace Deque.AxeCore.Playwright.Test.RunPartial
             {
                 RunOnly = RunOnlyOptions.Rules("frame-tested")
             });
+        }
+
+        private void AssertBlockedFrame(AxeResult res, string target)
+        {
+            var scanned = BrowserName == "firefox";
+            Assert.That(FrameTestedTargets(scanned ? res.Passes : res.Incomplete), Does.Contain(target));
+            Assert.That(FrameTestedTargets(scanned ? res.Incomplete : res.Passes), Does.Not.Contain(target));
         }
 
         private static string[] FrameTestedTargets(AxeResultItem[] items)

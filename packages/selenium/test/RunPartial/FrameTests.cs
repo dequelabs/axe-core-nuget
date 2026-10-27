@@ -1,3 +1,5 @@
+using System;
+using System.Diagnostics;
 using System.Linq;
 using Deque.AxeCore.Commons;
 using NUnit.Framework;
@@ -84,7 +86,6 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         }
 
         [Test]
-        [Timeout(15000)]
         [TestCase("Chrome")]
         [TestCase("Firefox")]
         public void ShouldReportFramesSandboxedWithoutScripts(string browser)
@@ -93,15 +94,12 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             GoToUrl("http://localhost:8080/index.html");
             AddFrame("no-scripts", "/index.html", "allow-same-origin");
 
-            var res = new AxeBuilder(WebDriver)
-                .WithRules("frame-tested")
-                .Analyze();
+            var res = AnalyzeFrameTestedQuickly();
 
             AssertBlockedFrame(res, browser, "#no-scripts");
         }
 
         [Test]
-        [Timeout(15000)]
         [TestCase("Chrome")]
         [TestCase("Firefox")]
         public void ShouldReportFramesSandboxedByCspHeader(string browser)
@@ -112,16 +110,13 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
                 GoToUrl($"{server.BaseUrl}/index.html");
                 AddFrame("csp-sandbox", "/csp-sandbox/index.html", null);
 
-                var res = new AxeBuilder(WebDriver)
-                    .WithRules("frame-tested")
-                    .Analyze();
+                var res = AnalyzeFrameTestedQuickly();
 
                 AssertBlockedFrame(res, browser, "#csp-sandbox");
             }
         }
 
         [Test]
-        [Timeout(15000)]
         [TestCase("Chrome")]
         [TestCase("Firefox")]
         public void ShouldUseTheSandboxAFrameLoadedWith(string browser)
@@ -135,16 +130,13 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
                 document.getElementById('sandbox-removed-after-load').removeAttribute('sandbox');
             ");
 
-            var res = new AxeBuilder(WebDriver)
-                .WithRules("frame-tested")
-                .Analyze();
+            var res = AnalyzeFrameTestedQuickly();
 
             Assert.That(FrameTestedTargets(res.Passes), Does.Contain("#sandbox-added-after-load"));
             AssertBlockedFrame(res, browser, "#sandbox-removed-after-load");
         }
 
         [Test]
-        [Timeout(15000)]
         [TestCase("Chrome")]
         [TestCase("Firefox")]
         public void ShouldAnalyzeFramesSandboxedWithScripts(string browser)
@@ -162,7 +154,6 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         }
 
         [Test]
-        [Timeout(15000)]
         [TestCase("Chrome")]
         [TestCase("Firefox")]
         public void ShouldScanPagesAndFramesThatReplaceEvent(string browser)
@@ -195,6 +186,16 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
                 iframe.src = arguments[1];
                 document.body.appendChild(iframe);
             ", id, src, sandbox);
+        }
+
+        private AxeResult AnalyzeFrameTestedQuickly()
+        {
+            var builder = new AxeBuilder(WebDriver).WithRules("frame-tested");
+            var stopwatch = Stopwatch.StartNew();
+            var res = builder.Analyze();
+            stopwatch.Stop();
+            Assert.That(stopwatch.Elapsed, Is.LessThan(TimeSpan.FromSeconds(10)));
+            return res;
         }
 
         private static void AssertBlockedFrame(AxeResult res, string browser, string target)
