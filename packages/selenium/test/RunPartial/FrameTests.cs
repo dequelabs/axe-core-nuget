@@ -26,6 +26,37 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         [Test]
         [TestCase("Chrome")]
         [TestCase("Firefox")]
+        public void ShouldInjectIntoNestedIFramesByDefault(string browser)
+        {
+            InitDriver(browser);
+            GoToFixture("nested-iframes.html");
+
+            new AxeBuilder(WebDriver)
+                .WithRules("label")
+                .Analyze();
+
+            AssertAxeInjectedIntoChildFrames();
+        }
+
+        [Test]
+        [TestCase("Chrome")]
+        [TestCase("Firefox")]
+        public void ShouldNotInjectIntoNestedIFramesWhenIframesIsFalse(string browser)
+        {
+            InitDriver(browser);
+            GoToFixture("nested-iframes.html");
+
+            var res = new AxeBuilder(WebDriver)
+                .WithOptions(LabelOnlyWithoutIframes())
+                .Analyze();
+
+            Assert.That(res.Violations, Is.Empty);
+            AssertAxeNotInjectedIntoChildFrames();
+        }
+
+        [Test]
+        [TestCase("Chrome")]
+        [TestCase("Firefox")]
         public void ShouldAnalyzeNestedFramesets(string browser)
         {
             InitDriver(browser);
