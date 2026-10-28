@@ -68,6 +68,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
                 return _axeCoreLegacy;
             }
         }
+        protected FixtureServer fixtureServer { get; private set; }
         protected string dylangConfigPath { get; set; } = null;
         protected string axeRunPartialThrows { get; set; } =
             ";axe.runPartial = () => { throw new Error(\"No runPartial\")}";
@@ -96,14 +97,13 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
 
             dylangConfigPath = FixturePath("dylang-config.json");
 
-            var commonsPath = Path.Combine(RepoRoot, "packages", "commons", "test");
-            TestFixtureServer.Start(commonsPath);
+            fixtureServer = new FixtureServer(FixturePath(""));
         }
 
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            TestFixtureServer.Stop();
+            fixtureServer?.Dispose();
         }
 
         protected AxeBuilderOptions CustomSource(string axeSource)
