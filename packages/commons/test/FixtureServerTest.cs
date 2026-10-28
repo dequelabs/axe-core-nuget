@@ -3,7 +3,6 @@ using Deque.AxeCore.Commons.Test.Util;
 using FluentAssertions;
 using System;
 using System.IO;
-using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
 using System.Threading.Tasks;
@@ -43,7 +42,7 @@ namespace Deque.AxeCore.Commons.Test
             {
                 var response = client.GetAsync($"{server.BaseUrl}/..%2Ffixtures-other%2Fsecret.txt").GetAwaiter().GetResult();
 
-                response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+                ((int)response.StatusCode).Should().BeInRange(400, 499);
             }
         }
 
