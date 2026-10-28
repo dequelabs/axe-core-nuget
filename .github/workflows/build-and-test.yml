@@ -12,6 +12,10 @@ on:
         description: "Version suffix (eg, for a version of 1.2.3-alpha.1, pass \"alpha.1\")"
         type: string
         default: "development.${{ github.sha }}"
+      cache:
+        description: "Whether to restore and save the pnpm store cache"
+        type: boolean
+        default: true
 
 permissions:
   contents: read # Needed to clone the repository
@@ -31,6 +35,8 @@ jobs:
 
       - name: Setup pnpm
         uses: ./.github/actions/setup-pnpm
+        with:
+          cache: ${{ inputs.cache }}
 
       - name: Install .NET 6
         uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
@@ -83,6 +89,8 @@ jobs:
 
       - name: Setup pnpm
         uses: ./.github/actions/setup-pnpm
+        with:
+          cache: ${{ inputs.cache }}
 
       - name: Install .NET 6
         uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0

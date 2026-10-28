@@ -10,6 +10,7 @@ jobs:
     uses: ./.github/workflows/build-and-test.yml
     with:
       version-suffix: ""
+      cache: false
 
   publish-nuget:
     uses: ./.github/workflows/publish-nuget-packages.yml

@@ -41,10 +41,10 @@
        Running it before CollectPackageReferences, will work in both vs & command line. But, this task will be executed in both build & restore multiple times on multi-target project.
        So, skipping this task if the copied pnpm-lock.yaml file is same as the source file, to support incremental builds.
   -->
-  <Target Name="DownloadAxe" Inputs="../../../pnpm-lock.yaml" Outputs="node_modules/pnpm-lock.yaml" BeforeTargets="CollectPackageReferences">
+  <Target Name="DownloadAxe" Inputs="../../../pnpm-lock.yaml" Outputs="../../../node_modules/pnpm-lock.yaml" BeforeTargets="CollectPackageReferences">
     <Exec Command="pnpm install --frozen-lockfile" />
     <!-- Copying this file to support incremental builds -->
-    <Copy SourceFiles="../../../pnpm-lock.yaml" DestinationFolder="node_modules" />
+    <Copy SourceFiles="../../../pnpm-lock.yaml" DestinationFolder="../../../node_modules" />
   </Target>
 
   <ItemGroup>
