@@ -12,22 +12,36 @@ on:
         description: "Version suffix (eg, for a version of 1.2.3-alpha.1, pass \"alpha.1\")"
         type: string
         default: "development.${{ github.sha }}"
+      cache:
+        description: "Whether to restore and save the pnpm store cache"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read # Needed to clone the repository
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  TESTINGPLATFORM_TELEMETRY_OPTOUT: 1
 
 jobs:
   build-and-test:
     name: Build and test
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 20
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Install .NET Core 3.1 and 6
-        uses: actions/setup-dotnet@v1
+      - name: Setup pnpm
+        uses: ./.github/actions/setup-pnpm
         with:
-          dotnet-version: | 
-            3.1.x
-            6.x.x
+          cache: ${{ inputs.cache }}
+
+      - name: Install .NET 6
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: 6.x.x
 
       - name: Install NuGet dependencies
         run: dotnet restore
@@ -41,10 +55,11 @@ jobs:
       - name: Test
         id: test
         run: |
-          dotnet test --no-build -c ${{ inputs.configuration }} -p:VersionSuffix=${{ inputs.version-suffix }} \
-            --logger GitHubActions --logger trx --logger html --logger "console;verbosity=minimal"
+          dotnet test --no-build -f net6.0 -c ${{ inputs.configuration }} -p:VersionSuffix=${{ inputs.version-suffix }} \
+            --logger GitHubActions --logger trx --logger html --logger "console;verbosity=minimal" \
+            -- RunConfiguration.TreatNoTestsAsError=true
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: ${{ success() || failure() }}
         name: Upload test-results artifact
         with:
@@ -58,9 +73,48 @@ jobs:
           cp ${{ github.workspace }}/packages/*/src/bin/*/*.nupkg ${{ github.workspace }}/packages-artifact
           cp ${{ github.workspace }}/packages/*/src/bin/*/*.snupkg ${{ github.workspace }}/packages-artifact
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         name: Upload packages artifact
         with:
           name: packages
           path: ${{ github.workspace }}/packages-artifact
-            
+
+  test-net-framework:
+    name: Test (.NET Framework)
+    runs-on: windows-2025
+    timeout-minutes: 30
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup pnpm
+        uses: ./.github/actions/setup-pnpm
+        with:
+          cache: ${{ inputs.cache }}
+
+      - name: Install .NET 6
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: 6.x.x
+
+      - name: Test
+        shell: bash
+        run: |
+          for project in \
+            packages/commons/test/Deque.AxeCore.Commons.Test.csproj \
+            packages/selenium/test/Deque.AxeCore.Selenium.Test.csproj \
+            packages/selenium/legacy-webdriver/test/Deque.AxeCore.Selenium.LegacyWebDriver.Test.csproj \
+            packages/selenium/new-webdriver/test/Deque.AxeCore.Selenium.NewWebDriver.Test.csproj
+          do
+            dotnet test "$project" -f net471 -c ${{ inputs.configuration }} -p:VersionSuffix=${{ inputs.version-suffix }} \
+              --logger GitHubActions --logger trx --logger html --logger "console;verbosity=minimal" \
+              -- RunConfiguration.TreatNoTestsAsError=true
+          done
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: ${{ success() || failure() }}
+        name: Upload test-results artifact
+        with:
+          name: test-results-net-framework
+          path: |
+            ${{ github.workspace }}/packages/**/test/TestResults

@@ -5,7 +5,7 @@
       https://dotnet.microsoft.com/en-us/platform/support/policy/dotnet-core and
       https://docs.microsoft.com/en-us/lifecycle/products/microsoft-net-framework
     -->
-    <TargetFrameworks>net471;netcoreapp3.1;net6.0</TargetFrameworks>
+    <TargetFrameworks>net471;net6.0</TargetFrameworks>
 
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <IsPackable>false</IsPackable>
@@ -18,10 +18,10 @@
     </PackageReference>
     <!-- Do not update FluentAssertions to >=8.0.0, as the license became paid for commercial use -->
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
     <PackageReference Include="NewtonSoft.Json" Version="13.0.1" />
     <PackageReference Include="NUnit" Version="3.13.3" />
-    <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
+    <PackageReference Include="NUnit3TestAdapter" Version="5.2.0" />
     <PackageReference Include="NUnit.Analyzers" Version="3.3.0" />
     <PackageReference Include="coverlet.collector" Version="3.1.2" />
   </ItemGroup>
@@ -36,12 +36,12 @@
 
   <!-- Running this using BeforeTagets="Restore" doesn't work if we run "dotnet restore" from solution folder.
        Running it before CollectPackageReferences, will work in both vs & command line. But, this task will be executed in both build & restore multiple times on multi-target project.
-       So, skipping this task if the copied package-lock.json file is same as the source file, to support incremental builds.
+       So, skipping this task if the copied pnpm-lock.yaml file is same as the source file, to support incremental builds.
   -->
-  <Target Name="DownloadTestFixtures" Inputs="package-lock.json" Outputs="node_modules/package-lock.json" BeforeTargets="CollectPackageReferences">
-    <Exec Command="npm ci" />
+  <Target Name="DownloadTestFixtures" Inputs="../../../pnpm-lock.yaml" Outputs="../../../node_modules/pnpm-lock.yaml" BeforeTargets="CollectPackageReferences">
+    <Exec Command="pnpm install --frozen-lockfile" />
     <!-- Copying this file to support incremental builds -->
-    <Copy SourceFiles="package-lock.json" DestinationFolder="node_modules" />
+    <Copy SourceFiles="../../../pnpm-lock.yaml" DestinationFolder="../../../node_modules" />
   </Target>
 
   <ItemGroup>

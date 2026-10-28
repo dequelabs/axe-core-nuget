@@ -11,6 +11,7 @@ jobs:
     uses: ./.github/workflows/build-and-test.yml
     with:
       version-suffix: "alpha.${{ github.run_number }}"
+      cache: false
 
   publish-nuget:
     uses: ./.github/workflows/publish-nuget-packages.yml
