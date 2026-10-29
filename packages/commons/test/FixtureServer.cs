@@ -4,9 +4,9 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 
-namespace Deque.AxeCore.Selenium.Test.RunPartial
+namespace Deque.AxeCore.Commons.Test.Util
 {
-    public sealed class CspSandboxServer : IDisposable
+    public sealed class FixtureServer : IDisposable
     {
         private const string CspSandboxPrefix = "/csp-sandbox";
 
@@ -15,9 +15,9 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
 
         public string BaseUrl { get; }
 
-        public CspSandboxServer(string root)
+        public FixtureServer(string root)
         {
-            _root = Path.GetFullPath(root);
+            _root = Path.GetFullPath(root).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
             BaseUrl = $"http://localhost:{FreePort()}";
             _listener.Prefixes.Add($"{BaseUrl}/");
             _listener.Start();
@@ -51,7 +51,14 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
                 {
                     return;
                 }
-                Respond(context);
+                try
+                {
+                    Respond(context);
+                }
+                catch (Exception)
+                {
+                    context.Response.Abort();
+                }
             }
         }
 
@@ -66,7 +73,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
             }
 
             var file = Path.GetFullPath(Path.Combine(_root, path.TrimStart('/')));
-            if (file.StartsWith(_root, StringComparison.Ordinal) && File.Exists(file))
+            if (file.StartsWith(_root + Path.DirectorySeparatorChar, StringComparison.Ordinal) && File.Exists(file))
             {
                 var body = File.ReadAllBytes(file);
                 response.ContentType = file.EndsWith(".html", StringComparison.OrdinalIgnoreCase)

@@ -122,7 +122,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         public void ShouldReportFramesSandboxedWithoutScripts(string browser)
         {
             InitDriver(browser);
-            GoToUrl("http://localhost:8080/index.html");
+            GoToUrl($"{fixtureServer.BaseUrl}/index.html");
             AddFrame("no-scripts", "/index.html", "allow-same-origin");
 
             var res = AnalyzeFrameTestedQuickly();
@@ -136,15 +136,12 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         public void ShouldReportFramesSandboxedByCspHeader(string browser)
         {
             InitDriver(browser);
-            using (var server = new CspSandboxServer(FixturePath("")))
-            {
-                GoToUrl($"{server.BaseUrl}/index.html");
-                AddFrame("csp-sandbox", "/csp-sandbox/index.html", null);
+            GoToUrl($"{fixtureServer.BaseUrl}/index.html");
+            AddFrame("csp-sandbox", "/csp-sandbox/index.html", null);
 
-                var res = AnalyzeFrameTestedQuickly();
+            var res = AnalyzeFrameTestedQuickly();
 
-                AssertBlockedFrame(res, browser, "#csp-sandbox");
-            }
+            AssertBlockedFrame(res, browser, "#csp-sandbox");
         }
 
         [Test]
@@ -153,7 +150,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         public void ShouldUseTheSandboxAFrameLoadedWith(string browser)
         {
             InitDriver(browser);
-            GoToUrl("http://localhost:8080/index.html");
+            GoToUrl($"{fixtureServer.BaseUrl}/index.html");
             AddFrame("sandbox-added-after-load", "/index.html", null);
             AddFrame("sandbox-removed-after-load", "/index.html", "allow-same-origin");
             ((IJavaScriptExecutor)WebDriver).ExecuteScript(@"
@@ -173,7 +170,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         public void ShouldAnalyzeFramesSandboxedWithScripts(string browser)
         {
             InitDriver(browser);
-            GoToUrl("http://localhost:8080/index.html");
+            GoToUrl($"{fixtureServer.BaseUrl}/index.html");
             AddFrame("scripts", "/index.html", "allow-same-origin allow-scripts");
 
             var res = new AxeBuilder(WebDriver)
@@ -190,7 +187,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
         public void ShouldScanPagesAndFramesThatReplaceEvent(string browser)
         {
             InitDriver(browser);
-            GoToUrl("http://localhost:8080/index.html");
+            GoToUrl($"{fixtureServer.BaseUrl}/index.html");
             ((IJavaScriptExecutor)WebDriver).ExecuteScript("window.Event = function () {};");
             AddFrame("replaced-event", "/index.html", null);
             ((IJavaScriptExecutor)WebDriver).ExecuteScript(
