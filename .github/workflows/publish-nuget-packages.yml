@@ -8,12 +8,14 @@ on:
         description: "Name of a previously-uploaded artifact containing a flat collection of .nupkg files to publish"
         default: packages # matches what ./build-and-test.yml produces
         type: string
-    secrets:
-      NUGET_API_KEY:
-        required: true
+
+permissions: {}
 
 jobs:
   publish:
+    permissions:
+      id-token: write # Needed to exchange a GitHub OIDC token for a short-lived nuget.org API key
+    environment: nuget.org
     runs-on: ubuntu-26.04
     timeout-minutes: 2
     steps:
@@ -31,12 +33,24 @@ jobs:
       - name: List packages to be published
         run: ls packages
 
+      - name: Log in to NuGet with Trusted Publishing
+        id: nuget-login
+        uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1.2.0
+        with:
+          user: ${{ vars.NUGET_USER }}
+
       # Order is important - if publishing Commons fails, we want the job to abort without attempting the others
       - name: Publish Deque.AxeCore.Commons to NuGet
-        run: dotnet nuget push packages/Deque.AxeCore.Commons.*.nupkg --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json
+        env:
+          NUGET_API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
+        run: dotnet nuget push packages/Deque.AxeCore.Commons.*.nupkg --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json
 
       - name: Publish Deque.AxeCore.Selenium to NuGet
-        run: dotnet nuget push packages/Deque.AxeCore.Selenium.*.nupkg --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json
-      
+        env:
+          NUGET_API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
+        run: dotnet nuget push packages/Deque.AxeCore.Selenium.*.nupkg --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json
+
       - name: Publish Deque.AxeCore.Playwright to NuGet
-        run: dotnet nuget push packages/Deque.AxeCore.Playwright.*.nupkg --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json
+        env:
+          NUGET_API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
+        run: dotnet nuget push packages/Deque.AxeCore.Playwright.*.nupkg --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json
