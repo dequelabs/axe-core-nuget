@@ -1,3 +1,13 @@
+## [4.14.1](https://github.com/dequelabs/axe-core-nuget/compare/v4.14.0...v4.14.1) (2026-11-19)
+
+
+### Bug Fixes
+
+* skip frames that cannot run scripts instead of hanging ([#300](https://github.com/dequelabs/axe-core-nuget/issues/300)) ([d2092e2](https://github.com/dequelabs/axe-core-nuget/commit/d2092e22e3dd08b39f475931469a836d8b82db61)), closes [dequelabs/axe-core-npm#1469](https://github.com/dequelabs/axe-core-npm/issues/1469) [dequelabs/axe-core-npm#1478](https://github.com/dequelabs/axe-core-npm/issues/1478) [dequelabs/axe-core-npm#1469](https://github.com/dequelabs/axe-core-npm/issues/1469)
+* update axe-core to v4.14.1 ([#308](https://github.com/dequelabs/axe-core-nuget/issues/308)) ([deb4ac0](https://github.com/dequelabs/axe-core-nuget/commit/deb4ac0d1407d5185229c48686276600113986cd)), closes [#307](https://github.com/dequelabs/axe-core-nuget/issues/307)
+
+
+
 # [4.14.0](https://github.com/dequelabs/axe-core-nuget/compare/v4.13.0...v4.14.0) (2026-10-06)
 
 
