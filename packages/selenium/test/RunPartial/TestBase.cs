@@ -1,7 +1,9 @@
+using System.Collections.Generic;
 using System.IO;
 using Deque.AxeCore.Commons;
 using Deque.AxeCore.Commons.Test.Util;
 using NUnit.Framework;
+using OpenQA.Selenium;
 
 namespace Deque.AxeCore.Selenium.Test.RunPartial
 {
@@ -66,6 +68,7 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
                 return _axeCoreLegacy;
             }
         }
+        protected FixtureServer fixtureServer { get; private set; }
         protected string dylangConfigPath { get; set; } = null;
         protected string axeRunPartialThrows { get; set; } =
             ";axe.runPartial = () => { throw new Error(\"No runPartial\")}";
@@ -94,14 +97,13 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
 
             dylangConfigPath = FixturePath("dylang-config.json");
 
-            var commonsPath = Path.Combine(RepoRoot, "packages", "commons", "test");
-            TestFixtureServer.Start(commonsPath);
+            fixtureServer = new FixtureServer(FixturePath(""));
         }
 
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            TestFixtureServer.Stop();
+            fixtureServer?.Dispose();
         }
 
         protected AxeBuilderOptions CustomSource(string axeSource)
@@ -111,6 +113,47 @@ namespace Deque.AxeCore.Selenium.Test.RunPartial
                 ScriptProvider = new StringAxeScriptProvider(axeSource)
             };
         }
+
+        protected AxeRunOptions LabelOnlyWithoutIframes()
+        {
+            return new AxeRunOptions
+            {
+                RunOnly = RunOnlyOptions.Rules("label"),
+                Iframes = false
+            };
+        }
+
+        protected void AssertAxeNotInjectedIntoChildFrames()
+        {
+            AssertChildFrameAxeTypes("undefined");
+        }
+
+        protected void AssertAxeInjectedIntoChildFrames()
+        {
+            AssertChildFrameAxeTypes("object");
+        }
+
+        private void AssertChildFrameAxeTypes(string expected)
+        {
+            var found = new List<string>();
+            CollectChildFrameAxeTypes(found);
+            WebDriver.SwitchTo().DefaultContent();
+            Assert.That(found, Is.Not.Empty);
+            Assert.That(found, Is.All.EqualTo(expected));
+        }
+
+        private void CollectChildFrameAxeTypes(List<string> found)
+        {
+            var count = WebDriver.FindElements(By.CssSelector("iframe, frame")).Count;
+            for (var i = 0; i < count; i++)
+            {
+                WebDriver.SwitchTo().Frame(i);
+                found.Add((string)((IJavaScriptExecutor)WebDriver).ExecuteScript("return typeof window.axe"));
+                CollectChildFrameAxeTypes(found);
+                WebDriver.SwitchTo().ParentFrame();
+            }
+        }
+
         protected void GoToResource(string resourceFilename)
         {
             WebDriver.Navigate().GoToUrl(ResourceUrl(resourceFilename));

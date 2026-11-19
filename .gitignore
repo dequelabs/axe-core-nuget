@@ -16,3 +16,7 @@ coveragereport
 
 # Can be removed once npm bundling is migrated to commons package (#8)
 packages/playwright/src/NodeDependencies/dist/
+
+package-lock.json
+yarn.lock
+.pnpm-store

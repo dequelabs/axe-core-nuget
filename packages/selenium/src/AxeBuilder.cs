@@ -402,7 +402,7 @@ namespace Deque.AxeCore.Selenium
             // Skip if value is set to false
             if (runOptions.Iframes != false)
             {
-                _webDriver.ForEachFrameContext(() => ConfigureAxe());
+                _webDriver.ForEachFrameContext(() => ConfigureAxe(assertScriptsRun: false));
             }
 
             string rawOptionsArg = SerializedRunOptions();
@@ -428,9 +428,14 @@ namespace Deque.AxeCore.Selenium
         /// <summary>
         /// Injects scripts into the current frame and configures axe
         /// </summary>
-        private void ConfigureAxe()
+        private void ConfigureAxe(bool assertScriptsRun = true)
         {
-            _webDriver.ExecuteScript(_AxeBuilderOptions.ScriptProvider.GetScript());
+            var axeScript = _AxeBuilderOptions.ScriptProvider.GetScript();
+            if (assertScriptsRun)
+            {
+                axeScript = EmbeddedResourceProvider.ReadEmbeddedFile("assertScriptsRun.js") + axeScript;
+            }
+            _webDriver.ExecuteScript(axeScript);
             var runPartialExists = (bool)_webDriver.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("runPartialExists.js"));
 
             if (!runPartialExists && !useLegacyMode)

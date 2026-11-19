@@ -4,3 +4,5 @@
 
 # Shell scripts must always be LF (CRLF breaks bash execution).
 *.sh text eol=lf
+
+pnpm-lock.yaml linguist-generated=true

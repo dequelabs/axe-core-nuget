@@ -35,10 +35,10 @@ This project uses the default `dotnet format` settings for formatting C# files. 
 You'll need the following installed:
 
 * [.NET SDK 6.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
-* [.NET Core 3.1 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/3.1)
 * [.NET Framework 4.7.1 Developer Pack](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net471)
 * [PowerShell 7+](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell)
 * [Node.js (latest LTS version)](https://nodejs.org)
+* [pnpm](https://pnpm.io/installation) (the version is pinned by `packageManager` in `package.json`)
 * [Google Chrome (latest stable version)](https://www.google.com/chrome/downloads)
 * [Mozilla Firefox (latest stable version)](https://www.mozilla.org/firefox)
 
